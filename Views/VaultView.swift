@@ -201,12 +201,25 @@ struct AddDocumentView: View {
     @State private var title = ""
     @State private var category: DocumentCategory = .other
     @State private var isPinned = false
+    @State private var ai = AIAssistant()
 
     var body: some View {
         NavigationStack {
             Form {
                 Section("Document Details") {
                     TextField("Title", text: $title)
+                        .onChange(of: title) { _, newTitle in
+                            guard ai.isAvailable, newTitle.count > 3 else { return }
+                            asyncRun {
+                                if let suggestion = await ai.suggestCategory(for: newTitle),
+                                   let match = DocumentCategory.allCases.first(where: {
+                                       $0.rawValue.localizedCaseInsensitiveContains(suggestion) ||
+                                       suggestion.localizedCaseInsensitiveContains($0.rawValue)
+                                   }) {
+                                    category = match
+                                }
+                            }
+                        }
 
                     Picker("Category", selection: $category) {
                         ForEach(DocumentCategory.allCases, id: \.self) { cat in

@@ -97,19 +97,8 @@ struct SidebarView: View {
     }
 }
 
-#Preview("iPhone") {
+#Preview {
     ContentView()
-        .modelContainer(for: [
-            ParentProfile.self, Appointment.self,
-            Task.self, Document.self,
-            FamilyMember.self, Expense.self,
-            ExpenseAccount.self, UpdateFeedItem.self
-        ])
-}
-
-#Preview("iPad") {
-    ContentView()
-        .previewDevice("iPad Pro (12.9-inch)")
         .modelContainer(for: [
             ParentProfile.self, Appointment.self,
             Task.self, Document.self,

@@ -11,6 +11,9 @@ struct CalendarView: View {
     @Query(sort: \Appointment.date) private var appointments: [Appointment]
     @Query private var parentProfiles: [ParentProfile]
     @State private var showingAddAppointment = false
+    @State private var ai = AIAssistant()
+    @State private var summaries: [UUID: String] = [:]
+    @State private var extractedTasks: [UUID: [SuggestedTask]] = [:]
 
     var upcomingAppointments: [Appointment] {
         appointments.filter { $0.date > Date() }
@@ -113,6 +116,61 @@ struct CalendarView: View {
                         .font(.caption)
                         .foregroundStyle(.tertiary)
                         .lineLimit(2)
+
+                    // AI actions for notes
+                    if ai.isAvailable {
+                        if let summary = summaries[appointment.id] {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Label("AI Summary", systemImage: "sparkles")
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.teal)
+                                Text(summary)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(.top, 4)
+                        }
+
+                        if let tasks = extractedTasks[appointment.id], !tasks.isEmpty {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Label("Suggested Tasks", systemImage: "list.bullet.circle.fill")
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.teal)
+                                ForEach(tasks, id: \.title) { task in
+                                    Text("· \(task.title)")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            .padding(.top, 2)
+                        }
+
+                        HStack(spacing: 12) {
+                            Button {
+                                asyncRun {
+                                    let result = await ai.summarizeNotes(appointment.notes)
+                                    if let result { summaries[appointment.id] = result }
+                                }
+                            } label: {
+                                Label("Summarize", systemImage: "sparkles")
+                            }
+
+                            Button {
+                                asyncRun {
+                                    let result = await ai.extractTasks(from: appointment.notes)
+                                    if !result.isEmpty { extractedTasks[appointment.id] = result }
+                                }
+                            } label: {
+                                Label("Extract Tasks", systemImage: "list.bullet")
+                            }
+                        }
+                        .font(.caption)
+                        .foregroundStyle(.teal)
+                        .disabled(ai.isProcessing)
+                        .padding(.top, 4)
+                    }
                 }
             }
 

@@ -22,6 +22,7 @@
 		A579610D8C4DAA27AC2D6242 /* Appointment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B09227E42515DA2261D3C7 /* Appointment.swift */; };
 		A7F8590D0EE24B656C5F8B85 /* FinancesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341499FA8F747E5F783EC8D3 /* FinancesView.swift */; };
 		B11DD7F08B80E0DB43A770FA /* ExpenseAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0EA3F369611505DA699F4C /* ExpenseAccount.swift */; };
+		C7F15BA6CAE17FD2E4EE0CB9 /* AIAssistant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C127343754B9F99C23F5D5B /* AIAssistant.swift */; };
 		D52ADAD428D6A048B0611A9F /* UpdateFeedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50EC3605690CBC693A2C5C5 /* UpdateFeedItem.swift */; };
 		DAB2E79DB0E5DBAD7D599585 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EC81C277E7175D4D0C9F39F /* ContentView.swift */; };
 /* End PBXBuildFile section */
@@ -34,6 +35,7 @@
 		341499FA8F747E5F783EC8D3 /* FinancesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinancesView.swift; sourceTree = "<group>"; };
 		4FA36E429FA5AC6C146D34C9 /* FamilyMember.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyMember.swift; sourceTree = "<group>"; };
 		54B09227E42515DA2261D3C7 /* Appointment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Appointment.swift; sourceTree = "<group>"; };
+		5C127343754B9F99C23F5D5B /* AIAssistant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIAssistant.swift; sourceTree = "<group>"; };
 		6EDAF7DE1CF364C4708F8B92 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		6F0EA3F369611505DA699F4C /* ExpenseAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseAccount.swift; sourceTree = "<group>"; };
 		7EC81C277E7175D4D0C9F39F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -71,6 +73,7 @@
 		39B95F64C655BDDE43DAE613 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				5C127343754B9F99C23F5D5B /* AIAssistant.swift */,
 				F1BD927AF6572EC6054C8D11 /* SampleDataGenerator.swift */,
 				6EDAF7DE1CF364C4708F8B92 /* Theme.swift */,
 			);
@@ -162,6 +165,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C7F15BA6CAE17FD2E4EE0CB9 /* AIAssistant.swift in Sources */,
 				A579610D8C4DAA27AC2D6242 /* Appointment.swift in Sources */,
 				9E4F13552E23EC2492D5FAD1 /* CalendarView.swift in Sources */,
 				88009E47EC381E5C9E78AF44 /* CareCircleApp.swift in Sources */,
@@ -294,7 +298,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -351,7 +355,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";

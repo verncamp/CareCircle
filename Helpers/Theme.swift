@@ -70,6 +70,13 @@ extension View {
     }
 }
 
+// MARK: - Async Helper
+// Disambiguate Swift concurrency Task from the SwiftData Task model.
+@discardableResult
+func asyncRun(_ operation: @escaping @Sendable () async -> Void) -> _Concurrency.Task<Void, Never> {
+    _Concurrency.Task(operation: operation)
+}
+
 // MARK: - Priority Helpers
 
 extension TaskPriority {

@@ -9,6 +9,9 @@ import SwiftData
 struct TodayView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var parentProfiles: [ParentProfile]
+    @State private var ai = AIAssistant()
+    @State private var briefing: String?
+    @State private var showBriefing = false
 
     var activeProfile: ParentProfile? { parentProfiles.first }
 
@@ -18,6 +21,11 @@ struct TodayView: View {
                 if let profile = activeProfile {
                     VStack(spacing: 20) {
                         parentHeroCard(profile)
+
+                        // AI Briefing
+                        if ai.isAvailable {
+                            aiBriefingCard(profile)
+                        }
 
                         if let appt = nextAppointment(from: profile) {
                             appointmentCard(appt)
@@ -36,6 +44,67 @@ struct TodayView: View {
             .navigationTitle("Today")
             .screenBackground()
         }
+    }
+
+    // MARK: - AI Briefing Card
+
+    private func aiBriefingCard(_ profile: ParentProfile) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                Image(systemName: "sparkles")
+                    .foregroundStyle(.teal)
+                Text("Daily Briefing")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.secondary)
+                    .textCase(.uppercase)
+                    .tracking(0.5)
+
+                Spacer()
+
+                if ai.isProcessing {
+                    ProgressView()
+                        .controlSize(.small)
+                }
+            }
+
+            if let briefing = briefing {
+                Text(briefing)
+                    .font(.subheadline)
+                    .foregroundStyle(.primary)
+                    .lineSpacing(4)
+
+                Button("Refresh") {
+                    asyncRun { await generateBriefing(profile) }
+                }
+                .font(.caption)
+                .foregroundStyle(.teal)
+            } else {
+                Button {
+                    asyncRun { await generateBriefing(profile) }
+                } label: {
+                    HStack {
+                        Image(systemName: "sparkles")
+                        Text("Generate today's briefing")
+                    }
+                    .font(.subheadline)
+                    .foregroundStyle(.teal)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                }
+                .disabled(ai.isProcessing)
+            }
+        }
+        .glassCard()
+    }
+
+    private func generateBriefing(_ profile: ParentProfile) async {
+        briefing = await ai.generateBriefing(
+            profile: profile,
+            appointments: profile.appointments,
+            tasks: profile.tasks,
+            updates: profile.updateFeedItems
+        )
     }
 
     // MARK: - Parent Hero Card
