@@ -77,6 +77,7 @@ struct WelcomeView: View {
                 // Action buttons
                 VStack(spacing: 14) {
                     Button {
+                        SampleDataGenerator.clearAllData(modelContext: modelContext)
                         appMode = "real"
                     } label: {
                         Text("Get Started")

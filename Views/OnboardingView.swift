@@ -2,11 +2,12 @@
 //  OnboardingView.swift
 //  CareCircle
 //
-//  Step-by-step profile setup for real (non-demo) users.
+//  Step-by-step setup: Sign in → Parent info → Confirm.
 //
 
 import SwiftUI
 import SwiftData
+import AuthenticationServices
 
 struct OnboardingView: View {
     @Environment(\.modelContext) private var modelContext
@@ -15,26 +16,26 @@ struct OnboardingView: View {
     @State private var step = 0
     @State private var healthKit = HealthKitManager()
 
-    // Parent fields
+    // Account (Step 1)
+    @State private var userName = ""
+    @State private var userEmail = ""
+    @State private var signedInWithApple = false
+
+    // Parent (Step 2)
     @State private var parentName = ""
     @State private var dateOfBirth = Calendar.current.date(byAdding: .year, value: -75, to: Date()) ?? Date()
     @State private var bloodType = ""
     @State private var allergies = ""
     @State private var primaryPhysician = ""
-    @State private var statusMessage = "Stable today"
 
-    // User fields
-    @State private var userName = ""
+    // Role & options (Step 2)
     @State private var userRole: FamilyRole = .medicalAdmin
-
-    // Optional
     @State private var connectHealth = false
 
     private let totalSteps = 3
 
     var body: some View {
         ZStack {
-            // Background
             LinearGradient(
                 colors: [
                     Color.teal.opacity(0.1),
@@ -58,11 +59,11 @@ struct OnboardingView: View {
                 .padding(.horizontal, 24)
                 .padding(.top, 16)
 
-                // Content
+                // Steps
                 TabView(selection: $step) {
-                    parentStep.tag(0)
-                    userStep.tag(1)
-                    finishStep.tag(2)
+                    accountStep.tag(0)
+                    parentStep.tag(1)
+                    confirmStep.tag(2)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .animation(.easeInOut, value: step)
@@ -88,7 +89,7 @@ struct OnboardingView: View {
                             }
                             .fontWeight(.semibold)
                         }
-                        .disabled(step == 0 && parentName.isEmpty)
+                        .disabled(!canAdvance)
                     }
                 }
                 .padding(.horizontal, 24)
@@ -97,7 +98,105 @@ struct OnboardingView: View {
         }
     }
 
-    // MARK: - Step 1: Parent Info
+    private var canAdvance: Bool {
+        switch step {
+        case 0: return !userName.isEmpty
+        case 1: return !parentName.isEmpty
+        default: return true
+        }
+    }
+
+    // MARK: - Step 1: Your Account
+
+    private var accountStep: some View {
+        ScrollView {
+            VStack(spacing: 28) {
+                VStack(spacing: 8) {
+                    Text("Create your account")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    Text("Sign in to save your care circle across devices")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+                .padding(.top, 16)
+
+                // Sign in with Apple
+                SignInWithAppleButton(.signUp) { request in
+                    request.requestedScopes = [.fullName, .email]
+                } onCompletion: { result in
+                    handleAppleSignIn(result)
+                }
+                .signInWithAppleButtonStyle(.black)
+                .frame(height: 50)
+                .cornerRadius(12)
+                .padding(.horizontal, 24)
+
+                // Divider
+                HStack {
+                    Rectangle().fill(.secondary.opacity(0.3)).frame(height: 1)
+                    Text("or sign up with email")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Rectangle().fill(.secondary.opacity(0.3)).frame(height: 1)
+                }
+                .padding(.horizontal, 24)
+
+                // Manual entry
+                VStack(spacing: 16) {
+                    TextField("Full name", text: $userName)
+                        .textFieldStyle(.roundedBorder)
+                        .textContentType(.name)
+                        .autocorrectionDisabled()
+
+                    TextField("Email address", text: $userEmail)
+                        .textFieldStyle(.roundedBorder)
+                        .textContentType(.emailAddress)
+                        .keyboardType(.emailAddress)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                }
+                .padding(.horizontal, 24)
+
+                if signedInWithApple {
+                    HStack(spacing: 6) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                        Text("Signed in with Apple")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
+                Spacer()
+            }
+        }
+    }
+
+    private func handleAppleSignIn(_ result: Result<ASAuthorization, Error>) {
+        switch result {
+        case .success(let auth):
+            if let credential = auth.credential as? ASAuthorizationAppleIDCredential {
+                if let fullName = credential.fullName {
+                    let parts = [fullName.givenName, fullName.familyName].compactMap { $0 }
+                    if !parts.isEmpty {
+                        userName = parts.joined(separator: " ")
+                    }
+                }
+                if let email = credential.email {
+                    userEmail = email
+                }
+                signedInWithApple = true
+                // Auto-advance to next step
+                withAnimation { step = 1 }
+            }
+        case .failure:
+            break
+        }
+    }
+
+    // MARK: - Step 2: Parent Info
 
     private var parentStep: some View {
         ScrollView {
@@ -114,7 +213,6 @@ struct OnboardingView: View {
                 VStack(spacing: 16) {
                     TextField("Parent's name", text: $parentName)
                         .textFieldStyle(.roundedBorder)
-                        .font(.body)
 
                     DatePicker("Date of Birth", selection: $dateOfBirth, displayedComponents: .date)
 
@@ -126,36 +224,12 @@ struct OnboardingView: View {
 
                     TextField("Primary physician (optional)", text: $primaryPhysician)
                         .textFieldStyle(.roundedBorder)
-                }
-            }
-            .padding(24)
-        }
-    }
-
-    // MARK: - Step 2: Your Info
-
-    private var userStep: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Tell us about you")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                    Text("You'll be the first member of the care circle.")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-
-                VStack(spacing: 16) {
-                    TextField("Your name", text: $userName)
-                        .textFieldStyle(.roundedBorder)
 
                     Picker("Your role", selection: $userRole) {
                         ForEach(FamilyRole.allCases, id: \.self) { role in
                             Text(role.rawValue).tag(role)
                         }
                     }
-                    .pickerStyle(.menu)
 
                     Toggle(isOn: $connectHealth) {
                         VStack(alignment: .leading, spacing: 2) {
@@ -173,9 +247,9 @@ struct OnboardingView: View {
         }
     }
 
-    // MARK: - Step 3: Confirm & Create
+    // MARK: - Step 3: Confirm
 
-    private var finishStep: some View {
+    private var confirmStep: some View {
         ScrollView {
             VStack(spacing: 32) {
                 VStack(spacing: 16) {
@@ -193,16 +267,14 @@ struct OnboardingView: View {
                         .multilineTextAlignment(.center)
                 }
 
-                // Summary card
                 VStack(alignment: .leading, spacing: 12) {
                     SectionHeader(title: "Summary")
-
-                    if !parentName.isEmpty {
-                        summaryRow(label: "Care recipient", value: parentName)
+                    summaryRow(label: "You", value: userName)
+                    if !userEmail.isEmpty {
+                        summaryRow(label: "Email", value: userEmail)
                     }
-                    if !userName.isEmpty {
-                        summaryRow(label: "You", value: "\(userName) (\(userRole.rawValue))")
-                    }
+                    summaryRow(label: "Role", value: userRole.rawValue)
+                    summaryRow(label: "Care recipient", value: parentName)
                     summaryRow(label: "Apple Health", value: connectHealth ? "Connected" : "Not connected")
                 }
                 .glassCard()
@@ -218,7 +290,7 @@ struct OnboardingView: View {
                 .buttonStyle(.borderedProminent)
                 .tint(.teal)
                 .controlSize(.large)
-                .disabled(parentName.isEmpty)
+                .disabled(parentName.isEmpty || userName.isEmpty)
             }
             .padding(24)
         }
@@ -241,7 +313,6 @@ struct OnboardingView: View {
     private func createProfile() {
         let profile = ParentProfile(
             name: parentName,
-            statusMessage: statusMessage,
             dateOfBirth: dateOfBirth,
             bloodType: bloodType.isEmpty ? nil : bloodType,
             allergies: allergies.isEmpty ? nil : allergies,
@@ -250,23 +321,20 @@ struct OnboardingView: View {
         )
         modelContext.insert(profile)
 
-        // Create the user as first family member
-        if !userName.isEmpty {
-            let member = FamilyMember(
-                name: userName,
-                role: userRole,
-                isCurrentUser: true
-            )
-            member.parentProfile = profile
-            modelContext.insert(member)
+        let member = FamilyMember(
+            name: userName,
+            role: userRole,
+            email: userEmail.isEmpty ? nil : userEmail,
+            isCurrentUser: true
+        )
+        member.parentProfile = profile
+        modelContext.insert(member)
 
-            let account = ExpenseAccount()
-            account.familyMember = member
-            member.expenseAccount = account
-            modelContext.insert(account)
-        }
+        let account = ExpenseAccount()
+        account.familyMember = member
+        member.expenseAccount = account
+        modelContext.insert(account)
 
-        // Request HealthKit if opted in
         if connectHealth {
             asyncRun {
                 _ = await healthKit.requestAuthorization()
