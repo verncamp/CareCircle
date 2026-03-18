@@ -305,7 +305,7 @@ struct RecentUpdatesCard: View {
                             Text("•")
                                 .foregroundStyle(.secondary)
                             VStack(alignment: .leading, spacing: 2) {
-                                Text("\(update.authorName): "\(update.message)"")
+                                Text("\(update.authorName): \"\(update.message)\"")
                                     .font(.subheadline)
                                 Text(update.timestamp.formatted(date: .omitted, time: .shortened))
                                     .font(.caption)
