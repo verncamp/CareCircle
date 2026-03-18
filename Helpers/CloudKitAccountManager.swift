@@ -7,13 +7,13 @@
 
 import CloudKit
 
-@Observable
 @MainActor
+@Observable
 final class CloudKitAccountManager {
-    var accountStatus: CKAccountStatus = .couldNotDetermine
-    var userName: String?
-    var userEmail: String?
-    var errorMessage: String?
+    private(set) var accountStatus: CKAccountStatus = .couldNotDetermine
+    private(set) var userName: String?
+    private(set) var userEmail: String?
+    private(set) var errorMessage: String?
 
     var isSignedIn: Bool { accountStatus == .available }
 
@@ -27,44 +27,57 @@ final class CloudKitAccountManager {
         @unknown default:             return "Unknown"
         }
     }
+    
+    nonisolated init() {}
 
     func checkAccountStatus() async {
+        let status: CKAccountStatus
         do {
-            let status = try await CKContainer.default().accountStatus()
-            self.accountStatus = status
-
-            if status == .available {
-                await fetchUserIdentity()
-            }
+            status = try await CKContainer.default().accountStatus()
         } catch {
-            errorMessage = error.localizedDescription
+            self.errorMessage = error.localizedDescription
+            return
+        }
+        
+        self.accountStatus = status
+
+        if status == .available {
+            await fetchUserIdentity()
         }
     }
 
     private func fetchUserIdentity() async {
+        let recordID: CKRecord.ID
+        let identity: CKUserIdentity?
+        
         do {
-            let id = try await CKContainer.default().userRecordID()
-            let identity = try await CKContainer.default().userIdentity(forUserRecordID: id)
-
-            if let components = identity?.nameComponents {
-                let parts = [components.givenName, components.familyName].compactMap { $0 }
-                if !parts.isEmpty {
-                    userName = parts.joined(separator: " ")
-                }
-            }
+            recordID = try await CKContainer.default().userRecordID()
+            identity = try await CKContainer.default().userIdentity(forUserRecordID: recordID)
         } catch {
             // Discoverability not granted — user can enter name manually
+            print("Failed to fetch user identity: \(error.localizedDescription)")
+            return
+        }
+
+        if let components = identity?.nameComponents {
+            let parts = [components.givenName, components.familyName].compactMap { $0 }
+            if !parts.isEmpty {
+                self.userName = parts.joined(separator: " ")
+            }
         }
     }
 
     func requestDiscoverability() async {
+        let status: CKContainer_Application_PermissionStatus
         do {
-            let status = try await CKContainer.default().requestApplicationPermission(.userDiscoverability)
-            if status == .granted {
-                await fetchUserIdentity()
-            }
+            status = try await CKContainer.default().requestApplicationPermission(.userDiscoverability)
         } catch {
-            errorMessage = error.localizedDescription
+            self.errorMessage = error.localizedDescription
+            return
+        }
+        
+        if status == .granted {
+            await fetchUserIdentity()
         }
     }
 }
