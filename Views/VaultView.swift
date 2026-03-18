@@ -156,6 +156,20 @@ struct VaultView: View {
                 .foregroundStyle(.quaternary)
         }
         .glassCard(padding: 12, cornerRadius: 14)
+        .contextMenu {
+            Button {
+                doc.isPinned.toggle()
+                try? modelContext.save()
+            } label: {
+                Label(doc.isPinned ? "Unpin" : "Pin", systemImage: doc.isPinned ? "pin.slash" : "pin")
+            }
+            Button(role: .destructive) {
+                modelContext.delete(doc)
+                try? modelContext.save()
+            } label: {
+                Label("Delete", systemImage: "trash")
+            }
+        }
     }
 
     // MARK: - Empty State

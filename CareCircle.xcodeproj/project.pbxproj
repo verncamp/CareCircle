@@ -30,6 +30,7 @@
 		B11DD7F08B80E0DB43A770FA /* ExpenseAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0EA3F369611505DA699F4C /* ExpenseAccount.swift */; };
 		B6050618FF13EB9B49EAB82C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013C81CBD5896779E2CC817F /* SettingsView.swift */; };
 		C7F15BA6CAE17FD2E4EE0CB9 /* AIAssistant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C127343754B9F99C23F5D5B /* AIAssistant.swift */; };
+		CD9BFE0FC0899D2729421F1B /* AppointmentDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A35CF2E3A2758C44E966BE2 /* AppointmentDetailView.swift */; };
 		D52ADAD428D6A048B0611A9F /* UpdateFeedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50EC3605690CBC693A2C5C5 /* UpdateFeedItem.swift */; };
 		DAB2E79DB0E5DBAD7D599585 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EC81C277E7175D4D0C9F39F /* ContentView.swift */; };
 		F9169C14D11F73985F5F8159 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313ECC5C7D1CBAAE4EB3E33B /* OnboardingView.swift */; };
@@ -56,6 +57,7 @@
 		8DBA6584DADEE5A0194A827E /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
 		90CAA894193FD0D2001FF986 /* VaultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VaultView.swift; sourceTree = "<group>"; };
 		937EE7E45BE4B24D6313CE42 /* ParentProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentProfile.swift; sourceTree = "<group>"; };
+		9A35CF2E3A2758C44E966BE2 /* AppointmentDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentDetailView.swift; sourceTree = "<group>"; };
 		A6AE49CA582D74D0B58866B5 /* CloudKitAccountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitAccountManager.swift; sourceTree = "<group>"; };
 		B9435B208D3FFC961F5898D2 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		CD6EF676C71F4914A00AA836 /* CareCircle.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = CareCircle.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -117,6 +119,7 @@
 		C2900E56EC09B8BAB52E5D94 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				9A35CF2E3A2758C44E966BE2 /* AppointmentDetailView.swift */,
 				B9435B208D3FFC961F5898D2 /* CalendarView.swift */,
 				2D5193DFF1DFF0319C5B0191 /* FamilyView.swift */,
 				341499FA8F747E5F783EC8D3 /* FinancesView.swift */,
@@ -191,6 +194,7 @@
 			files = (
 				C7F15BA6CAE17FD2E4EE0CB9 /* AIAssistant.swift in Sources */,
 				A579610D8C4DAA27AC2D6242 /* Appointment.swift in Sources */,
+				CD9BFE0FC0899D2729421F1B /* AppointmentDetailView.swift in Sources */,
 				9E4F13552E23EC2492D5FAD1 /* CalendarView.swift in Sources */,
 				88009E47EC381E5C9E78AF44 /* CareCircleApp.swift in Sources */,
 				4E23A650A7B514DF3928737A /* CloudKitAccountManager.swift in Sources */,

@@ -11,9 +11,6 @@ struct CalendarView: View {
     @Query(sort: \Appointment.date) private var appointments: [Appointment]
     @Query private var parentProfiles: [ParentProfile]
     @State private var showingAddAppointment = false
-    @State private var ai = AIAssistant()
-    @State private var summaries: [UUID: String] = [:]
-    @State private var extractedTasks: [UUID: [SuggestedTask]] = [:]
 
     var upcomingAppointments: [Appointment] {
         appointments.filter { $0.date > Date() }
@@ -75,113 +72,67 @@ struct CalendarView: View {
     // MARK: - Appointment Card
 
     private func appointmentCard(_ appointment: Appointment) -> some View {
-        HStack(alignment: .top, spacing: 14) {
-            // Time column
-            Text(appointment.date.formatted(date: .omitted, time: .shortened))
-                .font(.subheadline)
-                .fontWeight(.semibold)
-                .foregroundStyle(.teal)
-                .frame(width: 64, alignment: .trailing)
+        NavigationLink(destination: AppointmentDetailView(appointment: appointment)) {
+            HStack(alignment: .top, spacing: 14) {
+                Text(appointment.date.formatted(date: .omitted, time: .shortened))
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.teal)
+                    .frame(width: 64, alignment: .trailing)
 
-            // Accent bar
-            RoundedRectangle(cornerRadius: 1.5)
-                .fill(.teal.opacity(0.3))
-                .frame(width: 3)
-                .padding(.vertical, 4)
+                RoundedRectangle(cornerRadius: 1.5)
+                    .fill(.teal.opacity(0.3))
+                    .frame(width: 3)
+                    .padding(.vertical, 4)
 
-            // Details
-            VStack(alignment: .leading, spacing: 6) {
-                Text(appointment.title)
-                    .font(.headline)
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(appointment.title)
+                        .font(.headline)
+                        .foregroundStyle(.primary)
 
-                if !appointment.location.isEmpty {
-                    Label(appointment.location, systemImage: "mappin.circle.fill")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-
-                if !appointment.checklistItems.isEmpty {
-                    let done = appointment.checklistItems.filter(\.isCompleted).count
-                    HStack(spacing: 6) {
-                        Image(systemName: "checklist")
-                            .foregroundStyle(.teal)
-                        Text("\(done)/\(appointment.checklistItems.count) prepared")
+                    if !appointment.location.isEmpty {
+                        Label(appointment.location, systemImage: "mappin.circle.fill")
+                            .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
-                    .font(.caption)
-                }
 
-                if !appointment.notes.isEmpty {
-                    Text(appointment.notes)
-                        .font(.caption)
-                        .foregroundStyle(.tertiary)
-                        .lineLimit(2)
-
-                    // AI actions for notes
-                    if ai.isAvailable {
-                        if let summary = summaries[appointment.id] {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Label("AI Summary", systemImage: "sparkles")
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
-                                    .foregroundStyle(.teal)
-                                Text(summary)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                            .padding(.top, 4)
-                        }
-
-                        if let tasks = extractedTasks[appointment.id], !tasks.isEmpty {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Label("Suggested Tasks", systemImage: "list.bullet.circle.fill")
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
-                                    .foregroundStyle(.teal)
-                                ForEach(tasks, id: \.title) { task in
-                                    Text("· \(task.title)")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-                            .padding(.top, 2)
-                        }
-
-                        HStack(spacing: 12) {
-                            Button {
-                                asyncRun {
-                                    let result = await ai.summarizeNotes(appointment.notes)
-                                    if let result { summaries[appointment.id] = result }
-                                }
-                            } label: {
-                                Label("Summarize", systemImage: "sparkles")
-                            }
-
-                            Button {
-                                asyncRun {
-                                    let result = await ai.extractTasks(from: appointment.notes)
-                                    if !result.isEmpty { extractedTasks[appointment.id] = result }
-                                }
-                            } label: {
-                                Label("Extract Tasks", systemImage: "list.bullet")
-                            }
+                    if !appointment.checklistItems.isEmpty {
+                        let done = appointment.checklistItems.filter(\.isCompleted).count
+                        HStack(spacing: 6) {
+                            Image(systemName: "checklist")
+                                .foregroundStyle(.teal)
+                            Text("\(done)/\(appointment.checklistItems.count) prepared")
+                                .foregroundStyle(.secondary)
                         }
                         .font(.caption)
-                        .foregroundStyle(.teal)
-                        .disabled(ai.isProcessing)
-                        .padding(.top, 4)
+                    }
+
+                    if !appointment.notes.isEmpty {
+                        Text(appointment.notes)
+                            .font(.caption)
+                            .foregroundStyle(.tertiary)
+                            .lineLimit(2)
                     }
                 }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundStyle(.quaternary)
+                    .padding(.top, 4)
             }
-
-            Spacer()
-
-            Image(systemName: "chevron.right")
-                .font(.caption)
-                .foregroundStyle(.quaternary)
-                .padding(.top, 4)
         }
+        .buttonStyle(.plain)
         .glassCard()
+        .contextMenu {
+            Button(role: .destructive) {
+                modelContext.delete(appointment)
+                try? modelContext.save()
+            } label: {
+                Label("Delete", systemImage: "trash")
+            }
+        }
     }
 
     // MARK: - Empty State

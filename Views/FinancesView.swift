@@ -244,6 +244,14 @@ struct FinancesView: View {
                                     .foregroundStyle(.tertiary)
                             }
                         }
+                        .contextMenu {
+                            Button(role: .destructive) {
+                                modelContext.delete(expense)
+                                try? modelContext.save()
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
                     }
                 }
             }

@@ -11,6 +11,22 @@ struct FamilyView: View {
     @Query private var familyMembers: [FamilyMember]
     @Query private var tasks: [Task]
     @State private var showingAddMember = false
+    @State private var showingAddTask = false
+    @State private var taskFilter: TaskFilter = .open
+
+    enum TaskFilter: String, CaseIterable {
+        case open = "Open"
+        case completed = "Done"
+        case all = "All"
+    }
+
+    var filteredTasks: [Task] {
+        switch taskFilter {
+        case .open: return tasks.filter { !$0.isCompleted }
+        case .completed: return tasks.filter { $0.isCompleted }
+        case .all: return Array(tasks)
+        }
+    }
 
     private let avatarGradients: [[Color]] = [
         [.teal, .mint],
@@ -75,17 +91,40 @@ struct FamilyView: View {
                         }
                     }
 
-                    // Open Tasks
-                    if !openTasks.isEmpty {
-                        VStack(alignment: .leading, spacing: 12) {
-                            SectionHeader(title: "Open Tasks")
+                    // Tasks
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            SectionHeader(title: "Tasks")
+                            Spacer()
+                            Button {
+                                showingAddTask = true
+                            } label: {
+                                Image(systemName: "plus.circle.fill")
+                                    .symbolRenderingMode(.hierarchical)
+                                    .foregroundStyle(.teal)
+                            }
+                        }
 
-                            ForEach(openTasks.prefix(5)) { task in
+                        Picker("Filter", selection: $taskFilter) {
+                            ForEach(TaskFilter.allCases, id: \.self) { filter in
+                                Text(filter.rawValue).tag(filter)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+
+                        if filteredTasks.isEmpty {
+                            Text(taskFilter == .open ? "No open tasks" : "No tasks")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                        } else {
+                            ForEach(filteredTasks.prefix(10)) { task in
                                 taskRow(task)
                             }
                         }
-                        .glassCard()
                     }
+                    .glassCard()
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 20)
@@ -104,6 +143,9 @@ struct FamilyView: View {
             }
             .sheet(isPresented: $showingAddMember) {
                 AddFamilyMemberView()
+            }
+            .sheet(isPresented: $showingAddTask) {
+                AddTaskView()
             }
         }
     }
@@ -157,26 +199,52 @@ struct FamilyView: View {
 
     private func taskRow(_ task: Task) -> some View {
         HStack(spacing: 12) {
-            Image(systemName: task.priority.icon)
-                .foregroundStyle(task.priority.color)
-                .font(.caption)
+            Button {
+                withAnimation(.spring(response: 0.3)) {
+                    task.isCompleted.toggle()
+                    task.updatedAt = Date()
+                    try? modelContext.save()
+                }
+            } label: {
+                Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
+                    .font(.title3)
+                    .foregroundStyle(task.isCompleted ? .green : task.priority.color.opacity(0.6))
+            }
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(task.title)
                     .font(.subheadline)
+                    .strikethrough(task.isCompleted)
+                    .foregroundStyle(task.isCompleted ? .secondary : .primary)
 
-                if let assigned = task.assignedTo {
-                    Text("Assigned to \(assigned.name)")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                } else {
-                    Text("Unassigned")
-                        .font(.caption)
-                        .foregroundStyle(.orange)
+                HStack(spacing: 6) {
+                    if let assigned = task.assignedTo {
+                        Text(assigned.name)
+                    } else {
+                        Text("Unassigned").foregroundStyle(.orange)
+                    }
+                    if let due = task.dueDate {
+                        Text("·")
+                        Text("Due \(due.formatted(date: .abbreviated, time: .omitted))")
+                    }
                 }
+                .font(.caption)
+                .foregroundStyle(.secondary)
             }
 
             Spacer()
+
+            Image(systemName: task.priority.icon)
+                .foregroundStyle(task.priority.color)
+                .font(.caption)
+        }
+        .contextMenu {
+            Button(role: .destructive) {
+                modelContext.delete(task)
+                try? modelContext.save()
+            } label: {
+                Label("Delete", systemImage: "trash")
+            }
         }
     }
 }
@@ -249,6 +317,82 @@ struct AddFamilyMemberView: View {
 
         modelContext.insert(member)
         modelContext.insert(account)
+        try? modelContext.save()
+        dismiss()
+    }
+}
+
+// MARK: - Add Task Sheet
+
+struct AddTaskView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+    @Query private var parentProfiles: [ParentProfile]
+    @Query private var familyMembers: [FamilyMember]
+
+    @State private var title = ""
+    @State private var description = ""
+    @State private var priority: TaskPriority = .normal
+    @State private var hasDueDate = false
+    @State private var dueDate = Date()
+    @State private var assignee: FamilyMember?
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("Task") {
+                    TextField("Title", text: $title)
+                    TextField("Description (optional)", text: $description)
+
+                    Picker("Priority", selection: $priority) {
+                        Text("Low").tag(TaskPriority.low)
+                        Text("Normal").tag(TaskPriority.normal)
+                        Text("High").tag(TaskPriority.high)
+                        Text("Urgent").tag(TaskPriority.urgent)
+                    }
+                }
+
+                Section("Due Date") {
+                    Toggle("Set due date", isOn: $hasDueDate)
+                    if hasDueDate {
+                        DatePicker("Due", selection: $dueDate, displayedComponents: .date)
+                    }
+                }
+
+                Section("Assign To") {
+                    Picker("Family Member", selection: $assignee) {
+                        Text("Unassigned").tag(nil as FamilyMember?)
+                        ForEach(familyMembers) { member in
+                            Text(member.name).tag(member as FamilyMember?)
+                        }
+                    }
+                }
+            }
+            .navigationTitle("New Task")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") { saveTask() }
+                        .disabled(title.isEmpty)
+                        .fontWeight(.semibold)
+                }
+            }
+        }
+    }
+
+    func saveTask() {
+        let task = Task(
+            title: title,
+            taskDescription: description,
+            dueDate: hasDueDate ? dueDate : nil,
+            priority: priority
+        )
+        task.assignedTo = assignee
+        task.parentProfile = parentProfiles.first
+        modelContext.insert(task)
         try? modelContext.save()
         dismiss()
     }
