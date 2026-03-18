@@ -28,6 +28,7 @@ struct TodayView: View {
                     }
                     .padding(.horizontal)
                     .padding(.bottom, 20)
+                    .adaptiveWidth()
                 } else {
                     emptyState
                 }

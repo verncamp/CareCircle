@@ -69,6 +69,7 @@ struct VaultView: View {
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 20)
+                .adaptiveWidth()
             }
             .searchable(text: $searchText, prompt: "Search documents")
             .navigationTitle("Vault")

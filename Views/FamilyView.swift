@@ -89,6 +89,7 @@ struct FamilyView: View {
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 20)
+                .adaptiveWidth()
             }
             .navigationTitle("Family")
             .screenBackground()

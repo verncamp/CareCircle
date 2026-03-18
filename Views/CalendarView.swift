@@ -50,6 +50,7 @@ struct CalendarView: View {
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 20)
+                .adaptiveWidth()
             }
             .navigationTitle("Calendar")
             .screenBackground()

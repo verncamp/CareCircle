@@ -44,6 +44,7 @@ struct FinancesView: View {
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 20)
+                .adaptiveWidth()
             }
             .navigationTitle("Finances")
             .screenBackground()
