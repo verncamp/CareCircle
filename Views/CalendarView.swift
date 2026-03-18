@@ -76,12 +76,12 @@ struct CalendarView: View {
             Text(appointment.date.formatted(date: .omitted, time: .shortened))
                 .font(.subheadline)
                 .fontWeight(.semibold)
-                .foregroundStyle(.blue)
+                .foregroundStyle(.teal)
                 .frame(width: 64, alignment: .trailing)
 
             // Accent bar
             RoundedRectangle(cornerRadius: 1.5)
-                .fill(.blue.opacity(0.3))
+                .fill(.teal.opacity(0.3))
                 .frame(width: 3)
                 .padding(.vertical, 4)
 
@@ -100,7 +100,7 @@ struct CalendarView: View {
                     let done = appointment.checklistItems.filter(\.isCompleted).count
                     HStack(spacing: 6) {
                         Image(systemName: "checklist")
-                            .foregroundStyle(.blue)
+                            .foregroundStyle(.teal)
                         Text("\(done)/\(appointment.checklistItems.count) prepared")
                             .foregroundStyle(.secondary)
                     }
@@ -133,7 +133,7 @@ struct CalendarView: View {
 
             Image(systemName: "calendar.badge.plus")
                 .font(.system(size: 56))
-                .foregroundStyle(.blue.opacity(0.5))
+                .foregroundStyle(.teal.opacity(0.5))
 
             Text("No Appointments")
                 .font(.title3)

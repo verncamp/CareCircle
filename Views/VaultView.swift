@@ -101,9 +101,9 @@ struct VaultView: View {
         VStack(alignment: .leading, spacing: 10) {
             Image(systemName: iconForCategory(doc.category))
                 .font(.title2)
-                .foregroundStyle(.blue)
+                .foregroundStyle(.teal)
                 .frame(width: 40, height: 40)
-                .background(.blue.opacity(0.1), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .background(.teal.opacity(0.1), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
 
             Text(doc.title)
                 .font(.subheadline)
@@ -124,9 +124,9 @@ struct VaultView: View {
         HStack(spacing: 14) {
             Image(systemName: iconForCategory(doc.category))
                 .font(.title3)
-                .foregroundStyle(.blue)
+                .foregroundStyle(.teal)
                 .frame(width: 36, height: 36)
-                .background(.blue.opacity(0.1), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .background(.teal.opacity(0.1), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
 
             VStack(alignment: .leading, spacing: 3) {
                 Text(doc.title)
@@ -163,7 +163,7 @@ struct VaultView: View {
         VStack(spacing: 16) {
             Image(systemName: "folder.badge.plus")
                 .font(.system(size: 48))
-                .foregroundStyle(.blue.opacity(0.5))
+                .foregroundStyle(.teal.opacity(0.5))
 
             Text("No Documents Yet")
                 .font(.title3)

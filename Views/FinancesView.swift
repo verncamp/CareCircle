@@ -140,7 +140,7 @@ struct FinancesView: View {
                                 .frame(height: 6)
 
                             RoundedRectangle(cornerRadius: 4)
-                                .fill(.blue.gradient)
+                                .fill(.teal.gradient)
                                 .frame(width: geo.size.width * max(fraction, 0), height: 6)
                         }
                     }
@@ -166,7 +166,7 @@ struct FinancesView: View {
             ForEach(sorted.prefix(5), id: \.category) { item in
                 HStack(spacing: 12) {
                     Image(systemName: iconForCategory(item.category))
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.teal)
                         .frame(width: 24)
 
                     Text(item.category.rawValue)
@@ -196,7 +196,7 @@ struct FinancesView: View {
                 VStack(spacing: 12) {
                     Image(systemName: "dollarsign.circle")
                         .font(.system(size: 40))
-                        .foregroundStyle(.blue.opacity(0.5))
+                        .foregroundStyle(.teal.opacity(0.5))
                     Text("No expenses recorded")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
@@ -209,10 +209,10 @@ struct FinancesView: View {
                         HStack(spacing: 12) {
                             Image(systemName: iconForCategory(expense.category))
                                 .font(.body)
-                                .foregroundStyle(.blue)
+                                .foregroundStyle(.teal)
                                 .frame(width: 32, height: 32)
                                 .background(
-                                    .blue.opacity(0.1),
+                                    .teal.opacity(0.1),
                                     in: RoundedRectangle(cornerRadius: 8, style: .continuous)
                                 )
 

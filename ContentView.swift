@@ -35,6 +35,7 @@ struct ContentView: View {
                     Label("Finances", systemImage: "dollarsign.circle.fill")
                 }
         }
+        .tint(.teal)
     }
 }
 

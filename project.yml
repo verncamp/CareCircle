@@ -19,7 +19,7 @@ targets:
     settings:
       base:
         SWIFT_VERSION: "5.9"
-        PRODUCT_BUNDLE_IDENTIFIER: com.carecircle.app
+        PRODUCT_BUNDLE_IDENTIFIER: com.vernoncampbell.carecircle
         MARKETING_VERSION: "0.1.0"
         CURRENT_PROJECT_VERSION: 1
         INFOPLIST_GENERATION_MODE: GeneratedFile

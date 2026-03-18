@@ -42,7 +42,7 @@ struct TodayView: View {
     private func parentHeroCard(_ profile: ParentProfile) -> some View {
         VStack(spacing: 16) {
             HStack(spacing: 14) {
-                AvatarView(name: profile.name, size: 56, gradient: [.blue, .cyan])
+                AvatarView(name: profile.name, size: 56, gradient: [.teal, .mint])
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(profile.name)
@@ -104,7 +104,7 @@ struct TodayView: View {
                         .textCase(.uppercase)
                 }
                 .frame(width: 52, height: 52)
-                .background(.blue.opacity(0.1), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .background(.teal.opacity(0.1), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(appointment.title)
@@ -118,7 +118,7 @@ struct TodayView: View {
 
                     Text(appointment.date.formatted(date: .omitted, time: .shortened))
                         .font(.subheadline)
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.teal)
                         .fontWeight(.medium)
                 }
 
@@ -131,7 +131,7 @@ struct TodayView: View {
 
                 HStack(spacing: 8) {
                     ProgressView(value: Double(completed), total: Double(total))
-                        .tint(.blue)
+                        .tint(.teal)
 
                     Text("\(completed)/\(total) ready")
                         .font(.caption)
@@ -266,7 +266,7 @@ struct TodayView: View {
 
             Image(systemName: "heart.circle")
                 .font(.system(size: 72))
-                .foregroundStyle(.blue.opacity(0.6))
+                .foregroundStyle(.teal.opacity(0.6))
 
             Text("Welcome to CareCircle")
                 .font(.title2)

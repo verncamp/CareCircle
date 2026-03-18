@@ -13,11 +13,11 @@ struct FamilyView: View {
     @State private var showingAddMember = false
 
     private let avatarGradients: [[Color]] = [
-        [.blue, .cyan],
+        [.teal, .mint],
+        [.pink, .orange],
         [.purple, .pink],
-        [.orange, .red],
         [.green, .teal],
-        [.indigo, .blue]
+        [.orange, .yellow]
     ]
 
     var openTasks: [Task] {
@@ -61,7 +61,7 @@ struct FamilyView: View {
                             VStack(spacing: 12) {
                                 Image(systemName: "person.3")
                                     .font(.system(size: 40))
-                                    .foregroundStyle(.blue.opacity(0.5))
+                                    .foregroundStyle(.teal.opacity(0.5))
                                 Text("No family members yet")
                                     .font(.subheadline)
                                     .foregroundStyle(.secondary)
@@ -125,10 +125,10 @@ struct FamilyView: View {
                         Text("You")
                             .font(.caption2)
                             .fontWeight(.medium)
-                            .foregroundStyle(.blue)
+                            .foregroundStyle(.teal)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(.blue.opacity(0.1), in: Capsule())
+                            .background(.teal.opacity(0.1), in: Capsule())
                     }
                 }
 

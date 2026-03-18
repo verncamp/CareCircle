@@ -35,9 +35,9 @@ extension View {
                 Color(.systemGroupedBackground)
                 LinearGradient(
                     colors: [
-                        Color.blue.opacity(0.10),
-                        Color.indigo.opacity(0.06),
-                        Color.orange.opacity(0.03)
+                        Color.teal.opacity(0.08),
+                        Color.mint.opacity(0.05),
+                        Color(red: 0.98, green: 0.88, blue: 0.82).opacity(0.12)
                     ],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
@@ -54,7 +54,7 @@ extension TaskPriority {
     var color: Color {
         switch self {
         case .low:    return .secondary
-        case .normal: return .blue
+        case .normal: return .teal
         case .high:   return .orange
         case .urgent: return .red
         }
@@ -84,7 +84,7 @@ func formatCurrency(_ amount: Decimal) -> String {
 struct AvatarView: View {
     let name: String
     var size: CGFloat = 48
-    var gradient: [Color] = [.blue, .indigo]
+    var gradient: [Color] = [.teal, .mint]
 
     private var initials: String {
         let parts = name.split(separator: " ")
