@@ -39,6 +39,7 @@ enum AppTab: String, CaseIterable, Identifiable, Hashable {
     case vault = "Vault"
     case family = "Family"
     case finances = "Finances"
+    case settings = "Settings"
 
     var id: String { rawValue }
 
@@ -49,6 +50,7 @@ enum AppTab: String, CaseIterable, Identifiable, Hashable {
         case .vault:    return "folder.fill"
         case .family:   return "person.3.fill"
         case .finances: return "dollarsign.circle.fill"
+        case .settings: return "gearshape.fill"
         }
     }
 }
@@ -147,6 +149,7 @@ struct MainContentView: View {
         case .vault:    VaultView()
         case .family:   FamilyView()
         case .finances: FinancesView()
+        case .settings: SettingsView()
         }
     }
 }

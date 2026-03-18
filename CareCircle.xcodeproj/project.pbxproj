@@ -27,6 +27,7 @@
 		A579610D8C4DAA27AC2D6242 /* Appointment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B09227E42515DA2261D3C7 /* Appointment.swift */; };
 		A7F8590D0EE24B656C5F8B85 /* FinancesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341499FA8F747E5F783EC8D3 /* FinancesView.swift */; };
 		B11DD7F08B80E0DB43A770FA /* ExpenseAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0EA3F369611505DA699F4C /* ExpenseAccount.swift */; };
+		B6050618FF13EB9B49EAB82C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013C81CBD5896779E2CC817F /* SettingsView.swift */; };
 		C7F15BA6CAE17FD2E4EE0CB9 /* AIAssistant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C127343754B9F99C23F5D5B /* AIAssistant.swift */; };
 		D52ADAD428D6A048B0611A9F /* UpdateFeedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50EC3605690CBC693A2C5C5 /* UpdateFeedItem.swift */; };
 		DAB2E79DB0E5DBAD7D599585 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EC81C277E7175D4D0C9F39F /* ContentView.swift */; };
@@ -34,6 +35,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		013C81CBD5896779E2CC817F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		17434265C8057386D55919F9 /* Document.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Document.swift; sourceTree = "<group>"; };
 		1EDABAED291037CFE18E659B /* HealthMetricSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthMetricSnapshot.swift; sourceTree = "<group>"; };
 		2AF01489065453532424909B /* CareCircleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareCircleApp.swift; sourceTree = "<group>"; };
@@ -118,6 +120,7 @@
 				313ECC5C7D1CBAAE4EB3E33B /* OnboardingView.swift */,
 				D6C20DE762250A1290C43444 /* ParentProfileEditView.swift */,
 				39B255C63686C49CBBCE36D5 /* ParentProfileView.swift */,
+				013C81CBD5896779E2CC817F /* SettingsView.swift */,
 				8DBA6584DADEE5A0194A827E /* TodayView.swift */,
 				90CAA894193FD0D2001FF986 /* VaultView.swift */,
 				6A1AE509F00C7ED6E15506DC /* WelcomeView.swift */,
@@ -201,6 +204,7 @@
 				6CBAF3AB45F1D732DBBA8EE6 /* ParentProfileEditView.swift in Sources */,
 				9AD0C22367099AAC40E497DC /* ParentProfileView.swift in Sources */,
 				41DA7645571DB514C5B9ABF0 /* SampleDataGenerator.swift in Sources */,
+				B6050618FF13EB9B49EAB82C /* SettingsView.swift in Sources */,
 				05F1E4297D60EC5D025C04C2 /* Task.swift in Sources */,
 				0BCB634E9B3B39B0AD890655 /* Theme.swift in Sources */,
 				2D9BEFAA2602410A27A00BCB /* TodayView.swift in Sources */,
