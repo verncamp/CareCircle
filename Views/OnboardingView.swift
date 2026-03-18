@@ -107,7 +107,7 @@ struct OnboardingView: View {
 
     private var canAdvance: Bool {
         switch step {
-        case 0: return !userName.isEmpty && cloudKit.isSignedIn
+        case 0: return !userName.isEmpty
         case 1: return !parentName.isEmpty
         default: return true
         }
@@ -155,19 +155,16 @@ struct OnboardingView: View {
                     .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
 
                     if !cloudKit.isSignedIn {
-                        VStack(spacing: 12) {
-                            Text("Please sign in to iCloud to continue")
-                                .font(.subheadline)
+                        VStack(spacing: 8) {
+                            Text("iCloud sync is optional. You can use CareCircle offline and connect iCloud later in Settings.")
+                                .font(.caption)
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.center)
 
-                            Text("Go to Settings → Apple Account → iCloud")
-                                .font(.caption)
-                                .foregroundStyle(.tertiary)
-
-                            Button("Check Again") {
+                            Button("Retry iCloud") {
                                 asyncRun { await cloudKit.checkAccountStatus() }
                             }
+                            .font(.caption)
                             .buttonStyle(.bordered)
                             .tint(.teal)
                         }
@@ -287,7 +284,7 @@ struct OnboardingView: View {
                     }
                     summaryRow(label: "Role", value: userRole.rawValue)
                     summaryRow(label: "Care recipient", value: parentName)
-                    summaryRow(label: "Sync", value: "iCloud")
+                    summaryRow(label: "Sync", value: cloudKit.isSignedIn ? "iCloud" : "Local only")
                     summaryRow(label: "Apple Health", value: connectHealth ? "Connected" : "Not connected")
                 }
                 .glassCard()
