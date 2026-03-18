@@ -1,0 +1,140 @@
+//
+//  Theme.swift
+//  CareCircle
+//
+//  Design system: Glass cards, gradient backgrounds, consistent spacing.
+//
+
+import SwiftUI
+
+// MARK: - Glass Card Modifier
+
+struct GlassCard: ViewModifier {
+    var padding: CGFloat = 16
+    var cornerRadius: CGFloat = 20
+
+    func body(content: Content) -> some View {
+        content
+            .padding(padding)
+            .background(
+                .ultraThinMaterial,
+                in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+            )
+            .shadow(color: .black.opacity(0.06), radius: 10, y: 4)
+    }
+}
+
+extension View {
+    func glassCard(padding: CGFloat = 16, cornerRadius: CGFloat = 20) -> some View {
+        modifier(GlassCard(padding: padding, cornerRadius: cornerRadius))
+    }
+
+    func screenBackground() -> some View {
+        self.background {
+            ZStack {
+                Color(.systemGroupedBackground)
+                LinearGradient(
+                    colors: [
+                        Color.blue.opacity(0.10),
+                        Color.indigo.opacity(0.06),
+                        Color.orange.opacity(0.03)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            }
+            .ignoresSafeArea()
+        }
+    }
+}
+
+// MARK: - Priority Helpers
+
+extension TaskPriority {
+    var color: Color {
+        switch self {
+        case .low:    return .secondary
+        case .normal: return .blue
+        case .high:   return .orange
+        case .urgent: return .red
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .low:    return "arrow.down.circle"
+        case .normal: return "minus.circle"
+        case .high:   return "exclamationmark.circle.fill"
+        case .urgent: return "exclamationmark.triangle.fill"
+        }
+    }
+}
+
+// MARK: - Currency Formatting
+
+func formatCurrency(_ amount: Decimal) -> String {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .currency
+    formatter.currencyCode = "USD"
+    return formatter.string(from: amount as NSDecimalNumber) ?? "$0.00"
+}
+
+// MARK: - Reusable Components
+
+struct AvatarView: View {
+    let name: String
+    var size: CGFloat = 48
+    var gradient: [Color] = [.blue, .indigo]
+
+    private var initials: String {
+        let parts = name.split(separator: " ")
+        if parts.count >= 2 {
+            return String(parts[0].prefix(1) + parts[1].prefix(1)).uppercased()
+        }
+        return String(name.prefix(2)).uppercased()
+    }
+
+    var body: some View {
+        Circle()
+            .fill(
+                LinearGradient(
+                    colors: gradient,
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+            .frame(width: size, height: size)
+            .overlay {
+                Text(initials)
+                    .font(.system(size: size * 0.36, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.white)
+            }
+    }
+}
+
+struct SectionHeader: View {
+    let title: String
+    var action: String? = nil
+    var onAction: (() -> Void)? = nil
+
+    var body: some View {
+        HStack {
+            Text(title)
+                .font(.subheadline)
+                .fontWeight(.semibold)
+                .foregroundStyle(.secondary)
+                .textCase(.uppercase)
+                .tracking(0.5)
+
+            Spacer()
+
+            if let action = action {
+                Button(action: { onAction?() }) {
+                    Text(action)
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                }
+            }
+        }
+    }
+}

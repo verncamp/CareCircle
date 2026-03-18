@@ -2,8 +2,6 @@
 //  FinancesView.swift
 //  CareCircle
 //
-//  Created on March 17, 2026.
-//
 
 import SwiftUI
 import SwiftData
@@ -11,268 +9,276 @@ import SwiftData
 struct FinancesView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var parentProfiles: [ParentProfile]
-    @Query private var expenses: [Expense]
+    @Query(sort: \Expense.date, order: .reverse) private var expenses: [Expense]
     @Query private var familyMembers: [FamilyMember]
-    
+
     @State private var showingAddExpense = false
-    
-    var activeProfile: ParentProfile? {
-        parentProfiles.first
-    }
-    
+
     var totalPoolBalance: Decimal {
         familyMembers.compactMap { $0.expenseAccount?.balance }.reduce(0, +)
     }
-    
+
     var totalContributed: Decimal {
         familyMembers.compactMap { $0.expenseAccount?.totalContributed }.reduce(0, +)
     }
-    
+
     var totalSpent: Decimal {
-        expenses.map { $0.amount }.reduce(0, +)
+        familyMembers.compactMap { $0.expenseAccount?.totalSpent }.reduce(0, +)
     }
-    
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-                    // Home Account Summary
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text("Home Account")
-                            .font(.headline)
-                            .foregroundStyle(.secondary)
-                        
-                        VStack(spacing: 12) {
-                            HStack {
-                                Text("Total Pool")
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                                Spacer()
-                                Text(formatCurrency(totalPoolBalance))
-                                    .font(.title)
-                                    .fontWeight(.bold)
-                            }
-                            
-                            Divider()
-                            
-                            HStack {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text("Contributed")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                    Text(formatCurrency(totalContributed))
-                                        .font(.body)
-                                        .fontWeight(.semibold)
-                                        .foregroundStyle(.green)
-                                }
-                                
-                                Spacer()
-                                
-                                VStack(alignment: .trailing, spacing: 4) {
-                                    Text("Spent")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                    Text(formatCurrency(totalSpent))
-                                        .font(.body)
-                                        .fontWeight(.semibold)
-                                        .foregroundStyle(.red)
-                                }
-                            }
-                        }
+                    balanceCard
+
+                    if !familyMembers.isEmpty {
+                        contributionsSection
                     }
-                    .padding()
-                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
-                    
-                    // Family Member Accounts
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Family Contributions")
-                            .font(.headline)
-                            .foregroundStyle(.secondary)
-                        
-                        if familyMembers.isEmpty {
-                            Text("No family members yet")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                        } else {
-                            ForEach(familyMembers) { member in
-                                FamilyAccountRow(member: member)
-                            }
-                        }
+
+                    if !expenses.isEmpty {
+                        categoryBreakdown
                     }
-                    .padding()
-                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
-                    
-                    // Recent Expenses
-                    VStack(alignment: .leading, spacing: 12) {
-                        HStack {
-                            Text("Recent Expenses")
-                                .font(.headline)
-                                .foregroundStyle(.secondary)
-                            
-                            Spacer()
-                            
-                            Button(action: {
-                                showingAddExpense = true
-                            }) {
-                                Image(systemName: "plus.circle.fill")
-                                    .font(.title3)
-                                    .foregroundStyle(.blue)
-                            }
-                        }
-                        
-                        if expenses.isEmpty {
-                            Text("No expenses recorded")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                        } else {
-                            ForEach(expenses.sorted(by: { $0.date > $1.date }).prefix(10)) { expense in
-                                ExpenseRow(expense: expense)
-                            }
-                        }
-                    }
-                    .padding()
-                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+
+                    expensesSection
                 }
-                .padding()
+                .padding(.horizontal)
+                .padding(.bottom, 20)
             }
             .navigationTitle("Finances")
+            .screenBackground()
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button(action: { showingAddExpense = true }) {
+                        Image(systemName: "plus.circle.fill")
+                            .symbolRenderingMode(.hierarchical)
+                            .font(.title3)
+                    }
+                }
+            }
             .sheet(isPresented: $showingAddExpense) {
                 AddExpenseView()
             }
         }
     }
-    
-    func formatCurrency(_ amount: Decimal) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = "USD"
-        return formatter.string(from: amount as NSDecimalNumber) ?? "$0.00"
-    }
-}
 
-struct FamilyAccountRow: View {
-    let member: FamilyMember
-    
-    var balance: Decimal {
-        member.expenseAccount?.balance ?? 0
-    }
-    
-    var contributed: Decimal {
-        member.expenseAccount?.totalContributed ?? 0
-    }
-    
-    var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(member.name)
-                    .font(.body)
-                    .fontWeight(.medium)
-                Text(member.role.rawValue)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            
-            Spacer()
-            
-            VStack(alignment: .trailing, spacing: 4) {
-                Text(formatCurrency(balance))
-                    .font(.body)
-                    .fontWeight(.semibold)
-                Text("contributed \(formatCurrency(contributed))")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .padding(.vertical, 4)
-    }
-    
-    func formatCurrency(_ amount: Decimal) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = "USD"
-        return formatter.string(from: amount as NSDecimalNumber) ?? "$0.00"
-    }
-}
+    // MARK: - Balance Card
 
-struct ExpenseRow: View {
-    let expense: Expense
-    
-    var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: iconForCategory(expense.category))
-                .font(.title3)
-                .foregroundStyle(.secondary)
-                .frame(width: 30)
-            
-            VStack(alignment: .leading, spacing: 2) {
-                Text(expense.title)
-                    .font(.body)
-                HStack(spacing: 6) {
-                    Text(expense.category.rawValue)
+    private var balanceCard: some View {
+        VStack(spacing: 16) {
+            VStack(spacing: 4) {
+                Text("Home Account")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+
+                Text(formatCurrency(totalPoolBalance))
+                    .font(.system(size: 36, weight: .bold, design: .rounded))
+            }
+
+            HStack(spacing: 0) {
+                VStack(spacing: 4) {
+                    Image(systemName: "arrow.down.circle.fill")
+                        .foregroundStyle(.green)
+                    Text(formatCurrency(totalContributed))
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                    Text("Contributed")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    if let paidBy = expense.paidBy {
-                        Text("•")
-                            .foregroundStyle(.secondary)
-                        Text(paidBy.name)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity)
+
+                Divider()
+                    .frame(height: 40)
+
+                VStack(spacing: 4) {
+                    Image(systemName: "arrow.up.circle.fill")
+                        .foregroundStyle(.red)
+                    Text(formatCurrency(totalSpent))
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                    Text("Spent")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity)
+            }
+        }
+        .glassCard()
+    }
+
+    // MARK: - Contributions
+
+    private var contributionsSection: some View {
+        let maxContribution = max(
+            familyMembers.compactMap { $0.expenseAccount?.totalContributed }.max() ?? 0,
+            1
+        )
+
+        return VStack(alignment: .leading, spacing: 12) {
+            SectionHeader(title: "Contributions")
+
+            ForEach(familyMembers) { member in
+                let contributed = member.expenseAccount?.totalContributed ?? 0
+                let fraction = Double(truncating: (contributed / maxContribution) as NSDecimalNumber)
+
+                VStack(spacing: 6) {
+                    HStack {
+                        Text(member.name)
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                        Spacer()
+                        Text(formatCurrency(contributed))
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                    }
+
+                    GeometryReader { geo in
+                        ZStack(alignment: .leading) {
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(.quaternary)
+                                .frame(height: 6)
+
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(.blue.gradient)
+                                .frame(width: geo.size.width * max(fraction, 0), height: 6)
+                        }
+                    }
+                    .frame(height: 6)
+                }
+                .padding(.vertical, 4)
+            }
+        }
+        .glassCard()
+    }
+
+    // MARK: - Category Breakdown
+
+    private var categoryBreakdown: some View {
+        let grouped = Dictionary(grouping: expenses) { $0.category }
+        let sorted = grouped
+            .map { (category: $0.key, total: $0.value.map(\.amount).reduce(0, +)) }
+            .sorted { $0.total > $1.total }
+
+        return VStack(alignment: .leading, spacing: 12) {
+            SectionHeader(title: "By Category")
+
+            ForEach(sorted.prefix(5), id: \.category) { item in
+                HStack(spacing: 12) {
+                    Image(systemName: iconForCategory(item.category))
+                        .foregroundStyle(.blue)
+                        .frame(width: 24)
+
+                    Text(item.category.rawValue)
+                        .font(.subheadline)
+
+                    Spacer()
+
+                    Text(formatCurrency(item.total))
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .glassCard()
+    }
+
+    // MARK: - Expenses List
+
+    private var expensesSection: some View {
+        let recent = Array(expenses.prefix(10))
+
+        return VStack(alignment: .leading, spacing: 12) {
+            SectionHeader(title: "Recent Expenses")
+
+            if recent.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "dollarsign.circle")
+                        .font(.system(size: 40))
+                        .foregroundStyle(.blue.opacity(0.5))
+                    Text("No expenses recorded")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 20)
+            } else {
+                VStack(spacing: 12) {
+                    ForEach(recent) { expense in
+                        HStack(spacing: 12) {
+                            Image(systemName: iconForCategory(expense.category))
+                                .font(.body)
+                                .foregroundStyle(.blue)
+                                .frame(width: 32, height: 32)
+                                .background(
+                                    .blue.opacity(0.1),
+                                    in: RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                )
+
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(expense.title)
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+
+                                HStack(spacing: 4) {
+                                    Text(expense.category.rawValue)
+                                    if let paidBy = expense.paidBy {
+                                        Text("·")
+                                        Text(paidBy.name)
+                                    }
+                                }
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            }
+
+                            Spacer()
+
+                            VStack(alignment: .trailing, spacing: 2) {
+                                Text(formatCurrency(expense.amount))
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+                                Text(expense.date.formatted(date: .abbreviated, time: .omitted))
+                                    .font(.caption2)
+                                    .foregroundStyle(.tertiary)
+                            }
+                        }
                     }
                 }
             }
-            
-            Spacer()
-            
-            VStack(alignment: .trailing, spacing: 2) {
-                Text(formatCurrency(expense.amount))
-                    .font(.body)
-                    .fontWeight(.semibold)
-                Text(expense.date.formatted(date: .abbreviated, time: .omitted))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
         }
-        .padding(.vertical, 4)
+        .glassCard()
     }
-    
+
     func iconForCategory(_ category: ExpenseCategory) -> String {
         switch category {
-        case .medical: return "cross.case.fill"
-        case .medication: return "pills.fill"
-        case .utilities: return "bolt.fill"
-        case .groceries: return "cart.fill"
-        case .homeAide: return "person.fill"
+        case .medical:        return "cross.case.fill"
+        case .medication:     return "pills.fill"
+        case .utilities:      return "bolt.fill"
+        case .groceries:      return "cart.fill"
+        case .homeAide:       return "person.fill"
         case .transportation: return "car.fill"
-        case .equipment: return "wrench.and.screwdriver.fill"
-        case .other: return "tag.fill"
+        case .equipment:      return "wrench.and.screwdriver.fill"
+        case .other:          return "tag.fill"
         }
     }
-    
-    func formatCurrency(_ amount: Decimal) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = "USD"
-        return formatter.string(from: amount as NSDecimalNumber) ?? "$0.00"
-    }
 }
+
+// MARK: - Add Expense Sheet
 
 struct AddExpenseView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @Query private var familyMembers: [FamilyMember]
     @Query private var parentProfiles: [ParentProfile]
-    
+
     @State private var title = ""
     @State private var amount = ""
     @State private var category: ExpenseCategory = .other
     @State private var notes = ""
     @State private var selectedMember: FamilyMember?
     @State private var date = Date()
-    
+
     var body: some View {
         NavigationStack {
             Form {
@@ -280,16 +286,16 @@ struct AddExpenseView: View {
                     TextField("Title", text: $title)
                     TextField("Amount", text: $amount)
                         .keyboardType(.decimalPad)
-                    
+
                     Picker("Category", selection: $category) {
                         ForEach(ExpenseCategory.allCases, id: \.self) { cat in
                             Text(cat.rawValue).tag(cat)
                         }
                     }
-                    
+
                     DatePicker("Date", selection: $date, displayedComponents: .date)
                 }
-                
+
                 Section("Paid By") {
                     Picker("Family Member", selection: $selectedMember) {
                         Text("Select member").tag(nil as FamilyMember?)
@@ -298,7 +304,7 @@ struct AddExpenseView: View {
                         }
                     }
                 }
-                
+
                 Section("Notes") {
                     TextEditor(text: $notes)
                         .frame(height: 80)
@@ -308,24 +314,20 @@ struct AddExpenseView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
+                    Button("Cancel") { dismiss() }
                 }
-                
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        saveExpense()
-                    }
-                    .disabled(title.isEmpty || amount.isEmpty)
+                    Button("Save") { saveExpense() }
+                        .disabled(title.isEmpty || amount.isEmpty)
+                        .fontWeight(.semibold)
                 }
             }
         }
     }
-    
+
     func saveExpense() {
         guard let amountDecimal = Decimal(string: amount) else { return }
-        
+
         let expense = Expense(
             title: title,
             amount: amountDecimal,
@@ -333,12 +335,10 @@ struct AddExpenseView: View {
             date: date,
             notes: notes
         )
-        
         expense.paidBy = selectedMember
         expense.parentProfile = parentProfiles.first
-        
+
         modelContext.insert(expense)
-        
         try? modelContext.save()
         dismiss()
     }
@@ -346,5 +346,10 @@ struct AddExpenseView: View {
 
 #Preview {
     FinancesView()
-        .modelContainer(for: [ParentProfile.self, Expense.self, FamilyMember.self, ExpenseAccount.self], inMemory: true)
+        .modelContainer(for: [
+            ParentProfile.self, Expense.self,
+            FamilyMember.self, ExpenseAccount.self,
+            Appointment.self, Task.self,
+            Document.self, UpdateFeedItem.self
+        ], inMemory: true)
 }

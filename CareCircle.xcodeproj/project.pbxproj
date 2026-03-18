@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		05F1E4297D60EC5D025C04C2 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BAE93E11BCF8D2BBB062980 /* Task.swift */; };
+		0BCB634E9B3B39B0AD890655 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDAF7DE1CF364C4708F8B92 /* Theme.swift */; };
 		175FE2F6683B4E25829A3B08 /* ParentProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937EE7E45BE4B24D6313CE42 /* ParentProfile.swift */; };
 		2D9BEFAA2602410A27A00BCB /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DBA6584DADEE5A0194A827E /* TodayView.swift */; };
 		41DA7645571DB514C5B9ABF0 /* SampleDataGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BD927AF6572EC6054C8D11 /* SampleDataGenerator.swift */; };
@@ -33,6 +34,7 @@
 		341499FA8F747E5F783EC8D3 /* FinancesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinancesView.swift; sourceTree = "<group>"; };
 		4FA36E429FA5AC6C146D34C9 /* FamilyMember.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyMember.swift; sourceTree = "<group>"; };
 		54B09227E42515DA2261D3C7 /* Appointment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Appointment.swift; sourceTree = "<group>"; };
+		6EDAF7DE1CF364C4708F8B92 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		6F0EA3F369611505DA699F4C /* ExpenseAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseAccount.swift; sourceTree = "<group>"; };
 		7EC81C277E7175D4D0C9F39F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		8BAE93E11BCF8D2BBB062980 /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
@@ -70,6 +72,7 @@
 			isa = PBXGroup;
 			children = (
 				F1BD927AF6572EC6054C8D11 /* SampleDataGenerator.swift */,
+				6EDAF7DE1CF364C4708F8B92 /* Theme.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -172,6 +175,7 @@
 				175FE2F6683B4E25829A3B08 /* ParentProfile.swift in Sources */,
 				41DA7645571DB514C5B9ABF0 /* SampleDataGenerator.swift in Sources */,
 				05F1E4297D60EC5D025C04C2 /* Task.swift in Sources */,
+				0BCB634E9B3B39B0AD890655 /* Theme.swift in Sources */,
 				2D9BEFAA2602410A27A00BCB /* TodayView.swift in Sources */,
 				D52ADAD428D6A048B0611A9F /* UpdateFeedItem.swift in Sources */,
 				62FBC9383BFB8431D90FA7C6 /* VaultView.swift in Sources */,

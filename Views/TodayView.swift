@@ -2,8 +2,6 @@
 //  TodayView.swift
 //  CareCircle
 //
-//  Created on March 17, 2026.
-//
 
 import SwiftUI
 import SwiftData
@@ -11,318 +9,333 @@ import SwiftData
 struct TodayView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var parentProfiles: [ParentProfile]
-    
-    var activeProfile: ParentProfile? {
-        parentProfiles.first
-    }
-    
+
+    var activeProfile: ParentProfile? { parentProfiles.first }
+
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 20) {
-                    if let profile = activeProfile {
-                        // Header
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                Text(profile.name)
-                                    .font(.title2)
-                                    .fontWeight(.semibold)
-                                
-                                Spacer()
-                                
-                                Button(action: {
-                                    // Emergency action
-                                }) {
-                                    Text("Emergency")
-                                        .font(.subheadline)
-                                        .fontWeight(.semibold)
-                                        .foregroundStyle(.white)
-                                        .padding(.horizontal, 16)
-                                        .padding(.vertical, 8)
-                                        .background(.red, in: Capsule())
-                                }
-                            }
-                            
-                            HStack {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundStyle(.green)
-                                Text(profile.statusMessage)
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                            }
-                            
-                            Text(Date().formatted(date: .abbreviated, time: .omitted))
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
+                if let profile = activeProfile {
+                    VStack(spacing: 20) {
+                        parentHeroCard(profile)
+
+                        if let appt = nextAppointment(from: profile) {
+                            appointmentCard(appt)
                         }
-                        .padding()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
-                        
-                        // Next Appointment
-                        if let nextAppt = nextAppointment(from: profile) {
-                            NextAppointmentCard(appointment: nextAppt)
-                        }
-                        
-                        // Critical Tasks
-                        CriticalTasksCard(tasks: criticalTasks(from: profile))
-                        
-                        // Recent Updates
-                        RecentUpdatesCard(updates: recentUpdates(from: profile))
-                        
-                    } else {
-                        // Empty state
-                        VStack(spacing: 16) {
-                            Image(systemName: "person.crop.circle.badge.plus")
-                                .font(.system(size: 60))
-                                .foregroundStyle(.secondary)
-                            
-                            Text("No Parent Profile")
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                            
-                            Text("Create a parent profile to get started")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                            
-                            Button("Create Profile") {
-                                createSampleProfile()
-                            }
-                            .buttonStyle(.borderedProminent)
-                        }
-                        .padding(40)
+
+                        criticalTasksSection(from: profile)
+                        recentUpdatesSection(from: profile)
                     }
+                    .padding(.horizontal)
+                    .padding(.bottom, 20)
+                } else {
+                    emptyState
                 }
-                .padding()
             }
             .navigationTitle("Today")
+            .screenBackground()
         }
     }
-    
-    // MARK: - Helper Functions
-    
+
+    // MARK: - Parent Hero Card
+
+    private func parentHeroCard(_ profile: ParentProfile) -> some View {
+        VStack(spacing: 16) {
+            HStack(spacing: 14) {
+                AvatarView(name: profile.name, size: 56, gradient: [.blue, .cyan])
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(profile.name)
+                        .font(.title2)
+                        .fontWeight(.bold)
+
+                    if let dob = profile.dateOfBirth {
+                        let age = Calendar.current.dateComponents([.year], from: dob, to: Date()).year ?? 0
+                        Text("Age \(age)")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
+                Spacer()
+
+                Button(action: {}) {
+                    Image(systemName: "exclamationmark.circle.fill")
+                        .font(.system(size: 28))
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(.white, .red)
+                }
+                .shadow(color: .red.opacity(0.3), radius: 8, y: 2)
+            }
+
+            HStack(spacing: 8) {
+                Image(systemName: "checkmark.seal.fill")
+                    .foregroundStyle(.green)
+                Text(profile.statusMessage)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+
+                Spacer()
+
+                Text(Date().formatted(date: .abbreviated, time: .omitted))
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
+            }
+        }
+        .glassCard()
+    }
+
+    // MARK: - Next Appointment Card
+
+    private func appointmentCard(_ appointment: Appointment) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            SectionHeader(title: "Next Up")
+
+            HStack(alignment: .top, spacing: 14) {
+                // Date badge
+                VStack(spacing: 2) {
+                    Text(appointment.date.formatted(.dateTime.day()))
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    Text(appointment.date.formatted(.dateTime.month(.abbreviated)))
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.secondary)
+                        .textCase(.uppercase)
+                }
+                .frame(width: 52, height: 52)
+                .background(.blue.opacity(0.1), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(appointment.title)
+                        .font(.headline)
+
+                    if !appointment.location.isEmpty {
+                        Label(appointment.location, systemImage: "mappin")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Text(appointment.date.formatted(date: .omitted, time: .shortened))
+                        .font(.subheadline)
+                        .foregroundStyle(.blue)
+                        .fontWeight(.medium)
+                }
+
+                Spacer()
+            }
+
+            if !appointment.checklistItems.isEmpty {
+                let completed = appointment.checklistItems.filter(\.isCompleted).count
+                let total = appointment.checklistItems.count
+
+                HStack(spacing: 8) {
+                    ProgressView(value: Double(completed), total: Double(total))
+                        .tint(.blue)
+
+                    Text("\(completed)/\(total) ready")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .glassCard()
+    }
+
+    // MARK: - Critical Tasks
+
+    private func criticalTasksSection(from profile: ParentProfile) -> some View {
+        let tasks = criticalTasks(from: profile)
+
+        return VStack(alignment: .leading, spacing: 14) {
+            SectionHeader(title: "Critical Tasks", action: "See all")
+
+            if tasks.isEmpty {
+                HStack {
+                    Spacer()
+                    VStack(spacing: 8) {
+                        Image(systemName: "checkmark.circle")
+                            .font(.title)
+                            .foregroundStyle(.green)
+                        Text("All clear")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.vertical, 12)
+                    Spacer()
+                }
+            } else {
+                VStack(spacing: 10) {
+                    ForEach(tasks) { task in
+                        HStack(spacing: 12) {
+                            Button(action: {
+                                withAnimation(.spring(response: 0.3)) {
+                                    task.isCompleted.toggle()
+                                    task.updatedAt = Date()
+                                    try? modelContext.save()
+                                }
+                            }) {
+                                Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
+                                    .font(.title3)
+                                    .foregroundStyle(task.isCompleted ? .green : task.priority.color.opacity(0.6))
+                            }
+
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(task.title)
+                                    .font(.subheadline)
+                                    .strikethrough(task.isCompleted)
+                                    .foregroundStyle(task.isCompleted ? .secondary : .primary)
+
+                                if let due = task.dueDate {
+                                    Text("Due \(due.formatted(date: .abbreviated, time: .omitted))")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+
+                            Spacer()
+
+                            Image(systemName: task.priority.icon)
+                                .foregroundStyle(task.priority.color)
+                                .font(.caption)
+                        }
+                    }
+                }
+            }
+        }
+        .glassCard()
+    }
+
+    // MARK: - Recent Updates
+
+    private func recentUpdatesSection(from profile: ParentProfile) -> some View {
+        let updates = recentUpdates(from: profile)
+
+        return VStack(alignment: .leading, spacing: 14) {
+            SectionHeader(title: "Recent Updates")
+
+            if updates.isEmpty {
+                Text("No recent updates")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+            } else {
+                VStack(alignment: .leading, spacing: 0) {
+                    ForEach(Array(updates.enumerated()), id: \.element.id) { index, update in
+                        HStack(alignment: .top, spacing: 12) {
+                            VStack(spacing: 0) {
+                                Circle()
+                                    .fill(colorForUpdateType(update.type))
+                                    .frame(width: 8, height: 8)
+
+                                if index < updates.count - 1 {
+                                    Rectangle()
+                                        .fill(.quaternary)
+                                        .frame(width: 1)
+                                        .frame(maxHeight: .infinity)
+                                }
+                            }
+                            .frame(width: 8)
+                            .padding(.top, 6)
+
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("\(update.authorName): \"\(update.message)\"")
+                                    .font(.subheadline)
+
+                                Text(update.timestamp, style: .relative)
+                                    .font(.caption)
+                                    .foregroundStyle(.tertiary)
+                            }
+                            .padding(.bottom, index < updates.count - 1 ? 16 : 0)
+
+                            Spacer()
+                        }
+                    }
+                }
+            }
+        }
+        .glassCard()
+    }
+
+    // MARK: - Empty State
+
+    private var emptyState: some View {
+        VStack(spacing: 20) {
+            Spacer()
+
+            Image(systemName: "heart.circle")
+                .font(.system(size: 72))
+                .foregroundStyle(.blue.opacity(0.6))
+
+            Text("Welcome to CareCircle")
+                .font(.title2)
+                .fontWeight(.bold)
+
+            Text("Create a parent profile to start coordinating care")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+
+            Button(action: { createSampleProfile() }) {
+                Label("Get Started", systemImage: "plus.circle.fill")
+                    .font(.headline)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 12)
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+
+            Spacer()
+        }
+        .padding(40)
+    }
+
+    // MARK: - Helpers
+
     func nextAppointment(from profile: ParentProfile) -> Appointment? {
         profile.appointments
             .filter { $0.date > Date() }
             .sorted { $0.date < $1.date }
             .first
     }
-    
+
     func criticalTasks(from profile: ParentProfile) -> [Task] {
         profile.tasks
             .filter { !$0.isCompleted && ($0.priority == .high || $0.priority == .urgent) }
             .sorted { $0.priority.rawValue > $1.priority.rawValue }
-            .prefix(3)
+            .prefix(5)
             .map { $0 }
     }
-    
+
     func recentUpdates(from profile: ParentProfile) -> [UpdateFeedItem] {
         profile.updateFeedItems
             .sorted { $0.timestamp > $1.timestamp }
-            .prefix(3)
+            .prefix(5)
             .map { $0 }
     }
-    
+
+    func colorForUpdateType(_ type: UpdateType) -> Color {
+        switch type {
+        case .note:             return .blue
+        case .taskCompleted:    return .green
+        case .documentAdded:    return .purple
+        case .appointmentAdded: return .orange
+        case .expenseAdded:     return .pink
+        }
+    }
+
     func createSampleProfile() {
-        let profile = ParentProfile(name: "Mom Alvarez")
-        modelContext.insert(profile)
-        
-        // Sample appointment
-        let appointment = Appointment(
-            title: "Cardiology Follow-up",
-            date: Calendar.current.date(byAdding: .hour, value: 2, to: Date()) ?? Date(),
-            location: "St. Mary's Clinic",
-            checklistItems: [
-                ChecklistItem(title: "Insurance card", isCompleted: true),
-                ChecklistItem(title: "Medication list", isCompleted: true),
-                ChecklistItem(title: "Bring last lab report", isCompleted: false)
-            ]
-        )
-        appointment.parentProfile = profile
-        modelContext.insert(appointment)
-        
-        // Sample tasks
-        let task1 = Task(title: "Refill blood pressure meds", priority: .urgent)
-        task1.parentProfile = profile
-        modelContext.insert(task1)
-        
-        let task2 = Task(title: "Upload discharge summary", priority: .high)
-        task2.parentProfile = profile
-        modelContext.insert(task2)
-        
-        let task3 = Task(title: "Confirm ride for Thursday", priority: .high)
-        task3.parentProfile = profile
-        modelContext.insert(task3)
-        
-        // Sample updates
-        let update1 = UpdateFeedItem(type: .note, message: "Vitals looked normal.", authorName: "Sarah")
-        update1.parentProfile = profile
-        modelContext.insert(update1)
-        
-        let update2 = UpdateFeedItem(type: .documentAdded, message: "Scanned lab results.", authorName: "You")
-        update2.parentProfile = profile
-        modelContext.insert(update2)
-        
-        try? modelContext.save()
-    }
-}
-
-// MARK: - Component Views
-
-struct NextAppointmentCard: View {
-    let appointment: Appointment
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Next up")
-                .font(.headline)
-                .foregroundStyle(.secondary)
-            
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(appointment.date.formatted(date: .omitted, time: .shortened))
-                        .font(.title2)
-                        .fontWeight(.bold)
-                    
-                    Text(appointment.title)
-                        .font(.body)
-                }
-                
-                Spacer()
-                
-                Button(action: {}) {
-                    Text("Open")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.blue)
-                }
-            }
-            
-            if !appointment.checklistItems.isEmpty {
-                HStack {
-                    Image(systemName: "checkmark.circle")
-                        .foregroundStyle(.secondary)
-                    Text("\(appointment.checklistItems.filter { $0.isCompleted }.count)/\(appointment.checklistItems.count) items ready")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-            }
-        }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
-    }
-}
-
-struct CriticalTasksCard: View {
-    let tasks: [Task]
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text("Critical tasks")
-                    .font(.headline)
-                    .foregroundStyle(.secondary)
-                
-                Spacer()
-                
-                Button("See all") {}
-                    .font(.subheadline)
-                    .foregroundStyle(.blue)
-            }
-            
-            if tasks.isEmpty {
-                Text("No critical tasks")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding()
-            } else {
-                VStack(spacing: 8) {
-                    ForEach(tasks) { task in
-                        TaskRow(task: task)
-                    }
-                }
-            }
-        }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
-    }
-}
-
-struct TaskRow: View {
-    let task: Task
-    @State private var isCompleted: Bool = false
-    
-    var body: some View {
-        HStack(spacing: 12) {
-            Button(action: {
-                isCompleted.toggle()
-            }) {
-                Image(systemName: isCompleted ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(isCompleted ? .green : .secondary)
-                    .font(.title3)
-            }
-            
-            Text(task.title)
-                .font(.body)
-            
-            Spacer()
-        }
-    }
-}
-
-struct RecentUpdatesCard: View {
-    let updates: [UpdateFeedItem]
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text("Recent updates")
-                    .font(.headline)
-                    .foregroundStyle(.secondary)
-                
-                Spacer()
-                
-                Button(action: {}) {
-                    Image(systemName: "plus.circle.fill")
-                        .font(.title3)
-                        .foregroundStyle(.blue)
-                }
-            }
-            
-            if updates.isEmpty {
-                Text("No recent updates")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding()
-            } else {
-                VStack(alignment: .leading, spacing: 12) {
-                    ForEach(updates) { update in
-                        HStack(alignment: .top, spacing: 8) {
-                            Text("•")
-                                .foregroundStyle(.secondary)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("\(update.authorName): \"\(update.message)\"")
-                                    .font(.subheadline)
-                                Text(update.timestamp.formatted(date: .omitted, time: .shortened))
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+        SampleDataGenerator.generateSampleData(modelContext: modelContext)
     }
 }
 
 #Preview {
     TodayView()
-        .modelContainer(for: [ParentProfile.self, Appointment.self, Task.self, UpdateFeedItem.self], inMemory: true)
+        .modelContainer(for: [
+            ParentProfile.self, Appointment.self,
+            Task.self, UpdateFeedItem.self,
+            FamilyMember.self, ExpenseAccount.self,
+            Document.self, Expense.self
+        ], inMemory: true)
 }
