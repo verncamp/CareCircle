@@ -20,7 +20,10 @@ struct TodayView: View {
             ScrollView {
                 if let profile = activeProfile {
                     VStack(spacing: 20) {
-                        parentHeroCard(profile)
+                        NavigationLink(destination: ParentProfileView(profile: profile)) {
+                            parentHeroCard(profile)
+                        }
+                        .buttonStyle(.plain)
 
                         // AI Briefing
                         if ai.isAvailable {

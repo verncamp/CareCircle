@@ -21,7 +21,17 @@ struct SampleDataGenerator {
             allergies: "Penicillin",
             primaryPhysician: "Dr. Sarah Chen",
             insuranceProvider: "Blue Cross Blue Shield",
-            insuranceNumber: "MC123456789"
+            insuranceNumber: "MC123456789",
+            medications: [
+                Medication(name: "Lisinopril", dosage: "10mg", frequency: "Once daily", prescribedBy: "Dr. Chen"),
+                Medication(name: "Metformin", dosage: "500mg", frequency: "Twice daily", prescribedBy: "Dr. Chen"),
+                Medication(name: "Aspirin", dosage: "81mg", frequency: "Once daily")
+            ],
+            conditions: ["Hypertension", "Type 2 Diabetes", "Osteoarthritis"],
+            emergencyContactName: "Maria (Aide)",
+            emergencyContactPhone: "555-0125",
+            pharmacyName: "CVS Pharmacy - Main St",
+            pharmacyPhone: "555-0200"
         )
         modelContext.insert(parent)
         

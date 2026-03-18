@@ -10,13 +10,17 @@
 		05F1E4297D60EC5D025C04C2 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BAE93E11BCF8D2BBB062980 /* Task.swift */; };
 		0BCB634E9B3B39B0AD890655 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDAF7DE1CF364C4708F8B92 /* Theme.swift */; };
 		175FE2F6683B4E25829A3B08 /* ParentProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937EE7E45BE4B24D6313CE42 /* ParentProfile.swift */; };
+		25375F84226738584D18366A /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3056EE63F3DC7812C320D8D /* HealthKitManager.swift */; };
 		2D9BEFAA2602410A27A00BCB /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DBA6584DADEE5A0194A827E /* TodayView.swift */; };
+		38D3008FDCD05B25881EE636 /* HealthMetricSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EDABAED291037CFE18E659B /* HealthMetricSnapshot.swift */; };
 		41DA7645571DB514C5B9ABF0 /* SampleDataGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BD927AF6572EC6054C8D11 /* SampleDataGenerator.swift */; };
 		46450B0C097099FB205EF340 /* FamilyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5193DFF1DFF0319C5B0191 /* FamilyView.swift */; };
 		58685D41BA00F0CF4693C595 /* Expense.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B82DD2C793435B1760FEF4B /* Expense.swift */; };
 		62FBC9383BFB8431D90FA7C6 /* VaultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CAA894193FD0D2001FF986 /* VaultView.swift */; };
 		66D793F2156142A682FEF2C0 /* FamilyMember.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA36E429FA5AC6C146D34C9 /* FamilyMember.swift */; };
+		6CBAF3AB45F1D732DBBA8EE6 /* ParentProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C20DE762250A1290C43444 /* ParentProfileEditView.swift */; };
 		88009E47EC381E5C9E78AF44 /* CareCircleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AF01489065453532424909B /* CareCircleApp.swift */; };
+		9AD0C22367099AAC40E497DC /* ParentProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39B255C63686C49CBBCE36D5 /* ParentProfileView.swift */; };
 		9BB7C905D29386690D1D559E /* Document.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17434265C8057386D55919F9 /* Document.swift */; };
 		9E4F13552E23EC2492D5FAD1 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9435B208D3FFC961F5898D2 /* CalendarView.swift */; };
 		A579610D8C4DAA27AC2D6242 /* Appointment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B09227E42515DA2261D3C7 /* Appointment.swift */; };
@@ -29,10 +33,12 @@
 
 /* Begin PBXFileReference section */
 		17434265C8057386D55919F9 /* Document.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Document.swift; sourceTree = "<group>"; };
+		1EDABAED291037CFE18E659B /* HealthMetricSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthMetricSnapshot.swift; sourceTree = "<group>"; };
 		2AF01489065453532424909B /* CareCircleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareCircleApp.swift; sourceTree = "<group>"; };
 		2B82DD2C793435B1760FEF4B /* Expense.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Expense.swift; sourceTree = "<group>"; };
 		2D5193DFF1DFF0319C5B0191 /* FamilyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyView.swift; sourceTree = "<group>"; };
 		341499FA8F747E5F783EC8D3 /* FinancesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinancesView.swift; sourceTree = "<group>"; };
+		39B255C63686C49CBBCE36D5 /* ParentProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentProfileView.swift; sourceTree = "<group>"; };
 		4FA36E429FA5AC6C146D34C9 /* FamilyMember.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyMember.swift; sourceTree = "<group>"; };
 		54B09227E42515DA2261D3C7 /* Appointment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Appointment.swift; sourceTree = "<group>"; };
 		5C127343754B9F99C23F5D5B /* AIAssistant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIAssistant.swift; sourceTree = "<group>"; };
@@ -45,8 +51,10 @@
 		937EE7E45BE4B24D6313CE42 /* ParentProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentProfile.swift; sourceTree = "<group>"; };
 		B9435B208D3FFC961F5898D2 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		CD6EF676C71F4914A00AA836 /* CareCircle.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = CareCircle.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D6C20DE762250A1290C43444 /* ParentProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentProfileEditView.swift; sourceTree = "<group>"; };
 		E50EC3605690CBC693A2C5C5 /* UpdateFeedItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateFeedItem.swift; sourceTree = "<group>"; };
 		F1BD927AF6572EC6054C8D11 /* SampleDataGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleDataGenerator.swift; sourceTree = "<group>"; };
+		F3056EE63F3DC7812C320D8D /* HealthKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -74,6 +82,7 @@
 			isa = PBXGroup;
 			children = (
 				5C127343754B9F99C23F5D5B /* AIAssistant.swift */,
+				F3056EE63F3DC7812C320D8D /* HealthKitManager.swift */,
 				F1BD927AF6572EC6054C8D11 /* SampleDataGenerator.swift */,
 				6EDAF7DE1CF364C4708F8B92 /* Theme.swift */,
 			);
@@ -88,6 +97,7 @@
 				2B82DD2C793435B1760FEF4B /* Expense.swift */,
 				6F0EA3F369611505DA699F4C /* ExpenseAccount.swift */,
 				4FA36E429FA5AC6C146D34C9 /* FamilyMember.swift */,
+				1EDABAED291037CFE18E659B /* HealthMetricSnapshot.swift */,
 				937EE7E45BE4B24D6313CE42 /* ParentProfile.swift */,
 				8BAE93E11BCF8D2BBB062980 /* Task.swift */,
 				E50EC3605690CBC693A2C5C5 /* UpdateFeedItem.swift */,
@@ -101,6 +111,8 @@
 				B9435B208D3FFC961F5898D2 /* CalendarView.swift */,
 				2D5193DFF1DFF0319C5B0191 /* FamilyView.swift */,
 				341499FA8F747E5F783EC8D3 /* FinancesView.swift */,
+				D6C20DE762250A1290C43444 /* ParentProfileEditView.swift */,
+				39B255C63686C49CBBCE36D5 /* ParentProfileView.swift */,
 				8DBA6584DADEE5A0194A827E /* TodayView.swift */,
 				90CAA894193FD0D2001FF986 /* VaultView.swift */,
 			);
@@ -176,7 +188,11 @@
 				66D793F2156142A682FEF2C0 /* FamilyMember.swift in Sources */,
 				46450B0C097099FB205EF340 /* FamilyView.swift in Sources */,
 				A7F8590D0EE24B656C5F8B85 /* FinancesView.swift in Sources */,
+				25375F84226738584D18366A /* HealthKitManager.swift in Sources */,
+				38D3008FDCD05B25881EE636 /* HealthMetricSnapshot.swift in Sources */,
 				175FE2F6683B4E25829A3B08 /* ParentProfile.swift in Sources */,
+				6CBAF3AB45F1D732DBBA8EE6 /* ParentProfileEditView.swift in Sources */,
+				9AD0C22367099AAC40E497DC /* ParentProfileView.swift in Sources */,
 				41DA7645571DB514C5B9ABF0 /* SampleDataGenerator.swift in Sources */,
 				05F1E4297D60EC5D025C04C2 /* Task.swift in Sources */,
 				0BCB634E9B3B39B0AD890655 /* Theme.swift in Sources */,
@@ -193,12 +209,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = CareCircle.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_GENERATION_MODE = GeneratedFile;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "CareCircle reads health data to show your parent's vitals to trusted family members.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -222,12 +240,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = CareCircle.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_GENERATION_MODE = GeneratedFile;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "CareCircle reads health data to show your parent's vitals to trusted family members.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

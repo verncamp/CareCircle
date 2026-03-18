@@ -16,6 +16,8 @@ targets:
       - path: Models
       - path: Views
       - path: Helpers
+    entitlements:
+      path: CareCircle.entitlements
     settings:
       base:
         SWIFT_VERSION: "5.9"
@@ -28,6 +30,7 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
         SUPPORTS_MACCATALYST: YES
         DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER: NO
+        INFOPLIST_KEY_NSHealthShareUsageDescription: "CareCircle reads health data to show your parent's vitals to trusted family members."
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
         INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
