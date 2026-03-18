@@ -2,8 +2,6 @@
 //  Task.swift
 //  CareCircle
 //
-//  Created on March 17, 2026.
-//
 
 import Foundation
 import SwiftData
@@ -17,24 +15,21 @@ enum TaskPriority: String, Codable {
 
 @Model
 final class Task {
-    var id: UUID
-    var title: String
-    var taskDescription: String
+    var id: UUID = UUID()
+    var title: String = ""
+    var taskDescription: String = ""
     var dueDate: Date?
-    var isCompleted: Bool
-    var priority: TaskPriority
-    var createdAt: Date
-    var updatedAt: Date
-    
-    // Assignment
+    var isCompleted: Bool = false
+    var priority: TaskPriority = TaskPriority.normal
+    var createdAt: Date = Date()
+    var updatedAt: Date = Date()
+
     var assignedTo: FamilyMember?
-    
-    // Relationship
     var parentProfile: ParentProfile?
-    
+
     init(
         id: UUID = UUID(),
-        title: String,
+        title: String = "",
         taskDescription: String = "",
         dueDate: Date? = nil,
         isCompleted: Bool = false,

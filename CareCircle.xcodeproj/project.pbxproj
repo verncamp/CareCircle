@@ -16,6 +16,7 @@
 		41DA7645571DB514C5B9ABF0 /* SampleDataGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BD927AF6572EC6054C8D11 /* SampleDataGenerator.swift */; };
 		46450B0C097099FB205EF340 /* FamilyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5193DFF1DFF0319C5B0191 /* FamilyView.swift */; };
 		464CDB54EBFFAFE3220CB226 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1AE509F00C7ED6E15506DC /* WelcomeView.swift */; };
+		4E23A650A7B514DF3928737A /* CloudKitAccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6AE49CA582D74D0B58866B5 /* CloudKitAccountManager.swift */; };
 		58685D41BA00F0CF4693C595 /* Expense.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B82DD2C793435B1760FEF4B /* Expense.swift */; };
 		62FBC9383BFB8431D90FA7C6 /* VaultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CAA894193FD0D2001FF986 /* VaultView.swift */; };
 		66D793F2156142A682FEF2C0 /* FamilyMember.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA36E429FA5AC6C146D34C9 /* FamilyMember.swift */; };
@@ -55,6 +56,7 @@
 		8DBA6584DADEE5A0194A827E /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
 		90CAA894193FD0D2001FF986 /* VaultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VaultView.swift; sourceTree = "<group>"; };
 		937EE7E45BE4B24D6313CE42 /* ParentProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentProfile.swift; sourceTree = "<group>"; };
+		A6AE49CA582D74D0B58866B5 /* CloudKitAccountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitAccountManager.swift; sourceTree = "<group>"; };
 		B9435B208D3FFC961F5898D2 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		CD6EF676C71F4914A00AA836 /* CareCircle.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = CareCircle.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6C20DE762250A1290C43444 /* ParentProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentProfileEditView.swift; sourceTree = "<group>"; };
@@ -88,6 +90,7 @@
 			isa = PBXGroup;
 			children = (
 				5C127343754B9F99C23F5D5B /* AIAssistant.swift */,
+				A6AE49CA582D74D0B58866B5 /* CloudKitAccountManager.swift */,
 				F3056EE63F3DC7812C320D8D /* HealthKitManager.swift */,
 				F1BD927AF6572EC6054C8D11 /* SampleDataGenerator.swift */,
 				6EDAF7DE1CF364C4708F8B92 /* Theme.swift */,
@@ -190,6 +193,7 @@
 				A579610D8C4DAA27AC2D6242 /* Appointment.swift in Sources */,
 				9E4F13552E23EC2492D5FAD1 /* CalendarView.swift in Sources */,
 				88009E47EC381E5C9E78AF44 /* CareCircleApp.swift in Sources */,
+				4E23A650A7B514DF3928737A /* CloudKitAccountManager.swift in Sources */,
 				DAB2E79DB0E5DBAD7D599585 /* ContentView.swift in Sources */,
 				9BB7C905D29386690D1D559E /* Document.swift in Sources */,
 				58685D41BA00F0CF4693C595 /* Expense.swift in Sources */,

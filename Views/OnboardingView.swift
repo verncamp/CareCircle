@@ -2,24 +2,23 @@
 //  OnboardingView.swift
 //  CareCircle
 //
-//  Step-by-step setup: Sign in → Parent info → Confirm.
+//  Step-by-step setup: iCloud account → Parent info → Confirm.
 //
 
 import SwiftUI
 import SwiftData
-import AuthenticationServices
 
 struct OnboardingView: View {
     @Environment(\.modelContext) private var modelContext
     @AppStorage("appMode") private var appMode: String = "none"
 
-    @State private var step = 0
+    @State private var cloudKit = CloudKitAccountManager()
     @State private var healthKit = HealthKitManager()
+    @State private var step = 0
 
     // Account (Step 1)
     @State private var userName = ""
     @State private var userEmail = ""
-    @State private var signedInWithApple = false
 
     // Parent (Step 2)
     @State private var parentName = ""
@@ -27,8 +26,6 @@ struct OnboardingView: View {
     @State private var bloodType = ""
     @State private var allergies = ""
     @State private var primaryPhysician = ""
-
-    // Role & options (Step 2)
     @State private var userRole: FamilyRole = .medicalAdmin
     @State private var connectHealth = false
 
@@ -96,103 +93,114 @@ struct OnboardingView: View {
                 .padding(.bottom, 32)
             }
         }
+        .task {
+            await cloudKit.checkAccountStatus()
+            if let name = cloudKit.userName {
+                userName = name
+            }
+        }
     }
 
     private var canAdvance: Bool {
         switch step {
-        case 0: return !userName.isEmpty
+        case 0: return !userName.isEmpty && cloudKit.isSignedIn
         case 1: return !parentName.isEmpty
         default: return true
         }
     }
 
-    // MARK: - Step 1: Your Account
+    // MARK: - Step 1: iCloud Account
 
     private var accountStep: some View {
         ScrollView {
             VStack(spacing: 28) {
                 VStack(spacing: 8) {
-                    Text("Create your account")
+                    Text("Your Account")
                         .font(.title2)
                         .fontWeight(.bold)
-                    Text("Sign in to save your care circle across devices")
+                    Text("CareCircle uses your iCloud account to sync data across devices and share with family.")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                 }
                 .padding(.top, 16)
 
-                // Sign in with Apple
-                SignInWithAppleButton(.signUp) { request in
-                    request.requestedScopes = [.fullName, .email]
-                } onCompletion: { result in
-                    handleAppleSignIn(result)
-                }
-                .signInWithAppleButtonStyle(.black)
-                .frame(height: 50)
-                .cornerRadius(12)
-                .padding(.horizontal, 24)
-
-                // Divider
-                HStack {
-                    Rectangle().fill(.secondary.opacity(0.3)).frame(height: 1)
-                    Text("or sign up with email")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Rectangle().fill(.secondary.opacity(0.3)).frame(height: 1)
-                }
-                .padding(.horizontal, 24)
-
-                // Manual entry
+                // iCloud status
                 VStack(spacing: 16) {
-                    TextField("Full name", text: $userName)
-                        .textFieldStyle(.roundedBorder)
-                        .textContentType(.name)
-                        .autocorrectionDisabled()
+                    HStack(spacing: 12) {
+                        Image(systemName: cloudKit.isSignedIn ? "icloud.fill" : "icloud.slash")
+                            .font(.title)
+                            .foregroundStyle(cloudKit.isSignedIn ? .teal : .red)
 
-                    TextField("Email address", text: $userEmail)
-                        .textFieldStyle(.roundedBorder)
-                        .textContentType(.emailAddress)
-                        .keyboardType(.emailAddress)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("iCloud")
+                                .font(.headline)
+                            Text(cloudKit.statusDescription)
+                                .font(.subheadline)
+                                .foregroundStyle(cloudKit.isSignedIn ? .green : .red)
+                        }
+
+                        Spacer()
+
+                        if cloudKit.isSignedIn {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(.green)
+                        }
+                    }
+                    .padding()
+                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+
+                    if !cloudKit.isSignedIn {
+                        VStack(spacing: 12) {
+                            Text("Please sign in to iCloud to continue")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.center)
+
+                            Text("Go to Settings → Apple Account → iCloud")
+                                .font(.caption)
+                                .foregroundStyle(.tertiary)
+
+                            Button("Check Again") {
+                                asyncRun { await cloudKit.checkAccountStatus() }
+                            }
+                            .buttonStyle(.bordered)
+                            .tint(.teal)
+                        }
+                    }
                 }
                 .padding(.horizontal, 24)
 
-                if signedInWithApple {
-                    HStack(spacing: 6) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundStyle(.green)
-                        Text("Signed in with Apple")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                if cloudKit.isSignedIn {
+                    // Name & email
+                    VStack(spacing: 16) {
+                        TextField("Your full name", text: $userName)
+                            .textFieldStyle(.roundedBorder)
+                            .textContentType(.name)
+                            .autocorrectionDisabled()
+
+                        TextField("Email address (optional)", text: $userEmail)
+                            .textFieldStyle(.roundedBorder)
+                            .textContentType(.emailAddress)
+                            .keyboardType(.emailAddress)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                    }
+                    .padding(.horizontal, 24)
+
+                    if cloudKit.userName != nil {
+                        HStack(spacing: 6) {
+                            Image(systemName: "person.crop.circle.badge.checkmark")
+                                .foregroundStyle(.green)
+                            Text("Name auto-filled from iCloud")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
                     }
                 }
 
                 Spacer()
             }
-        }
-    }
-
-    private func handleAppleSignIn(_ result: Result<ASAuthorization, Error>) {
-        switch result {
-        case .success(let auth):
-            if let credential = auth.credential as? ASAuthorizationAppleIDCredential {
-                if let fullName = credential.fullName {
-                    let parts = [fullName.givenName, fullName.familyName].compactMap { $0 }
-                    if !parts.isEmpty {
-                        userName = parts.joined(separator: " ")
-                    }
-                }
-                if let email = credential.email {
-                    userEmail = email
-                }
-                signedInWithApple = true
-                // Auto-advance to next step
-                withAnimation { step = 1 }
-            }
-        case .failure:
-            break
         }
     }
 
@@ -261,7 +269,7 @@ struct OnboardingView: View {
                         .font(.title2)
                         .fontWeight(.bold)
 
-                    Text("We'll create a care circle for \(parentName.isEmpty ? "your parent" : parentName) with you as the first member.")
+                    Text("Your care circle will sync across all your devices via iCloud.")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
@@ -275,6 +283,7 @@ struct OnboardingView: View {
                     }
                     summaryRow(label: "Role", value: userRole.rawValue)
                     summaryRow(label: "Care recipient", value: parentName)
+                    summaryRow(label: "Sync", value: "iCloud")
                     summaryRow(label: "Apple Health", value: connectHealth ? "Connected" : "Not connected")
                 }
                 .glassCard()
@@ -336,9 +345,7 @@ struct OnboardingView: View {
         modelContext.insert(account)
 
         if connectHealth {
-            asyncRun {
-                _ = await healthKit.requestAuthorization()
-            }
+            asyncRun { _ = await healthKit.requestAuthorization() }
         }
 
         try? modelContext.save()

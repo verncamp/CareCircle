@@ -2,8 +2,6 @@
 //  Document.swift
 //  CareCircle
 //
-//  Created on March 17, 2026.
-//
 
 import Foundation
 import SwiftData
@@ -20,26 +18,24 @@ enum DocumentCategory: String, Codable, CaseIterable {
 
 @Model
 final class Document {
-    var id: UUID
-    var title: String
-    var category: DocumentCategory
-    var fileURL: String // Local file path or future cloud URL
-    var isPinned: Bool
-    var createdAt: Date
-    var updatedAt: Date
-    
-    // AI-generated tags or metadata (optional)
-    var tags: [String]
+    var id: UUID = UUID()
+    var title: String = ""
+    var category: DocumentCategory = DocumentCategory.other
+    var fileURL: String = ""
+    @Attribute(.externalStorage) var fileData: Data?
+    var isPinned: Bool = false
+    var createdAt: Date = Date()
+    var updatedAt: Date = Date()
+    var tags: [String] = []
     var aiExtractedText: String?
-    
-    // Relationship
+
     var parentProfile: ParentProfile?
-    
+
     init(
         id: UUID = UUID(),
-        title: String,
+        title: String = "",
         category: DocumentCategory = .other,
-        fileURL: String,
+        fileURL: String = "",
         isPinned: Bool = false,
         tags: [String] = []
     ) {

@@ -2,39 +2,30 @@
 //  Appointment.swift
 //  CareCircle
 //
-//  Created on March 17, 2026.
-//
 
 import Foundation
 import SwiftData
 
 @Model
 final class Appointment {
-    var id: UUID
-    var title: String
-    var date: Date
-    var location: String
-    var notes: String
-    var createdAt: Date
-    var updatedAt: Date
-    
-    // Checklist items (stored as JSON array of strings for simplicity)
-    var checklistItems: [ChecklistItem]
-    
-    // AI summary (optional, generated after appointment)
+    var id: UUID = UUID()
+    var title: String = ""
+    var date: Date = Date()
+    var location: String = ""
+    var notes: String = ""
+    var createdAt: Date = Date()
+    var updatedAt: Date = Date()
+    var checklistItems: [ChecklistItem] = []
     var aiSummary: String?
-    
-    // Voice/photo notes data (file references or base64 for MVP)
     var voiceNoteURL: String?
-    var photoNoteURLs: [String]
-    
-    // Relationship
+    var photoNoteURLs: [String] = []
+
     var parentProfile: ParentProfile?
-    
+
     init(
         id: UUID = UUID(),
-        title: String,
-        date: Date,
+        title: String = "",
+        date: Date = Date(),
         location: String = "",
         notes: String = "",
         checklistItems: [ChecklistItem] = [],
@@ -47,22 +38,13 @@ final class Appointment {
         self.notes = notes
         self.checklistItems = checklistItems
         self.aiSummary = aiSummary
-        self.voiceNoteURL = nil
-        self.photoNoteURLs = []
         self.createdAt = Date()
         self.updatedAt = Date()
     }
 }
 
-// Checklist item model (codable struct for simple storage)
 struct ChecklistItem: Codable, Identifiable {
-    var id: UUID
+    var id: UUID = UUID()
     var title: String
-    var isCompleted: Bool
-    
-    init(id: UUID = UUID(), title: String, isCompleted: Bool = false) {
-        self.id = id
-        self.title = title
-        self.isCompleted = isCompleted
-    }
+    var isCompleted: Bool = false
 }

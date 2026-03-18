@@ -2,8 +2,6 @@
 //  UpdateFeedItem.swift
 //  CareCircle
 //
-//  Created on March 17, 2026.
-//
 
 import Foundation
 import SwiftData
@@ -18,20 +16,19 @@ enum UpdateType: String, Codable {
 
 @Model
 final class UpdateFeedItem {
-    var id: UUID
-    var type: UpdateType
-    var message: String
-    var authorName: String
-    var timestamp: Date
-    
-    // Relationship
+    var id: UUID = UUID()
+    var type: UpdateType = UpdateType.note
+    var message: String = ""
+    var authorName: String = ""
+    var timestamp: Date = Date()
+
     var parentProfile: ParentProfile?
-    
+
     init(
         id: UUID = UUID(),
-        type: UpdateType,
-        message: String,
-        authorName: String,
+        type: UpdateType = .note,
+        message: String = "",
+        authorName: String = "",
         timestamp: Date = Date()
     ) {
         self.id = id

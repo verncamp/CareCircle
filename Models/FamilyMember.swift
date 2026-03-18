@@ -2,8 +2,6 @@
 //  FamilyMember.swift
 //  CareCircle
 //
-//  Created on March 17, 2026.
-//
 
 import Foundation
 import SwiftData
@@ -18,26 +16,23 @@ enum FamilyRole: String, Codable, CaseIterable {
 
 @Model
 final class FamilyMember {
-    var id: UUID
-    var name: String
-    var role: FamilyRole
+    var id: UUID = UUID()
+    var name: String = ""
+    var role: FamilyRole = FamilyRole.other
     var email: String?
     var phoneNumber: String?
-    var isCurrentUser: Bool
-    var createdAt: Date
-    
-    // Future: Airwallex user ID for account integration
+    var isCurrentUser: Bool = false
+    var createdAt: Date = Date()
     var airwallexUserID: String?
-    
-    // Relationship
+
     var parentProfile: ParentProfile?
     var expenseAccount: ExpenseAccount?
-    @Relationship(deleteRule: .nullify, inverse: \Task.assignedTo) var assignedTasks: [Task]
-    
+    @Relationship(deleteRule: .nullify, inverse: \Task.assignedTo) var assignedTasks: [Task] = []
+
     init(
         id: UUID = UUID(),
-        name: String,
-        role: FamilyRole,
+        name: String = "",
+        role: FamilyRole = .other,
         email: String? = nil,
         phoneNumber: String? = nil,
         isCurrentUser: Bool = false
@@ -49,6 +44,5 @@ final class FamilyMember {
         self.phoneNumber = phoneNumber
         self.isCurrentUser = isCurrentUser
         self.createdAt = Date()
-        self.assignedTasks = []
     }
 }

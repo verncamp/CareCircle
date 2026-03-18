@@ -16,14 +16,14 @@ struct Medication: Codable, Identifiable {
 
 @Model
 final class ParentProfile {
-    var id: UUID
-    var name: String
-    var statusMessage: String
-    var createdAt: Date
-    var updatedAt: Date
+    var id: UUID = UUID()
+    var name: String = ""
+    var statusMessage: String = "Stable today"
+    var createdAt: Date = Date()
+    var updatedAt: Date = Date()
 
     // Profile details
-    var photoData: Data?
+    @Attribute(.externalStorage) var photoData: Data?
     var dateOfBirth: Date?
     var bloodType: String?
     var allergies: String?
@@ -32,8 +32,8 @@ final class ParentProfile {
     var insuranceNumber: String?
 
     // Medical
-    var medications: [Medication]
-    var conditions: [String]
+    var medications: [Medication] = []
+    var conditions: [String] = []
 
     // Emergency & pharmacy
     var emergencyContactName: String?
@@ -42,19 +42,19 @@ final class ParentProfile {
     var pharmacyPhone: String?
 
     // Health
-    var healthKitEnabled: Bool
+    var healthKitEnabled: Bool = false
 
     // Relationships
-    @Relationship(deleteRule: .cascade) var appointments: [Appointment]
-    @Relationship(deleteRule: .cascade) var tasks: [Task]
-    @Relationship(deleteRule: .cascade) var documents: [Document]
-    @Relationship(deleteRule: .cascade) var familyMembers: [FamilyMember]
-    @Relationship(deleteRule: .cascade) var expenses: [Expense]
-    @Relationship(deleteRule: .cascade) var updateFeedItems: [UpdateFeedItem]
+    @Relationship(deleteRule: .cascade) var appointments: [Appointment] = []
+    @Relationship(deleteRule: .cascade) var tasks: [Task] = []
+    @Relationship(deleteRule: .cascade) var documents: [Document] = []
+    @Relationship(deleteRule: .cascade) var familyMembers: [FamilyMember] = []
+    @Relationship(deleteRule: .cascade) var expenses: [Expense] = []
+    @Relationship(deleteRule: .cascade) var updateFeedItems: [UpdateFeedItem] = []
 
     init(
         id: UUID = UUID(),
-        name: String,
+        name: String = "",
         statusMessage: String = "Stable today",
         photoData: Data? = nil,
         dateOfBirth: Date? = nil,
@@ -90,11 +90,5 @@ final class ParentProfile {
         self.healthKitEnabled = healthKitEnabled
         self.createdAt = Date()
         self.updatedAt = Date()
-        self.appointments = []
-        self.tasks = []
-        self.documents = []
-        self.familyMembers = []
-        self.expenses = []
-        self.updateFeedItems = []
     }
 }

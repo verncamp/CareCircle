@@ -2,19 +2,16 @@
 //  CareCircleApp.swift
 //  CareCircle
 //
-//  Created on March 17, 2026.
-//
 
 import SwiftUI
 import SwiftData
 
 @main
 struct CareCircleApp: App {
-    var body: some Scene {
-        WindowGroup {
-            AppRouter()
-        }
-        .modelContainer(for: [
+    let modelContainer: ModelContainer
+
+    init() {
+        let schema = Schema([
             ParentProfile.self,
             Appointment.self,
             Task.self,
@@ -24,5 +21,37 @@ struct CareCircleApp: App {
             ExpenseAccount.self,
             UpdateFeedItem.self
         ])
+
+        let mode = UserDefaults.standard.string(forKey: "appMode") ?? "none"
+
+        let config: ModelConfiguration
+        if mode == "demo" {
+            // Demo: in-memory, no CloudKit sync
+            config = ModelConfiguration(
+                "CareCircleDemo",
+                schema: schema,
+                isStoredInMemoryOnly: true
+            )
+        } else {
+            // Real: CloudKit-backed persistent store
+            config = ModelConfiguration(
+                "CareCircle",
+                schema: schema,
+                cloudKitDatabase: .automatic
+            )
+        }
+
+        do {
+            modelContainer = try ModelContainer(for: schema, configurations: [config])
+        } catch {
+            fatalError("Failed to create ModelContainer: \(error)")
+        }
+    }
+
+    var body: some Scene {
+        WindowGroup {
+            AppRouter()
+        }
+        .modelContainer(modelContainer)
     }
 }

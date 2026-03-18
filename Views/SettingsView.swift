@@ -14,6 +14,7 @@ struct SettingsView: View {
     @Query private var profiles: [ParentProfile]
     @Query private var familyMembers: [FamilyMember]
 
+    @State private var cloudKit = CloudKitAccountManager()
     @State private var showingEditProfile = false
     @State private var showingAddMember = false
     @State private var showingResetConfirm = false
@@ -52,6 +53,7 @@ struct SettingsView: View {
                 dangerSection
             }
             .navigationTitle("Settings")
+            .task { await cloudKit.checkAccountStatus() }
             .sheet(isPresented: $showingEditProfile) {
                 if let profile {
                     ParentProfileEditView(profile: profile)
@@ -242,6 +244,24 @@ struct SettingsView: View {
 
     private var preferencesSection: some View {
         Section("App") {
+            HStack(spacing: 12) {
+                Image(systemName: cloudKit.isSignedIn ? "icloud.fill" : "icloud.slash")
+                    .foregroundStyle(cloudKit.isSignedIn ? .teal : .red)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("iCloud Sync")
+                        .font(.subheadline)
+                    Text(cloudKit.statusDescription)
+                        .font(.caption)
+                        .foregroundStyle(cloudKit.isSignedIn ? .green : .red)
+                }
+                Spacer()
+                if cloudKit.isSignedIn {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                        .font(.caption)
+                }
+            }
+
             NavigationLink {
                 notificationsPlaceholder
             } label: {
