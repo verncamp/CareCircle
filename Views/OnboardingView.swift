@@ -349,6 +349,9 @@ struct OnboardingView: View {
             asyncRun { _ = await healthKit.requestAuthorization() }
         }
 
+        // Request notification permission
+        asyncRun { _ = await NotificationManager.requestPermission() }
+
         try? modelContext.save()
         appMode = "real"
     }

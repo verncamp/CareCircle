@@ -204,6 +204,11 @@ struct FamilyView: View {
                     task.isCompleted.toggle()
                     task.updatedAt = Date()
                     try? modelContext.save()
+
+                    if task.isCompleted {
+                        let author = familyMembers.first(where: \.isCurrentUser)?.name ?? "Someone"
+                        ActivityFeedHelper.logTaskCompleted(task, by: author, profile: task.parentProfile, context: modelContext)
+                    }
                 }
             } label: {
                 Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
@@ -394,6 +399,7 @@ struct AddTaskView: View {
         task.parentProfile = parentProfiles.first
         modelContext.insert(task)
         try? modelContext.save()
+        NotificationManager.scheduleTaskReminder(for: task)
         dismiss()
     }
 }

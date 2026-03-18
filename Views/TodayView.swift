@@ -9,9 +9,13 @@ import SwiftData
 struct TodayView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var parentProfiles: [ParentProfile]
+    @Query private var familyMembers: [FamilyMember]
     @State private var ai = AIAssistant()
     @State private var briefing: String?
     @State private var showBriefing = false
+    @State private var showingEmergency = false
+    @State private var showingEmergencyPacket = false
+    @State private var emergencyPDFData: Data?
 
     var activeProfile: ParentProfile? { parentProfiles.first }
 
@@ -46,6 +50,36 @@ struct TodayView: View {
             }
             .navigationTitle("Today")
             .screenBackground()
+            .confirmationDialog("Emergency", isPresented: $showingEmergency, titleVisibility: .visible) {
+                Button("Call 911", role: .destructive) {
+                    if let url = URL(string: "tel://911") {
+                        UIApplication.shared.open(url)
+                    }
+                }
+
+                Button("Call Emergency Contact") {
+                    guard let phone = activeProfile?.emergencyContactPhone else { return }
+                    let digits = phone.filter { $0.isNumber }
+                    if let url = URL(string: "tel://\(digits)") {
+                        UIApplication.shared.open(url)
+                    }
+                }
+
+                Button("Generate Emergency Packet") {
+                    guard let profile = activeProfile else { return }
+                    emergencyPDFData = EmergencyPacketGenerator.generate(for: profile)
+                    showingEmergencyPacket = true
+                }
+
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("Quick access to emergency services and care information")
+            }
+            .sheet(isPresented: $showingEmergencyPacket) {
+                if let data = emergencyPDFData {
+                    ShareSheet(items: [data])
+                }
+            }
         }
     }
 
@@ -132,7 +166,7 @@ struct TodayView: View {
 
                 Spacer()
 
-                Button(action: {}) {
+                Button(action: { showingEmergency = true }) {
                     Image(systemName: "exclamationmark.circle.fill")
                         .font(.system(size: 28))
                         .symbolRenderingMode(.palette)
@@ -249,6 +283,11 @@ struct TodayView: View {
                                     task.isCompleted.toggle()
                                     task.updatedAt = Date()
                                     try? modelContext.save()
+
+                                    if task.isCompleted {
+                                        let author = familyMembers.first(where: \.isCurrentUser)?.name ?? "Someone"
+                                        ActivityFeedHelper.logTaskCompleted(task, by: author, profile: task.parentProfile, context: modelContext)
+                                    }
                                 }
                             }) {
                                 Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")

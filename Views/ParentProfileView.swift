@@ -13,6 +13,8 @@ struct ParentProfileView: View {
 
     @State private var healthKit = HealthKitManager()
     @State private var showingEdit = false
+    @State private var showingShareSheet = false
+    @State private var emergencyPDFData: Data?
 
     var age: Int? {
         guard let dob = profile.dateOfBirth else { return nil }
@@ -33,6 +35,7 @@ struct ParentProfileView: View {
                 }
 
                 emergencyCard
+                emergencyPacketCard
                 familyCircleCard
             }
             .padding(.horizontal)
@@ -50,6 +53,11 @@ struct ParentProfileView: View {
         }
         .sheet(isPresented: $showingEdit) {
             ParentProfileEditView(profile: profile)
+        }
+        .sheet(isPresented: $showingShareSheet) {
+            if let data = emergencyPDFData {
+                ShareSheet(items: [data])
+            }
         }
         .task {
             if profile.healthKitEnabled && healthKit.isAvailable {
@@ -381,6 +389,35 @@ struct ParentProfileView: View {
         .glassCard()
     }
 
+    // MARK: - Emergency Packet
+
+    private var emergencyPacketCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            SectionHeader(title: "Emergency Packet")
+
+            Text("Generate a printable PDF with all critical care information for emergency responders.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            Button {
+                emergencyPDFData = EmergencyPacketGenerator.generate(for: profile)
+                showingShareSheet = true
+            } label: {
+                HStack {
+                    Image(systemName: "doc.text.fill")
+                    Text("Generate & Share PDF")
+                }
+                .font(.subheadline)
+                .fontWeight(.medium)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(.teal)
+        }
+        .glassCard()
+    }
+
     // MARK: - Family Circle
 
     private var familyCircleCard: some View {
@@ -411,6 +448,20 @@ struct ParentProfileView: View {
 }
 
 // MARK: - Flow Layout for condition tags
+
+// MARK: - Share Sheet
+
+struct ShareSheet: UIViewControllerRepresentable {
+    let items: [Any]
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: items, applicationActivities: nil)
+    }
+
+    func updateUIViewController(_ controller: UIActivityViewController, context: Context) {}
+}
+
+// MARK: - Flow Layout
 
 struct FlowLayout: Layout {
     var spacing: CGFloat = 8

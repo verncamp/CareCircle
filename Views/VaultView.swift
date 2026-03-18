@@ -10,7 +10,9 @@ struct VaultView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Document.createdAt, order: .reverse) private var documents: [Document]
     @State private var searchText = ""
+    @Query private var familyMembers: [FamilyMember]
     @State private var showingAddDocument = false
+    @State private var showingScanner = false
 
     var pinnedDocuments: [Document] {
         documents.filter { $0.isPinned }
@@ -39,7 +41,10 @@ struct VaultView: View {
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 12) {
                                     ForEach(pinnedDocuments) { doc in
-                                        pinnedCard(doc)
+                                        NavigationLink(destination: DocumentDetailView(document: doc)) {
+                                            pinnedCard(doc)
+                                        }
+                                        .buttonStyle(.plain)
                                     }
                                 }
                             }
@@ -61,7 +66,10 @@ struct VaultView: View {
                         } else {
                             VStack(spacing: 8) {
                                 ForEach(filteredDocuments) { doc in
-                                    documentRow(doc)
+                                    NavigationLink(destination: DocumentDetailView(document: doc)) {
+                                        documentRow(doc)
+                                    }
+                                    .buttonStyle(.plain)
                                 }
                             }
                         }
@@ -80,7 +88,7 @@ struct VaultView: View {
                         Button(action: { showingAddDocument = true }) {
                             Label("Add Document", systemImage: "doc.badge.plus")
                         }
-                        Button(action: {}) {
+                        Button(action: { showingScanner = true }) {
                             Label("Scan Document", systemImage: "doc.text.viewfinder")
                         }
                     } label: {
@@ -92,6 +100,11 @@ struct VaultView: View {
             }
             .sheet(isPresented: $showingAddDocument) {
                 AddDocumentView()
+            }
+            .sheet(isPresented: $showingScanner) {
+                DocumentScannerView { scannedData, pageCount in
+                    saveScannedDocument(data: scannedData, pages: pageCount)
+                }
             }
         }
     }
@@ -192,6 +205,21 @@ struct VaultView: View {
         .padding(32)
     }
 
+    private func saveScannedDocument(data: Data, pages: Int) {
+        let document = Document(
+            title: "Scanned Document (\(pages) page\(pages == 1 ? "" : "s"))",
+            category: .other,
+            fileURL: "scanned://\(UUID().uuidString)"
+        )
+        document.fileData = data
+        document.parentProfile = documents.first?.parentProfile
+        modelContext.insert(document)
+        try? modelContext.save()
+
+        let author = familyMembers.first(where: \.isCurrentUser)?.name ?? "Someone"
+        ActivityFeedHelper.logDocumentAdded(document, by: author, profile: document.parentProfile, context: modelContext)
+    }
+
     func iconForCategory(_ category: DocumentCategory) -> String {
         switch category {
         case .insurance:   return "shield.checkered"
@@ -211,6 +239,7 @@ struct AddDocumentView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @Query private var parentProfiles: [ParentProfile]
+    @Query private var familyMembers: [FamilyMember]
 
     @State private var title = ""
     @State private var category: DocumentCategory = .other
@@ -269,6 +298,9 @@ struct AddDocumentView: View {
         document.parentProfile = parentProfiles.first
         modelContext.insert(document)
         try? modelContext.save()
+
+        let author = familyMembers.first(where: \.isCurrentUser)?.name ?? "Someone"
+        ActivityFeedHelper.logDocumentAdded(document, by: author, profile: parentProfiles.first, context: modelContext)
         dismiss()
     }
 }

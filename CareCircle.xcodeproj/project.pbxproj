@@ -7,8 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01A2B3C4D5E6F7081234AAAA /* ActivityFeedHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01A2B3C4D5E6F7081234BBBB /* ActivityFeedHelper.swift */; };
+		01A2B3C4D5E6F7081234CCCC /* DocumentDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01A2B3C4D5E6F7081234DDDD /* DocumentDetailView.swift */; };
+		01A2B3C4D5E6F7081234EEEE /* NotificationSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01A2B3C4D5E6F7081234FFFF /* NotificationSettingsView.swift */; };
 		05F1E4297D60EC5D025C04C2 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BAE93E11BCF8D2BBB062980 /* Task.swift */; };
 		0BCB634E9B3B39B0AD890655 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDAF7DE1CF364C4708F8B92 /* Theme.swift */; };
+		10309B94E179ADACFC0983F7 /* DocumentScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B449BB33DC591B5136CBEBF /* DocumentScannerView.swift */; };
 		175FE2F6683B4E25829A3B08 /* ParentProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937EE7E45BE4B24D6313CE42 /* ParentProfile.swift */; };
 		25375F84226738584D18366A /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3056EE63F3DC7812C320D8D /* HealthKitManager.swift */; };
 		2D9BEFAA2602410A27A00BCB /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DBA6584DADEE5A0194A827E /* TodayView.swift */; };
@@ -18,6 +22,7 @@
 		464CDB54EBFFAFE3220CB226 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1AE509F00C7ED6E15506DC /* WelcomeView.swift */; };
 		4E23A650A7B514DF3928737A /* CloudKitAccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6AE49CA582D74D0B58866B5 /* CloudKitAccountManager.swift */; };
 		58685D41BA00F0CF4693C595 /* Expense.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B82DD2C793435B1760FEF4B /* Expense.swift */; };
+		610A8B76C23D10D1D9E0D6A1 /* EmergencyPacketGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12718590F1C678E72AEA8008 /* EmergencyPacketGenerator.swift */; };
 		62FBC9383BFB8431D90FA7C6 /* VaultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CAA894193FD0D2001FF986 /* VaultView.swift */; };
 		66D793F2156142A682FEF2C0 /* FamilyMember.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA36E429FA5AC6C146D34C9 /* FamilyMember.swift */; };
 		6CBAF3AB45F1D732DBBA8EE6 /* ParentProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C20DE762250A1290C43444 /* ParentProfileEditView.swift */; };
@@ -25,6 +30,7 @@
 		9AD0C22367099AAC40E497DC /* ParentProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39B255C63686C49CBBCE36D5 /* ParentProfileView.swift */; };
 		9BB7C905D29386690D1D559E /* Document.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17434265C8057386D55919F9 /* Document.swift */; };
 		9E4F13552E23EC2492D5FAD1 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9435B208D3FFC961F5898D2 /* CalendarView.swift */; };
+		A225932B6990939DF99167B9 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12999950C0536BEC53B9AA3B /* NotificationManager.swift */; };
 		A579610D8C4DAA27AC2D6242 /* Appointment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B09227E42515DA2261D3C7 /* Appointment.swift */; };
 		A7F8590D0EE24B656C5F8B85 /* FinancesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341499FA8F747E5F783EC8D3 /* FinancesView.swift */; };
 		B11DD7F08B80E0DB43A770FA /* ExpenseAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0EA3F369611505DA699F4C /* ExpenseAccount.swift */; };
@@ -34,10 +40,38 @@
 		D52ADAD428D6A048B0611A9F /* UpdateFeedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50EC3605690CBC693A2C5C5 /* UpdateFeedItem.swift */; };
 		DAB2E79DB0E5DBAD7D599585 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EC81C277E7175D4D0C9F39F /* ContentView.swift */; };
 		F9169C14D11F73985F5F8159 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313ECC5C7D1CBAAE4EB3E33B /* OnboardingView.swift */; };
+		AA10000100001000AA100001 /* ExpenseAccountTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000200002000AA100002 /* ExpenseAccountTests.swift */; };
+		AA10000300003000AA100003 /* ModelRelationshipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000400004000AA100004 /* ModelRelationshipTests.swift */; };
+		AA10000500005000AA100005 /* ActivityFeedHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000600006000AA100006 /* ActivityFeedHelperTests.swift */; };
+		AA10000700007000AA100007 /* EmergencyPacketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000800008000AA100008 /* EmergencyPacketTests.swift */; };
+		BB10000100001000BB100001 /* CareCircleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB10000200002000BB100002 /* CareCircleUITests.swift */; };
+		BB10000300003000BB100003 /* CareCircleLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB10000400004000BB100004 /* CareCircleLaunchTests.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		AA20000100001000AA200001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 117EFD211382C077908F6525 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 59FFC5608501DDDBBC7559EF;
+			remoteInfo = CareCircle;
+		};
+		BB20000100001000BB200001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 117EFD211382C077908F6525 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 59FFC5608501DDDBBC7559EF;
+			remoteInfo = CareCircle;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		013C81CBD5896779E2CC817F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		01A2B3C4D5E6F7081234BBBB /* ActivityFeedHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityFeedHelper.swift; sourceTree = "<group>"; };
+		01A2B3C4D5E6F7081234DDDD /* DocumentDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentDetailView.swift; sourceTree = "<group>"; };
+		01A2B3C4D5E6F7081234FFFF /* NotificationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingsView.swift; sourceTree = "<group>"; };
+		12718590F1C678E72AEA8008 /* EmergencyPacketGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmergencyPacketGenerator.swift; sourceTree = "<group>"; };
+		12999950C0536BEC53B9AA3B /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		17434265C8057386D55919F9 /* Document.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Document.swift; sourceTree = "<group>"; };
 		1EDABAED291037CFE18E659B /* HealthMetricSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthMetricSnapshot.swift; sourceTree = "<group>"; };
 		2AF01489065453532424909B /* CareCircleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareCircleApp.swift; sourceTree = "<group>"; };
@@ -50,6 +84,7 @@
 		54B09227E42515DA2261D3C7 /* Appointment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Appointment.swift; sourceTree = "<group>"; };
 		5C127343754B9F99C23F5D5B /* AIAssistant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIAssistant.swift; sourceTree = "<group>"; };
 		6A1AE509F00C7ED6E15506DC /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		6B449BB33DC591B5136CBEBF /* DocumentScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentScannerView.swift; sourceTree = "<group>"; };
 		6EDAF7DE1CF364C4708F8B92 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		6F0EA3F369611505DA699F4C /* ExpenseAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseAccount.swift; sourceTree = "<group>"; };
 		7EC81C277E7175D4D0C9F39F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -60,11 +95,19 @@
 		9A35CF2E3A2758C44E966BE2 /* AppointmentDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentDetailView.swift; sourceTree = "<group>"; };
 		A6AE49CA582D74D0B58866B5 /* CloudKitAccountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitAccountManager.swift; sourceTree = "<group>"; };
 		B9435B208D3FFC961F5898D2 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
-		CD6EF676C71F4914A00AA836 /* CareCircle.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = CareCircle.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD6EF676C71F4914A00AA836 /* CareCircle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CareCircle.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6C20DE762250A1290C43444 /* ParentProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentProfileEditView.swift; sourceTree = "<group>"; };
 		E50EC3605690CBC693A2C5C5 /* UpdateFeedItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateFeedItem.swift; sourceTree = "<group>"; };
 		F1BD927AF6572EC6054C8D11 /* SampleDataGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleDataGenerator.swift; sourceTree = "<group>"; };
 		F3056EE63F3DC7812C320D8D /* HealthKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitManager.swift; sourceTree = "<group>"; };
+		AA10000200002000AA100002 /* ExpenseAccountTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseAccountTests.swift; sourceTree = "<group>"; };
+		AA10000400004000AA100004 /* ModelRelationshipTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelRelationshipTests.swift; sourceTree = "<group>"; };
+		AA10000600006000AA100006 /* ActivityFeedHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityFeedHelperTests.swift; sourceTree = "<group>"; };
+		AA10000800008000AA100008 /* EmergencyPacketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmergencyPacketTests.swift; sourceTree = "<group>"; };
+		AA30000100001000AA300001 /* CareCircleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CareCircleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB10000200002000BB100002 /* CareCircleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareCircleUITests.swift; sourceTree = "<group>"; };
+		BB10000400004000BB100004 /* CareCircleLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareCircleLaunchTests.swift; sourceTree = "<group>"; };
+		BB30000100001000BB300001 /* CareCircleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CareCircleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -76,6 +119,8 @@
 				39B95F64C655BDDE43DAE613 /* Helpers */,
 				9C7D2F2EDFCFBA1F763CC6A2 /* Models */,
 				C2900E56EC09B8BAB52E5D94 /* Views */,
+				AA40000100001000AA400001 /* CareCircleTests */,
+				BB40000100001000BB400001 /* CareCircleUITests */,
 				1E7E27F35C1771ED8C11F42D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -84,6 +129,8 @@
 			isa = PBXGroup;
 			children = (
 				CD6EF676C71F4914A00AA836 /* CareCircle.app */,
+				AA30000100001000AA300001 /* CareCircleTests.xctest */,
+				BB30000100001000BB300001 /* CareCircleUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -91,9 +138,12 @@
 		39B95F64C655BDDE43DAE613 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				01A2B3C4D5E6F7081234BBBB /* ActivityFeedHelper.swift */,
 				5C127343754B9F99C23F5D5B /* AIAssistant.swift */,
 				A6AE49CA582D74D0B58866B5 /* CloudKitAccountManager.swift */,
+				12718590F1C678E72AEA8008 /* EmergencyPacketGenerator.swift */,
 				F3056EE63F3DC7812C320D8D /* HealthKitManager.swift */,
+				12999950C0536BEC53B9AA3B /* NotificationManager.swift */,
 				F1BD927AF6572EC6054C8D11 /* SampleDataGenerator.swift */,
 				6EDAF7DE1CF364C4708F8B92 /* Theme.swift */,
 			);
@@ -121,9 +171,12 @@
 			children = (
 				9A35CF2E3A2758C44E966BE2 /* AppointmentDetailView.swift */,
 				B9435B208D3FFC961F5898D2 /* CalendarView.swift */,
+				01A2B3C4D5E6F7081234DDDD /* DocumentDetailView.swift */,
+				6B449BB33DC591B5136CBEBF /* DocumentScannerView.swift */,
 				2D5193DFF1DFF0319C5B0191 /* FamilyView.swift */,
 				341499FA8F747E5F783EC8D3 /* FinancesView.swift */,
 				313ECC5C7D1CBAAE4EB3E33B /* OnboardingView.swift */,
+				01A2B3C4D5E6F7081234FFFF /* NotificationSettingsView.swift */,
 				D6C20DE762250A1290C43444 /* ParentProfileEditView.swift */,
 				39B255C63686C49CBBCE36D5 /* ParentProfileView.swift */,
 				013C81CBD5896779E2CC817F /* SettingsView.swift */,
@@ -132,6 +185,26 @@
 				6A1AE509F00C7ED6E15506DC /* WelcomeView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		AA40000100001000AA400001 /* CareCircleTests */ = {
+			isa = PBXGroup;
+			children = (
+				AA10000600006000AA100006 /* ActivityFeedHelperTests.swift */,
+				AA10000800008000AA100008 /* EmergencyPacketTests.swift */,
+				AA10000200002000AA100002 /* ExpenseAccountTests.swift */,
+				AA10000400004000AA100004 /* ModelRelationshipTests.swift */,
+			);
+			path = CareCircleTests;
+			sourceTree = "<group>";
+		};
+		BB40000100001000BB400001 /* CareCircleUITests */ = {
+			isa = PBXGroup;
+			children = (
+				BB10000400004000BB100004 /* CareCircleLaunchTests.swift */,
+				BB10000200002000BB100002 /* CareCircleUITests.swift */,
+			);
+			path = CareCircleUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -154,6 +227,38 @@
 			productReference = CD6EF676C71F4914A00AA836 /* CareCircle.app */;
 			productType = "com.apple.product-type.application";
 		};
+		AA50000100001000AA500001 /* CareCircleTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA60000100001000AA600001 /* Build configuration list for PBXNativeTarget "CareCircleTests" */;
+			buildPhases = (
+				AA70000100001000AA700001 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AA80000100001000AA800001 /* PBXTargetDependency */,
+			);
+			name = CareCircleTests;
+			productName = CareCircleTests;
+			productReference = AA30000100001000AA300001 /* CareCircleTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		BB50000100001000BB500001 /* CareCircleUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BB60000100001000BB600001 /* Build configuration list for PBXNativeTarget "CareCircleUITests" */;
+			buildPhases = (
+				BB70000100001000BB700001 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BB80000100001000BB800001 /* PBXTargetDependency */,
+			);
+			name = CareCircleUITests;
+			productName = CareCircleUITests;
+			productReference = BB30000100001000BB300001 /* CareCircleUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -162,11 +267,6 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1600;
-				TargetAttributes = {
-					59FFC5608501DDDBBC7559EF = {
-						DevelopmentTeam = "";
-					};
-				};
 			};
 			buildConfigurationList = 93A2E45C1DD8AAD76BEAB1C9 /* Build configuration list for PBXProject "CareCircle" */;
 			developmentRegion = en;
@@ -183,6 +283,8 @@
 			projectRoot = "";
 			targets = (
 				59FFC5608501DDDBBC7559EF /* CareCircle */,
+				AA50000100001000AA500001 /* CareCircleTests */,
+				BB50000100001000BB500001 /* CareCircleUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -192,6 +294,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01A2B3C4D5E6F7081234AAAA /* ActivityFeedHelper.swift in Sources */,
 				C7F15BA6CAE17FD2E4EE0CB9 /* AIAssistant.swift in Sources */,
 				A579610D8C4DAA27AC2D6242 /* Appointment.swift in Sources */,
 				CD9BFE0FC0899D2729421F1B /* AppointmentDetailView.swift in Sources */,
@@ -200,6 +303,9 @@
 				4E23A650A7B514DF3928737A /* CloudKitAccountManager.swift in Sources */,
 				DAB2E79DB0E5DBAD7D599585 /* ContentView.swift in Sources */,
 				9BB7C905D29386690D1D559E /* Document.swift in Sources */,
+				01A2B3C4D5E6F7081234CCCC /* DocumentDetailView.swift in Sources */,
+				10309B94E179ADACFC0983F7 /* DocumentScannerView.swift in Sources */,
+				610A8B76C23D10D1D9E0D6A1 /* EmergencyPacketGenerator.swift in Sources */,
 				58685D41BA00F0CF4693C595 /* Expense.swift in Sources */,
 				B11DD7F08B80E0DB43A770FA /* ExpenseAccount.swift in Sources */,
 				66D793F2156142A682FEF2C0 /* FamilyMember.swift in Sources */,
@@ -207,6 +313,8 @@
 				A7F8590D0EE24B656C5F8B85 /* FinancesView.swift in Sources */,
 				25375F84226738584D18366A /* HealthKitManager.swift in Sources */,
 				38D3008FDCD05B25881EE636 /* HealthMetricSnapshot.swift in Sources */,
+				A225932B6990939DF99167B9 /* NotificationManager.swift in Sources */,
+				01A2B3C4D5E6F7081234EEEE /* NotificationSettingsView.swift in Sources */,
 				F9169C14D11F73985F5F8159 /* OnboardingView.swift in Sources */,
 				175FE2F6683B4E25829A3B08 /* ParentProfile.swift in Sources */,
 				6CBAF3AB45F1D732DBBA8EE6 /* ParentProfileEditView.swift in Sources */,
@@ -222,7 +330,40 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AA70000100001000AA700001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA10000500005000AA100005 /* ActivityFeedHelperTests.swift in Sources */,
+				AA10000700007000AA100007 /* EmergencyPacketTests.swift in Sources */,
+				AA10000100001000AA100001 /* ExpenseAccountTests.swift in Sources */,
+				AA10000300003000AA100003 /* ModelRelationshipTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BB70000100001000BB700001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BB10000300003000BB100003 /* CareCircleLaunchTests.swift in Sources */,
+				BB10000100001000BB100001 /* CareCircleUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AA80000100001000AA800001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 59FFC5608501DDDBBC7559EF /* CareCircle */;
+			targetProxy = AA20000100001000AA200001 /* PBXContainerItemProxy */;
+		};
+		BB80000100001000BB800001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 59FFC5608501DDDBBC7559EF /* CareCircle */;
+			targetProxy = BB20000100001000BB200001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		5889F07B1E5663F7C79B068A /* Release */ = {
@@ -233,7 +374,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = R8HQ8WYP5T;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_GENERATION_MODE = GeneratedFile;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "CareCircle reads health data to show your parent's vitals to trusted family members.";
@@ -264,7 +405,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = R8HQ8WYP5T;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_GENERATION_MODE = GeneratedFile;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "CareCircle reads health data to show your parent's vitals to trusted family members.";
@@ -406,6 +547,72 @@
 			};
 			name = Release;
 		};
+		AA90000100001000AA900001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = R8HQ8WYP5T;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vernoncampbell.carecircle.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CareCircle.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CareCircle";
+			};
+			name = Debug;
+		};
+		AA90000200002000AA900002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = R8HQ8WYP5T;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vernoncampbell.carecircle.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CareCircle.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CareCircle";
+			};
+			name = Release;
+		};
+		BB90000100001000BB900001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = R8HQ8WYP5T;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vernoncampbell.carecircle.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = CareCircle;
+			};
+			name = Debug;
+		};
+		BB90000200002000BB900002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = R8HQ8WYP5T;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vernoncampbell.carecircle.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = CareCircle;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -423,6 +630,24 @@
 			buildConfigurations = (
 				9CF979DECDD9EB692D88C08A /* Debug */,
 				B49F832A79865AB891191046 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		AA60000100001000AA600001 /* Build configuration list for PBXNativeTarget "CareCircleTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA90000100001000AA900001 /* Debug */,
+				AA90000200002000AA900002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		BB60000100001000BB600001 /* Build configuration list for PBXNativeTarget "CareCircleUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BB90000100001000BB900001 /* Debug */,
+				BB90000200002000BB900002 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

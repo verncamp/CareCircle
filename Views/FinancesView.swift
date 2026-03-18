@@ -13,6 +13,7 @@ struct FinancesView: View {
     @Query private var familyMembers: [FamilyMember]
 
     @State private var showingAddExpense = false
+    @State private var showingContribute = false
 
     var totalPoolBalance: Decimal {
         familyMembers.compactMap { $0.expenseAccount?.balance }.reduce(0, +)
@@ -50,7 +51,14 @@ struct FinancesView: View {
             .screenBackground()
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    Button(action: { showingAddExpense = true }) {
+                    Menu {
+                        Button(action: { showingAddExpense = true }) {
+                            Label("Add Expense", systemImage: "creditcard")
+                        }
+                        Button(action: { showingContribute = true }) {
+                            Label("Fund Account", systemImage: "banknote")
+                        }
+                    } label: {
                         Image(systemName: "plus.circle.fill")
                             .symbolRenderingMode(.hierarchical)
                             .font(.title3)
@@ -59,6 +67,9 @@ struct FinancesView: View {
             }
             .sheet(isPresented: $showingAddExpense) {
                 AddExpenseView()
+            }
+            .sheet(isPresented: $showingContribute) {
+                ContributeView()
             }
         }
     }
@@ -347,8 +358,103 @@ struct AddExpenseView: View {
         expense.paidBy = selectedMember
         expense.parentProfile = parentProfiles.first
 
+        // Deduct from payer's account
+        if let account = selectedMember?.expenseAccount {
+            account.spend(amount: amountDecimal)
+        }
+
         modelContext.insert(expense)
         try? modelContext.save()
+
+        let author = familyMembers.first(where: \.isCurrentUser)?.name ?? "Someone"
+        ActivityFeedHelper.logExpenseAdded(expense, by: author, profile: parentProfiles.first, context: modelContext)
+        dismiss()
+    }
+}
+
+// MARK: - Contribute View
+
+struct ContributeView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+    @Query private var familyMembers: [FamilyMember]
+    @Query private var parentProfiles: [ParentProfile]
+
+    @State private var amount = ""
+    @State private var selectedMember: FamilyMember?
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("Contribution") {
+                    TextField("Amount", text: $amount)
+                        .keyboardType(.decimalPad)
+
+                    Picker("From", selection: $selectedMember) {
+                        Text("Select member").tag(nil as FamilyMember?)
+                        ForEach(familyMembers) { member in
+                            HStack {
+                                Text(member.name)
+                                if let balance = member.expenseAccount?.balance {
+                                    Text("(\(formatCurrency(balance)))")
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            .tag(member as FamilyMember?)
+                        }
+                    }
+                }
+
+                if let member = selectedMember, let account = member.expenseAccount {
+                    Section("Current Balance") {
+                        HStack {
+                            Text("Balance")
+                            Spacer()
+                            Text(formatCurrency(account.balance))
+                                .fontWeight(.semibold)
+                        }
+                        HStack {
+                            Text("Total Contributed")
+                            Spacer()
+                            Text(formatCurrency(account.totalContributed))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Fund Account")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Contribute") { saveContribution() }
+                        .disabled(amount.isEmpty || selectedMember == nil)
+                        .fontWeight(.semibold)
+                }
+            }
+            .onAppear {
+                selectedMember = familyMembers.first(where: \.isCurrentUser)
+            }
+        }
+    }
+
+    private func saveContribution() {
+        guard let amountDecimal = Decimal(string: amount),
+              let member = selectedMember,
+              let account = member.expenseAccount else { return }
+
+        account.contribute(amount: amountDecimal)
+        try? modelContext.save()
+
+        let author = familyMembers.first(where: \.isCurrentUser)?.name ?? "Someone"
+        ActivityFeedHelper.logNote(
+            "\(member.name) contributed \(formatCurrency(amountDecimal)) to the care fund",
+            by: author,
+            profile: parentProfiles.first,
+            context: modelContext
+        )
         dismiss()
     }
 }

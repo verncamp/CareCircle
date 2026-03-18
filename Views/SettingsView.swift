@@ -263,7 +263,7 @@ struct SettingsView: View {
             }
 
             NavigationLink {
-                notificationsPlaceholder
+                notificationSettingsView
             } label: {
                 Label("Notifications", systemImage: "bell.badge")
             }
@@ -306,15 +306,10 @@ struct SettingsView: View {
         }
     }
 
-    // MARK: - Placeholder Views
+    // MARK: - Notification Settings
 
-    private var notificationsPlaceholder: some View {
-        ContentUnavailableView(
-            "Coming Soon",
-            systemImage: "bell.badge",
-            description: Text("Notification preferences will be available in a future update")
-        )
-        .navigationTitle("Notifications")
+    private var notificationSettingsView: some View {
+        NotificationSettingsView()
     }
 
     private var aboutView: some View {

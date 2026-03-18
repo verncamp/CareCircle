@@ -170,6 +170,8 @@ struct AddAppointmentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var parentProfiles: [ParentProfile]
 
+    @Query private var familyMembers: [FamilyMember]
+
     @State private var title = ""
     @State private var date = Date()
     @State private var location = ""
@@ -214,6 +216,10 @@ struct AddAppointmentView: View {
         appointment.parentProfile = parentProfiles.first
         modelContext.insert(appointment)
         try? modelContext.save()
+        NotificationManager.scheduleAppointmentReminder(for: appointment)
+
+        let author = familyMembers.first(where: \.isCurrentUser)?.name ?? "Someone"
+        ActivityFeedHelper.logAppointmentAdded(appointment, by: author, profile: parentProfiles.first, context: modelContext)
         dismiss()
     }
 }
