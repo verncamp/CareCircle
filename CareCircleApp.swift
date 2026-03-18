@@ -12,7 +12,7 @@ import SwiftData
 struct CareCircleApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            AppRouter()
         }
         .modelContainer(for: [
             ParentProfile.self,

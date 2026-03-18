@@ -334,34 +334,11 @@ struct TodayView: View {
     // MARK: - Empty State
 
     private var emptyState: some View {
-        VStack(spacing: 20) {
-            Spacer()
-
-            Image(systemName: "heart.circle")
-                .font(.system(size: 72))
-                .foregroundStyle(.teal.opacity(0.6))
-
-            Text("Welcome to CareCircle")
-                .font(.title2)
-                .fontWeight(.bold)
-
-            Text("Create a parent profile to start coordinating care")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-
-            Button(action: { createSampleProfile() }) {
-                Label("Get Started", systemImage: "plus.circle.fill")
-                    .font(.headline)
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 12)
-            }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
-
-            Spacer()
-        }
-        .padding(40)
+        ContentUnavailableView(
+            "No Profile",
+            systemImage: "heart.circle",
+            description: Text("Go back to set up a care profile")
+        )
     }
 
     // MARK: - Helpers
@@ -398,9 +375,6 @@ struct TodayView: View {
         }
     }
 
-    func createSampleProfile() {
-        SampleDataGenerator.generateSampleData(modelContext: modelContext)
-    }
 }
 
 #Preview {
