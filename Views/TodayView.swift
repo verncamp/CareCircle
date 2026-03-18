@@ -161,6 +161,7 @@ struct TodayView: View {
     // MARK: - Next Appointment Card
 
     private func appointmentCard(_ appointment: Appointment) -> some View {
+        NavigationLink(destination: AppointmentDetailView(appointment: appointment)) {
         VStack(alignment: .leading, spacing: 14) {
             SectionHeader(title: "Next Up")
 
@@ -213,6 +214,8 @@ struct TodayView: View {
             }
         }
         .glassCard()
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Critical Tasks

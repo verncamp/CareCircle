@@ -17,6 +17,8 @@ struct AppRouter: View {
             switch appMode {
             case "demo":
                 MainContentView(isDemo: true)
+            case "signup":
+                OnboardingView()
             case "real":
                 if profiles.isEmpty {
                     OnboardingView()
@@ -96,7 +98,7 @@ struct MainContentView: View {
 
             Button("Sign Up") {
                 SampleDataGenerator.clearAllData(modelContext: modelContext)
-                appMode = "real"
+                appMode = "signup"
             }
             .font(.subheadline)
             .fontWeight(.semibold)

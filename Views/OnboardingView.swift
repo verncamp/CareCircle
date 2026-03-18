@@ -57,13 +57,17 @@ struct OnboardingView: View {
                 .padding(.top, 16)
 
                 // Steps
-                TabView(selection: $step) {
-                    accountStep.tag(0)
-                    parentStep.tag(1)
-                    confirmStep.tag(2)
+                Group {
+                    switch step {
+                    case 0: accountStep
+                    case 1: parentStep
+                    default: confirmStep
+                    }
                 }
-                .tabViewStyle(.page(indexDisplayMode: .never))
-                .animation(.easeInOut, value: step)
+                .transition(.asymmetric(
+                    insertion: .move(edge: .trailing),
+                    removal: .move(edge: .leading)
+                ))
 
                 // Navigation
                 HStack {
