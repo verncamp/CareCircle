@@ -24,36 +24,43 @@ struct CareCircleApp: App {
 
         let mode = UserDefaults.standard.string(forKey: "appMode") ?? "none"
 
-        if mode == "demo" {
-            // Demo: in-memory, no CloudKit sync
-            let config = ModelConfiguration(
+        let config: ModelConfiguration
+
+        switch mode {
+        case "demo":
+            // In-memory, no persistence, no CloudKit
+            config = ModelConfiguration(
                 "CareCircleDemo",
                 schema: schema,
                 isStoredInMemoryOnly: true
             )
-            do {
-                modelContainer = try ModelContainer(for: schema, configurations: [config])
-            } catch {
-                fatalError("Failed to create demo ModelContainer: \(error)")
-            }
-        } else {
-            // Real: CloudKit-backed persistent store
-            let config = ModelConfiguration(
+        case "real":
+            // Signed-up user: persistent store with CloudKit sync
+            config = ModelConfiguration(
                 "CareCircle",
                 schema: schema,
                 cloudKitDatabase: .automatic
             )
+        default:
+            // "none", "signup", or any other state: local-only persistent store
+            // No CloudKit until the user completes onboarding
+            config = ModelConfiguration(
+                "CareCircle",
+                schema: schema,
+                cloudKitDatabase: .none
+            )
+        }
+
+        do {
+            modelContainer = try ModelContainer(for: schema, configurations: [config])
+        } catch {
+            // Schema migration failed — delete old store and retry
+            print("ModelContainer init failed, resetting store: \(error)")
+            Self.deleteExistingStore()
             do {
                 modelContainer = try ModelContainer(for: schema, configurations: [config])
             } catch {
-                // Migration failed — delete the old store and retry
-                print("ModelContainer failed, clearing store: \(error)")
-                Self.deleteExistingStore(named: "CareCircle")
-                do {
-                    modelContainer = try ModelContainer(for: schema, configurations: [config])
-                } catch {
-                    fatalError("Failed to create ModelContainer after reset: \(error)")
-                }
+                fatalError("Failed to create ModelContainer after reset: \(error)")
             }
         }
     }
@@ -65,18 +72,19 @@ struct CareCircleApp: App {
         .modelContainer(modelContainer)
     }
 
-    /// Remove an incompatible SwiftData store so a fresh one can be created.
-    private static func deleteExistingStore(named name: String) {
-        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        let extensions = ["store", "store-shm", "store-wal"]
-        for ext in extensions {
-            let url = appSupport.appendingPathComponent("\(name).\(ext)")
-            try? FileManager.default.removeItem(at: url)
-        }
-        // Also try default.store
-        for ext in extensions {
-            let url = appSupport.appendingPathComponent("default.\(ext)")
-            try? FileManager.default.removeItem(at: url)
+    private static func deleteExistingStore() {
+        guard let appSupport = FileManager.default.urls(
+            for: .applicationSupportDirectory, in: .userDomainMask
+        ).first else { return }
+
+        let suffixes = ["store", "store-shm", "store-wal"]
+        let names = ["CareCircle", "default"]
+
+        for name in names {
+            for suffix in suffixes {
+                let url = appSupport.appendingPathComponent("\(name).\(suffix)")
+                try? FileManager.default.removeItem(at: url)
+            }
         }
     }
 }
