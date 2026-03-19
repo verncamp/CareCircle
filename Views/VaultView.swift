@@ -10,16 +10,22 @@ struct VaultView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Document.createdAt, order: .reverse) private var documents: [Document]
     @State private var searchText = ""
+    @State private var selectedCategory: DocumentCategory?
     @Query private var familyMembers: [FamilyMember]
     @State private var showingAddDocument = false
     @State private var showingScanner = false
 
     var pinnedDocuments: [Document] {
-        documents.filter { $0.isPinned }
+        let pinned = documents.filter { $0.isPinned }
+        if let cat = selectedCategory { return pinned.filter { $0.category == cat } }
+        return pinned
     }
 
     var filteredDocuments: [Document] {
-        let unpinned = documents.filter { !$0.isPinned }
+        var unpinned = documents.filter { !$0.isPinned }
+        if let cat = selectedCategory {
+            unpinned = unpinned.filter { $0.category == cat }
+        }
         if searchText.isEmpty { return unpinned }
         return unpinned.filter {
             $0.title.localizedCaseInsensitiveContains(searchText) ||
@@ -82,6 +88,35 @@ struct VaultView: View {
             .searchable(text: $searchText, prompt: "Search documents")
             .navigationTitle("Vault")
             .screenBackground()
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Menu {
+                        Button("All Categories") {
+                            selectedCategory = nil
+                        }
+                        ForEach(DocumentCategory.allCases, id: \.self) { cat in
+                            Button {
+                                selectedCategory = cat
+                            } label: {
+                                HStack {
+                                    Text(cat.rawValue)
+                                    if selectedCategory == cat {
+                                        Image(systemName: "checkmark")
+                                    }
+                                }
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "line.3.horizontal.decrease.circle")
+                            if let cat = selectedCategory {
+                                Text(cat.rawValue)
+                                    .font(.caption)
+                            }
+                        }
+                    }
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
@@ -218,6 +253,15 @@ struct VaultView: View {
 
         let author = familyMembers.first(where: \.isCurrentUser)?.name ?? "Someone"
         ActivityFeedHelper.logDocumentAdded(document, by: author, profile: document.parentProfile, context: modelContext)
+
+        // Run OCR in background
+        asyncRun {
+            let text = await OCRHelper.extractText(from: data)
+            if let text, !text.isEmpty {
+                document.aiExtractedText = text
+                try? modelContext.save()
+            }
+        }
     }
 
     func iconForCategory(_ category: DocumentCategory) -> String {
@@ -245,6 +289,9 @@ struct AddDocumentView: View {
     @State private var category: DocumentCategory = .other
     @State private var isPinned = false
     @State private var ai = AIAssistant()
+    @State private var showingFilePicker = false
+    @State private var importedFileData: Data?
+    @State private var importedFileName: String?
 
     var body: some View {
         NavigationStack {
@@ -272,6 +319,31 @@ struct AddDocumentView: View {
 
                     Toggle("Pin to top", isOn: $isPinned)
                 }
+
+                Section("File") {
+                    if let fileName = importedFileName {
+                        HStack {
+                            Image(systemName: "doc.fill")
+                                .foregroundStyle(.teal)
+                            Text(fileName)
+                                .font(.subheadline)
+                            Spacer()
+                            Button("Remove") {
+                                importedFileData = nil
+                                importedFileName = nil
+                            }
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                        }
+                    }
+
+                    Button {
+                        showingFilePicker = true
+                    } label: {
+                        Label(importedFileData == nil ? "Attach File" : "Replace File",
+                              systemImage: "paperclip")
+                    }
+                }
             }
             .navigationTitle("Add Document")
             .navigationBarTitleDisplayMode(.inline)
@@ -285,6 +357,21 @@ struct AddDocumentView: View {
                         .fontWeight(.semibold)
                 }
             }
+            .fileImporter(
+                isPresented: $showingFilePicker,
+                allowedContentTypes: [.pdf, .image, .jpeg, .png],
+                allowsMultipleSelection: false
+            ) { result in
+                if case .success(let urls) = result, let url = urls.first {
+                    guard url.startAccessingSecurityScopedResource() else { return }
+                    defer { url.stopAccessingSecurityScopedResource() }
+                    importedFileData = try? Data(contentsOf: url)
+                    importedFileName = url.lastPathComponent
+                    if title.isEmpty {
+                        title = url.deletingPathExtension().lastPathComponent
+                    }
+                }
+            }
         }
     }
 
@@ -292,9 +379,10 @@ struct AddDocumentView: View {
         let document = Document(
             title: title,
             category: category,
-            fileURL: "placeholder://\(UUID().uuidString)",
+            fileURL: importedFileName ?? "manual://\(UUID().uuidString)",
             isPinned: isPinned
         )
+        document.fileData = importedFileData
         document.parentProfile = parentProfiles.first
         modelContext.insert(document)
         try? modelContext.save()

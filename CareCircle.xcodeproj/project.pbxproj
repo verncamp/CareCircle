@@ -49,6 +49,7 @@
 		CC10000100001000CC100001 /* TaskDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC10000200002000CC100002 /* TaskDetailView.swift */; };
 		CC10000300003000CC100003 /* ExpenseDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC10000400004000CC100004 /* ExpenseDetailView.swift */; };
 		CC10000500005000CC100005 /* FamilyMemberDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC10000600006000CC100006 /* FamilyMemberDetailView.swift */; };
+		DD10000100001000DD100001 /* OCRHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD10000200002000DD100002 /* OCRHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -114,6 +115,7 @@
 		CC10000200002000CC100002 /* TaskDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailView.swift; sourceTree = "<group>"; };
 		CC10000400004000CC100004 /* ExpenseDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseDetailView.swift; sourceTree = "<group>"; };
 		CC10000600006000CC100006 /* FamilyMemberDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyMemberDetailView.swift; sourceTree = "<group>"; };
+		DD10000200002000DD100002 /* OCRHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -150,6 +152,7 @@
 				12718590F1C678E72AEA8008 /* EmergencyPacketGenerator.swift */,
 				F3056EE63F3DC7812C320D8D /* HealthKitManager.swift */,
 				12999950C0536BEC53B9AA3B /* NotificationManager.swift */,
+				DD10000200002000DD100002 /* OCRHelper.swift */,
 				F1BD927AF6572EC6054C8D11 /* SampleDataGenerator.swift */,
 				6EDAF7DE1CF364C4708F8B92 /* Theme.swift */,
 			);
@@ -339,6 +342,7 @@
 				CC10000100001000CC100001 /* TaskDetailView.swift in Sources */,
 				CC10000300003000CC100003 /* ExpenseDetailView.swift in Sources */,
 				CC10000500005000CC100005 /* FamilyMemberDetailView.swift in Sources */,
+				DD10000100001000DD100001 /* OCRHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

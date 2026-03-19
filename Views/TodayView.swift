@@ -14,6 +14,8 @@ struct TodayView: View {
     @State private var briefing: String?
     @State private var showBriefing = false
     @State private var showingAllTasks = false
+    @State private var showingPostNote = false
+    @State private var noteText = ""
     @State private var showingEmergency = false
     @State private var showingEmergencyPacket = false
     @State private var emergencyPDFData: Data?
@@ -422,15 +424,64 @@ struct TodayView: View {
         let updates = recentUpdates(from: profile)
 
         return VStack(alignment: .leading, spacing: 14) {
-            SectionHeader(title: "Recent Updates")
+            HStack {
+                SectionHeader(title: "Recent Updates")
+                Spacer()
+                Button {
+                    showingPostNote = true
+                } label: {
+                    Image(systemName: "square.and.pencil")
+                        .font(.subheadline)
+                        .foregroundStyle(.teal)
+                }
+            }
 
-            if updates.isEmpty {
+            // Post note inline
+            if showingPostNote {
+                VStack(spacing: 10) {
+                    TextField("Share an update with your care circle...", text: $noteText, axis: .vertical)
+                        .font(.subheadline)
+                        .lineLimit(2...4)
+                        .textFieldStyle(.roundedBorder)
+
+                    HStack {
+                        Button("Cancel") {
+                            noteText = ""
+                            showingPostNote = false
+                        }
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+
+                        Spacer()
+
+                        Button {
+                            guard !noteText.isEmpty else { return }
+                            let author = familyMembers.first(where: \.isCurrentUser)?.name ?? "Someone"
+                            ActivityFeedHelper.logNote(noteText, by: author, profile: profile, context: modelContext)
+                            noteText = ""
+                            showingPostNote = false
+                        } label: {
+                            Text("Post")
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 6)
+                                .background(.teal, in: Capsule())
+                        }
+                        .disabled(noteText.isEmpty)
+                    }
+                }
+                .padding(.bottom, 4)
+            }
+
+            if updates.isEmpty && !showingPostNote {
                 Text("No recent updates")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
-            } else {
+            } else if !updates.isEmpty {
                 VStack(alignment: .leading, spacing: 0) {
                     ForEach(Array(updates.enumerated()), id: \.element.id) { index, update in
                         HStack(alignment: .top, spacing: 12) {

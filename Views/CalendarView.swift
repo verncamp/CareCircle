@@ -11,9 +11,25 @@ struct CalendarView: View {
     @Query(sort: \Appointment.date) private var appointments: [Appointment]
     @Query private var parentProfiles: [ParentProfile]
     @State private var showingAddAppointment = false
+    @State private var searchText = ""
+    @State private var showPast = false
 
     var upcomingAppointments: [Appointment] {
-        appointments.filter { $0.date > Date() }
+        let upcoming = appointments.filter { $0.date > Date() }
+        if searchText.isEmpty { return upcoming }
+        return upcoming.filter { matchesSearch($0) }
+    }
+
+    var pastAppointments: [Appointment] {
+        let past = appointments.filter { $0.date <= Date() }.reversed()
+        if searchText.isEmpty { return Array(past) }
+        return past.filter { matchesSearch($0) }
+    }
+
+    private func matchesSearch(_ appt: Appointment) -> Bool {
+        appt.title.localizedCaseInsensitiveContains(searchText) ||
+        appt.location.localizedCaseInsensitiveContains(searchText) ||
+        appt.notes.localizedCaseInsensitiveContains(searchText)
     }
 
     var groupedByDate: [(key: String, appointments: [Appointment])] {
@@ -25,11 +41,21 @@ struct CalendarView: View {
             .sorted { ($0.appointments.first?.date ?? .distantPast) < ($1.appointments.first?.date ?? .distantPast) }
     }
 
+    var groupedPast: [(key: String, appointments: [Appointment])] {
+        let grouped = Dictionary(grouping: pastAppointments) { appt in
+            appt.date.formatted(date: .complete, time: .omitted)
+        }
+        return grouped
+            .map { (key: $0.key, appointments: $0.value) }
+            .sorted { ($0.appointments.first?.date ?? .distantPast) > ($1.appointments.first?.date ?? .distantPast) }
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-                    if upcomingAppointments.isEmpty {
+                    // Upcoming
+                    if upcomingAppointments.isEmpty && !showPast {
                         emptyState
                     } else {
                         ForEach(groupedByDate, id: \.key) { group in
@@ -47,11 +73,50 @@ struct CalendarView: View {
                             }
                         }
                     }
+
+                    // Past Appointments
+                    if !pastAppointments.isEmpty {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Button {
+                                withAnimation { showPast.toggle() }
+                            } label: {
+                                HStack(spacing: 6) {
+                                    SectionHeader(title: "Past Appointments")
+                                    Spacer()
+                                    Text("\(pastAppointments.count)")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                    Image(systemName: showPast ? "chevron.up" : "chevron.down")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            .buttonStyle(.plain)
+
+                            if showPast {
+                                ForEach(groupedPast, id: \.key) { group in
+                                    VStack(alignment: .leading, spacing: 12) {
+                                        Text(group.key)
+                                            .font(.subheadline)
+                                            .fontWeight(.semibold)
+                                            .foregroundStyle(.tertiary)
+                                            .textCase(.uppercase)
+                                            .tracking(0.5)
+
+                                        ForEach(group.appointments) { appointment in
+                                            appointmentCard(appointment, isPast: true)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 20)
                 .adaptiveWidth()
             }
+            .searchable(text: $searchText, prompt: "Search appointments")
             .navigationTitle("Calendar")
             .screenBackground()
             .toolbar {
@@ -71,7 +136,7 @@ struct CalendarView: View {
 
     // MARK: - Appointment Card
 
-    private func appointmentCard(_ appointment: Appointment) -> some View {
+    private func appointmentCard(_ appointment: Appointment, isPast: Bool = false) -> some View {
         NavigationLink(destination: AppointmentDetailView(appointment: appointment)) {
             HStack(alignment: .top, spacing: 14) {
                 Text(appointment.date.formatted(date: .omitted, time: .shortened))

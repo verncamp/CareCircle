@@ -14,6 +14,17 @@ struct FinancesView: View {
 
     @State private var showingAddExpense = false
     @State private var showingContribute = false
+    @State private var searchText = ""
+
+    var filteredExpenses: [Expense] {
+        if searchText.isEmpty { return expenses }
+        return expenses.filter {
+            $0.title.localizedCaseInsensitiveContains(searchText) ||
+            $0.category.rawValue.localizedCaseInsensitiveContains(searchText) ||
+            $0.notes.localizedCaseInsensitiveContains(searchText) ||
+            ($0.paidBy?.name.localizedCaseInsensitiveContains(searchText) ?? false)
+        }
+    }
 
     var totalPoolBalance: Decimal {
         familyMembers.compactMap { $0.expenseAccount?.balance }.reduce(0, +)
@@ -47,6 +58,7 @@ struct FinancesView: View {
                 .padding(.bottom, 20)
                 .adaptiveWidth()
             }
+            .searchable(text: $searchText, prompt: "Search expenses")
             .navigationTitle("Finances")
             .screenBackground()
             .toolbar {
@@ -199,7 +211,7 @@ struct FinancesView: View {
     // MARK: - Expenses List
 
     private var expensesSection: some View {
-        let recent = Array(expenses.prefix(10))
+        let recent = Array(filteredExpenses.prefix(20))
 
         return VStack(alignment: .leading, spacing: 12) {
             SectionHeader(title: "Recent Expenses")
