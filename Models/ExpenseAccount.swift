@@ -13,8 +13,6 @@ final class ExpenseAccount {
     var totalContributed: Decimal = 0
     var totalSpent: Decimal = 0
     var updatedAt: Date = Date()
-    var airwallexAccountID: String?
-    var airwallexWalletID: String?
     var familyMember: FamilyMember?
 
     init(

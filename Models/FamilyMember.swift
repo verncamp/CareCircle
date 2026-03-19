@@ -23,8 +23,6 @@ final class FamilyMember {
     var phoneNumber: String?
     var isCurrentUser: Bool = false
     var createdAt: Date = Date()
-    var airwallexUserID: String?
-
     var parentProfile: ParentProfile?
     var expenseAccount: ExpenseAccount?
     @Relationship(deleteRule: .nullify, inverse: \Task.assignedTo) var assignedTasks: [Task] = []

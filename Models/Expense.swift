@@ -25,12 +25,8 @@ final class Expense {
     var category: ExpenseCategory = ExpenseCategory.other
     var date: Date = Date()
     var notes: String = ""
-    var receiptPhotoURL: String?
     var createdAt: Date = Date()
     var paidBy: FamilyMember?
-    var isSplit: Bool = false
-    var splitAmong: [String] = []
-    var airwallexTransactionID: String?
     var parentProfile: ParentProfile?
 
     init(
@@ -39,10 +35,7 @@ final class Expense {
         amount: Decimal = 0,
         category: ExpenseCategory = .other,
         date: Date = Date(),
-        notes: String = "",
-        receiptPhotoURL: String? = nil,
-        isSplit: Bool = false,
-        splitAmong: [String] = []
+        notes: String = ""
     ) {
         self.id = id
         self.title = title
@@ -50,9 +43,6 @@ final class Expense {
         self.category = category
         self.date = date
         self.notes = notes
-        self.receiptPhotoURL = receiptPhotoURL
-        self.isSplit = isSplit
-        self.splitAmong = splitAmong
         self.createdAt = Date()
     }
 }

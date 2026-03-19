@@ -221,6 +221,8 @@ struct FamilyView: View {
                     .font(.title3)
                     .foregroundStyle(task.isCompleted ? .green : task.priority.color.opacity(0.6))
             }
+            .accessibilityLabel(task.isCompleted ? "Completed" : "Not completed")
+            .accessibilityHint("Double-tap to toggle")
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(task.title)
@@ -248,7 +250,9 @@ struct FamilyView: View {
             Image(systemName: task.priority.icon)
                 .foregroundStyle(task.priority.color)
                 .font(.caption)
+                .accessibilityLabel("\(task.priority.rawValue.capitalized) priority")
         }
+        .accessibilityElement(children: .combine)
         .contextMenu {
             Button {
                 // Toggle completion from context menu

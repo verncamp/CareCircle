@@ -17,9 +17,6 @@ final class Appointment {
     var updatedAt: Date = Date()
     var checklistItems: [ChecklistItem] = []
     var aiSummary: String?
-    var voiceNoteURL: String?
-    var photoNoteURLs: [String] = []
-
     var parentProfile: ParentProfile?
 
     init(

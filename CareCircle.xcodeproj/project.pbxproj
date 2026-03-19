@@ -50,6 +50,10 @@
 		CC10000300003000CC100003 /* ExpenseDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC10000400004000CC100004 /* ExpenseDetailView.swift */; };
 		CC10000500005000CC100005 /* FamilyMemberDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC10000600006000CC100006 /* FamilyMemberDetailView.swift */; };
 		DD10000100001000DD100001 /* OCRHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD10000200002000DD100002 /* OCRHelper.swift */; };
+		DD10000300003000DD100003 /* SaveHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD10000400004000DD100004 /* SaveHelper.swift */; };
+		EE10000100001000EE100001 /* OnboardingFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE10000200002000EE100002 /* OnboardingFlowTests.swift */; };
+		EE10000300003000EE100003 /* DeletionCascadeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE10000400004000EE100004 /* DeletionCascadeTests.swift */; };
+		EE10000500005000EE100005 /* FormValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE10000600006000EE100006 /* FormValidationTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -116,6 +120,10 @@
 		CC10000400004000CC100004 /* ExpenseDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseDetailView.swift; sourceTree = "<group>"; };
 		CC10000600006000CC100006 /* FamilyMemberDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyMemberDetailView.swift; sourceTree = "<group>"; };
 		DD10000200002000DD100002 /* OCRHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRHelper.swift; sourceTree = "<group>"; };
+		DD10000400004000DD100004 /* SaveHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveHelper.swift; sourceTree = "<group>"; };
+		EE10000200002000EE100002 /* OnboardingFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowTests.swift; sourceTree = "<group>"; };
+		EE10000400004000EE100004 /* DeletionCascadeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletionCascadeTests.swift; sourceTree = "<group>"; };
+		EE10000600006000EE100006 /* FormValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormValidationTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -154,6 +162,7 @@
 				12999950C0536BEC53B9AA3B /* NotificationManager.swift */,
 				DD10000200002000DD100002 /* OCRHelper.swift */,
 				F1BD927AF6572EC6054C8D11 /* SampleDataGenerator.swift */,
+				DD10000400004000DD100004 /* SaveHelper.swift */,
 				6EDAF7DE1CF364C4708F8B92 /* Theme.swift */,
 			);
 			path = Helpers;
@@ -203,9 +212,12 @@
 			isa = PBXGroup;
 			children = (
 				AA10000600006000AA100006 /* ActivityFeedHelperTests.swift */,
+				EE10000400004000EE100004 /* DeletionCascadeTests.swift */,
 				AA10000800008000AA100008 /* EmergencyPacketTests.swift */,
 				AA10000200002000AA100002 /* ExpenseAccountTests.swift */,
+				EE10000600006000EE100006 /* FormValidationTests.swift */,
 				AA10000400004000AA100004 /* ModelRelationshipTests.swift */,
+				EE10000200002000EE100002 /* OnboardingFlowTests.swift */,
 			);
 			path = CareCircleTests;
 			sourceTree = "<group>";
@@ -343,6 +355,7 @@
 				CC10000300003000CC100003 /* ExpenseDetailView.swift in Sources */,
 				CC10000500005000CC100005 /* FamilyMemberDetailView.swift in Sources */,
 				DD10000100001000DD100001 /* OCRHelper.swift in Sources */,
+				DD10000300003000DD100003 /* SaveHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -354,6 +367,9 @@
 				AA10000700007000AA100007 /* EmergencyPacketTests.swift in Sources */,
 				AA10000100001000AA100001 /* ExpenseAccountTests.swift in Sources */,
 				AA10000300003000AA100003 /* ModelRelationshipTests.swift in Sources */,
+				EE10000100001000EE100001 /* OnboardingFlowTests.swift in Sources */,
+				EE10000300003000EE100003 /* DeletionCascadeTests.swift in Sources */,
+				EE10000500005000EE100005 /* FormValidationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
