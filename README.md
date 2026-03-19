@@ -137,4 +137,4 @@ Proprietary - All rights reserved
 ---
 
 **Last updated**: March 17, 2026  
-**Working owner**: Vernon + Codex
+**Working owner**: Vernon
