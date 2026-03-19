@@ -279,7 +279,7 @@ struct AppointmentDetailView: View {
             // Action buttons
             HStack(spacing: 12) {
                 Button {
-                    asyncRun {
+                    asyncRun { @MainActor in
                         let result = await ai.summarizeNotes(appointment.notes)
                         if let result {
                             aiSummary = result
@@ -292,7 +292,7 @@ struct AppointmentDetailView: View {
                 }
 
                 Button {
-                    asyncRun {
+                    asyncRun { @MainActor in
                         suggestedTasks = await ai.extractTasks(from: appointment.notes)
                     }
                 } label: {

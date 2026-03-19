@@ -292,7 +292,7 @@ struct AddDocumentView: View {
                     TextField("Title", text: $title)
                         .onChange(of: title) { _, newTitle in
                             guard ai.isAvailable, newTitle.count > 3 else { return }
-                            asyncRun {
+                            asyncRun { @MainActor in
                                 if let suggestion = await ai.suggestCategory(for: newTitle),
                                    let match = DocumentCategory.allCases.first(where: {
                                        $0.rawValue.localizedCaseInsensitiveContains(suggestion) ||

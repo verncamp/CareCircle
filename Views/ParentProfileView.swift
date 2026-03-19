@@ -300,7 +300,7 @@ struct ParentProfileView: View {
             }
 
             Button {
-                asyncRun {
+                asyncRun { @MainActor in
                     await healthKit.fetchLatestMetrics()
                     await healthKit.fetchHeartRateHistory()
                 }

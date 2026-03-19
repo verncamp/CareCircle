@@ -162,7 +162,7 @@ struct OnboardingView: View {
                                 .multilineTextAlignment(.center)
 
                             Button("Retry iCloud") {
-                                asyncRun { await cloudKit.checkAccountStatus() }
+                                asyncRun { @MainActor in await cloudKit.checkAccountStatus() }
                             }
                             .font(.caption)
                             .buttonStyle(.bordered)
@@ -344,11 +344,11 @@ struct OnboardingView: View {
         modelContext.insert(account)
 
         if connectHealth {
-            asyncRun { _ = await healthKit.requestAuthorization() }
+            asyncRun { @MainActor in _ = await healthKit.requestAuthorization() }
         }
 
         // Request notification permission
-        asyncRun { _ = await NotificationManager.requestPermission() }
+        asyncRun { @MainActor in _ = await NotificationManager.requestPermission() }
 
         try? modelContext.save()
         appMode = "real"

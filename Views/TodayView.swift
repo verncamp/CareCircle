@@ -207,13 +207,13 @@ struct TodayView: View {
                     .lineSpacing(4)
 
                 Button("Refresh") {
-                    asyncRun { await generateBriefing(profile) }
+                    asyncRun { @MainActor in await generateBriefing(profile) }
                 }
                 .font(.caption)
                 .foregroundStyle(.teal)
             } else {
                 Button {
-                    asyncRun { await generateBriefing(profile) }
+                    asyncRun { @MainActor in await generateBriefing(profile) }
                 } label: {
                     HStack {
                         Image(systemName: "sparkles")

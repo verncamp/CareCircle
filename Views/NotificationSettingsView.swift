@@ -61,7 +61,7 @@ struct NotificationSettingsView: View {
 
                 if authorizationStatus == .notDetermined {
                     Button {
-                        asyncRun {
+                        asyncRun { @MainActor in
                             _ = await NotificationManager.requestPermission()
                             await checkStatus()
                         }
@@ -120,7 +120,7 @@ struct NotificationSettingsView: View {
                             appointments: appointments,
                             tasks: tasks
                         )
-                        asyncRun {
+                        asyncRun { @MainActor in
                             await checkStatus()
                             isLoading = false
                         }
@@ -139,7 +139,7 @@ struct NotificationSettingsView: View {
 
                     Button(role: .destructive) {
                         NotificationManager.cancelAll()
-                        asyncRun { await checkStatus() }
+                        asyncRun { @MainActor in await checkStatus() }
                     } label: {
                         Label("Clear All Reminders", systemImage: "bell.slash")
                     }
@@ -189,17 +189,19 @@ struct NotificationSettingsView: View {
 
     private var statusIcon: String {
         switch authorizationStatus {
-        case .authorized, .provisional: return "bell.badge.fill"
+        case .authorized, .provisional, .ephemeral: return "bell.badge.fill"
         case .denied: return "bell.slash.fill"
-        default: return "bell.fill"
+        case .notDetermined: return "bell.fill"
+        @unknown default: return "bell.fill"
         }
     }
 
     private var statusColor: Color {
         switch authorizationStatus {
-        case .authorized, .provisional: return .green
+        case .authorized, .provisional, .ephemeral: return .green
         case .denied: return .red
-        default: return .secondary
+        case .notDetermined: return .secondary
+        @unknown default: return .secondary
         }
     }
 
@@ -207,6 +209,7 @@ struct NotificationSettingsView: View {
         switch authorizationStatus {
         case .authorized: return "Notifications enabled"
         case .provisional: return "Provisional notifications enabled"
+        case .ephemeral: return "Ephemeral notifications enabled"
         case .denied: return "Notifications denied"
         case .notDetermined: return "Not yet configured"
         @unknown default: return "Unknown"

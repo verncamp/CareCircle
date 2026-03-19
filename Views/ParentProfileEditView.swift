@@ -164,7 +164,7 @@ struct ParentProfileEditView: View {
                     Toggle("Connect Apple Health", isOn: $profile.healthKitEnabled)
                         .onChange(of: profile.healthKitEnabled) { _, enabled in
                             if enabled {
-                                asyncRun {
+                                asyncRun { @MainActor in
                                     let authorized = await healthKit.requestAuthorization()
                                     if !authorized {
                                         profile.healthKitEnabled = false
@@ -191,7 +191,7 @@ struct ParentProfileEditView: View {
                 }
             }
             .onChange(of: selectedPhoto) { _, item in
-                asyncRun {
+                asyncRun { @MainActor in
                     if let data = try? await item?.loadTransferable(type: Data.self) {
                         profile.photoData = data
                     }

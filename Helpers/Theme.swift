@@ -77,6 +77,13 @@ func asyncRun(_ operation: @escaping @Sendable () async -> Void) -> _Concurrency
     _Concurrency.Task(operation: operation)
 }
 
+@discardableResult
+func asyncRun(_ operation: @escaping @MainActor () async -> Void) -> _Concurrency.Task<Void, Never> {
+    _Concurrency.Task { @MainActor in
+        await operation()
+    }
+}
+
 // MARK: - Priority Helpers
 
 extension TaskPriority {
