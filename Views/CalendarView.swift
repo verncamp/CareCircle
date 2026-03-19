@@ -13,6 +13,7 @@ struct CalendarView: View {
     @State private var showingAddAppointment = false
     @State private var searchText = ""
     @State private var showPast = false
+    @State private var appointmentToDelete: Appointment?
 
     var upcomingAppointments: [Appointment] {
         let upcoming = appointments.filter { $0.date > Date() }
@@ -131,6 +132,21 @@ struct CalendarView: View {
             .sheet(isPresented: $showingAddAppointment) {
                 AddAppointmentView()
             }
+            .alert("Delete Appointment", isPresented: Binding(
+                get: { appointmentToDelete != nil },
+                set: { if !$0 { appointmentToDelete = nil } }
+            )) {
+                Button("Delete", role: .destructive) {
+                    if let appt = appointmentToDelete {
+                        modelContext.delete(appt)
+                        try? modelContext.save()
+                        appointmentToDelete = nil
+                    }
+                }
+                Button("Cancel", role: .cancel) { appointmentToDelete = nil }
+            } message: {
+                Text("Are you sure you want to delete \"\(appointmentToDelete?.title ?? "")\"?")
+            }
         }
     }
 
@@ -192,8 +208,7 @@ struct CalendarView: View {
         .glassCard()
         .contextMenu {
             Button(role: .destructive) {
-                modelContext.delete(appointment)
-                try? modelContext.save()
+                appointmentToDelete = appointment
             } label: {
                 Label("Delete", systemImage: "trash")
             }

@@ -254,8 +254,8 @@ struct VaultView: View {
         let author = familyMembers.first(where: \.isCurrentUser)?.name ?? "Someone"
         ActivityFeedHelper.logDocumentAdded(document, by: author, profile: document.parentProfile, context: modelContext)
 
-        // Run OCR in background
-        asyncRun {
+        // Run OCR — extract on background, update model on main
+        asyncRun { @MainActor in
             let text = await OCRHelper.extractText(from: data)
             if let text, !text.isEmpty {
                 document.aiExtractedText = text
@@ -265,15 +265,7 @@ struct VaultView: View {
     }
 
     func iconForCategory(_ category: DocumentCategory) -> String {
-        switch category {
-        case .insurance:   return "shield.checkered"
-        case .medical:     return "heart.text.square"
-        case .legal:       return "doc.text"
-        case .medication:  return "pills"
-        case .lab:         return "chart.bar.doc.horizontal"
-        case .vaccination: return "syringe"
-        case .other:       return "doc"
-        }
+        iconForDocumentCategory(category)
     }
 }
 

@@ -213,15 +213,7 @@ struct DocumentDetailView: View {
     }
 
     func iconForCategory(_ category: DocumentCategory) -> String {
-        switch category {
-        case .insurance:   return "shield.checkered"
-        case .medical:     return "heart.text.square"
-        case .legal:       return "doc.text"
-        case .medication:  return "pills"
-        case .lab:         return "chart.bar.doc.horizontal"
-        case .vaccination: return "syringe"
-        case .other:       return "doc"
-        }
+        iconForDocumentCategory(category)
     }
 }
 

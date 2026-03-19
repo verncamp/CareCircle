@@ -286,16 +286,7 @@ struct FinancesView: View {
     }
 
     func iconForCategory(_ category: ExpenseCategory) -> String {
-        switch category {
-        case .medical:        return "cross.case.fill"
-        case .medication:     return "pills.fill"
-        case .utilities:      return "bolt.fill"
-        case .groceries:      return "cart.fill"
-        case .homeAide:       return "person.fill"
-        case .transportation: return "car.fill"
-        case .equipment:      return "wrench.and.screwdriver.fill"
-        case .other:          return "tag.fill"
-        }
+        iconForExpenseCategory(category)
     }
 }
 

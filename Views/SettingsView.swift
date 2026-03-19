@@ -189,6 +189,10 @@ struct SettingsView: View {
         for index in offsets {
             let member = familyMembers[index]
             if !member.isCurrentUser {
+                // Delete orphaned expense account
+                if let account = member.expenseAccount {
+                    modelContext.delete(account)
+                }
                 modelContext.delete(member)
             }
         }

@@ -267,6 +267,8 @@ struct TodayView: View {
                         .symbolRenderingMode(.palette)
                         .foregroundStyle(.white, .red)
                 }
+                .accessibilityLabel("Emergency")
+                .accessibilityHint("Access emergency services and care information")
                 .shadow(color: .red.opacity(0.3), radius: 8, y: 2)
             }
 
@@ -541,7 +543,7 @@ struct TodayView: View {
     func criticalTasks(from profile: ParentProfile) -> [Task] {
         profile.tasks
             .filter { !$0.isCompleted && ($0.priority == .high || $0.priority == .urgent) }
-            .sorted { $0.priority.rawValue > $1.priority.rawValue }
+            .sorted { $0.priority.sortOrder < $1.priority.sortOrder }
             .prefix(5)
             .map { $0 }
     }

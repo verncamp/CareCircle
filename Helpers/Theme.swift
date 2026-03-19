@@ -108,6 +108,33 @@ extension TaskPriority {
     }
 }
 
+// MARK: - Category Icons
+
+func iconForDocumentCategory(_ category: DocumentCategory) -> String {
+    switch category {
+    case .insurance:   return "shield.checkered"
+    case .medical:     return "heart.text.square"
+    case .legal:       return "doc.text"
+    case .medication:  return "pills"
+    case .lab:         return "chart.bar.doc.horizontal"
+    case .vaccination: return "syringe"
+    case .other:       return "doc"
+    }
+}
+
+func iconForExpenseCategory(_ category: ExpenseCategory) -> String {
+    switch category {
+    case .medical:        return "cross.case.fill"
+    case .medication:     return "pills.fill"
+    case .utilities:      return "bolt.fill"
+    case .groceries:      return "cart.fill"
+    case .homeAide:       return "person.fill"
+    case .transportation: return "car.fill"
+    case .equipment:      return "wrench.and.screwdriver.fill"
+    case .other:          return "tag.fill"
+    }
+}
+
 // MARK: - Currency Formatting
 
 func formatCurrency(_ amount: Decimal) -> String {
@@ -147,6 +174,7 @@ struct AvatarView: View {
                     .font(.system(size: size * 0.36, weight: .semibold, design: .rounded))
                     .foregroundStyle(.white)
             }
+            .accessibilityLabel(name)
     }
 }
 
