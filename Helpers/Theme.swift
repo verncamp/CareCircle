@@ -89,6 +89,15 @@ extension TaskPriority {
         }
     }
 
+    var sortOrder: Int {
+        switch self {
+        case .urgent: return 0
+        case .high:   return 1
+        case .normal: return 2
+        case .low:    return 3
+        }
+    }
+
     var icon: String {
         switch self {
         case .low:    return "arrow.down.circle"

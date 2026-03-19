@@ -172,31 +172,29 @@ struct OnboardingView: View {
                 }
                 .padding(.horizontal, 24)
 
-                if cloudKit.isSignedIn {
-                    // Name & email
-                    VStack(spacing: 16) {
-                        TextField("Your full name", text: $userName)
-                            .textFieldStyle(.roundedBorder)
-                            .textContentType(.name)
-                            .autocorrectionDisabled()
+                // Name & email — always shown regardless of iCloud status
+                VStack(spacing: 16) {
+                    TextField("Your full name", text: $userName)
+                        .textFieldStyle(.roundedBorder)
+                        .textContentType(.name)
+                        .autocorrectionDisabled()
 
-                        TextField("Email address (optional)", text: $userEmail)
-                            .textFieldStyle(.roundedBorder)
-                            .textContentType(.emailAddress)
-                            .keyboardType(.emailAddress)
-                            .textInputAutocapitalization(.never)
-                            .autocorrectionDisabled()
-                    }
-                    .padding(.horizontal, 24)
+                    TextField("Email address (optional)", text: $userEmail)
+                        .textFieldStyle(.roundedBorder)
+                        .textContentType(.emailAddress)
+                        .keyboardType(.emailAddress)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                }
+                .padding(.horizontal, 24)
 
-                    if cloudKit.userName != nil {
-                        HStack(spacing: 6) {
-                            Image(systemName: "person.crop.circle.badge.checkmark")
-                                .foregroundStyle(.green)
-                            Text("Name auto-filled from iCloud")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
+                if cloudKit.isSignedIn, cloudKit.userName != nil {
+                    HStack(spacing: 6) {
+                        Image(systemName: "person.crop.circle.badge.checkmark")
+                            .foregroundStyle(.green)
+                        Text("Name auto-filled from iCloud")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                     }
                 }
 

@@ -13,6 +13,7 @@ struct TodayView: View {
     @State private var ai = AIAssistant()
     @State private var briefing: String?
     @State private var showBriefing = false
+    @State private var showingAllTasks = false
     @State private var showingEmergency = false
     @State private var showingEmergencyPacket = false
     @State private var emergencyPDFData: Data?
@@ -80,6 +81,98 @@ struct TodayView: View {
                     ShareSheet(items: [data])
                 }
             }
+            .navigationDestination(isPresented: $showingAllTasks) {
+                AllTasksView(profile: activeProfile)
+            }
+        }
+    }
+
+    // MARK: - All Tasks View
+
+    struct AllTasksView: View {
+        let profile: ParentProfile?
+        @Environment(\.modelContext) private var modelContext
+        @Query private var familyMembers: [FamilyMember]
+
+        var allTasks: [Task] {
+            guard let profile else { return [] }
+            return profile.tasks
+                .filter { !$0.isCompleted }
+                .sorted { ($0.priority.sortOrder, $0.dueDate ?? .distantFuture) < ($1.priority.sortOrder, $1.dueDate ?? .distantFuture) }
+        }
+
+        var body: some View {
+            ScrollView {
+                VStack(spacing: 12) {
+                    if allTasks.isEmpty {
+                        ContentUnavailableView(
+                            "No Open Tasks",
+                            systemImage: "checkmark.circle",
+                            description: Text("All tasks are completed")
+                        )
+                    } else {
+                        ForEach(allTasks) { task in
+                            NavigationLink(destination: TaskDetailView(task: task)) {
+                                HStack(spacing: 12) {
+                                    Button {
+                                        withAnimation(.spring(response: 0.3)) {
+                                            task.isCompleted.toggle()
+                                            task.updatedAt = Date()
+                                            try? modelContext.save()
+
+                                            if task.isCompleted {
+                                                let author = familyMembers.first(where: \.isCurrentUser)?.name ?? "Someone"
+                                                ActivityFeedHelper.logTaskCompleted(task, by: author, profile: task.parentProfile, context: modelContext)
+                                            }
+                                        }
+                                    } label: {
+                                        Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
+                                            .font(.title3)
+                                            .foregroundStyle(task.isCompleted ? .green : task.priority.color.opacity(0.6))
+                                    }
+
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(task.title)
+                                            .font(.subheadline)
+                                            .foregroundStyle(.primary)
+
+                                        HStack(spacing: 6) {
+                                            if let assigned = task.assignedTo {
+                                                Text(assigned.name)
+                                            } else {
+                                                Text("Unassigned").foregroundStyle(.orange)
+                                            }
+                                            if let due = task.dueDate {
+                                                Text("·")
+                                                Text("Due \(due.formatted(date: .abbreviated, time: .omitted))")
+                                            }
+                                        }
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                    }
+
+                                    Spacer()
+
+                                    Image(systemName: task.priority.icon)
+                                        .foregroundStyle(task.priority.color)
+                                        .font(.caption)
+
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption2)
+                                        .foregroundStyle(.tertiary)
+                                }
+                                .glassCard(padding: 14)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 20)
+                .adaptiveWidth()
+            }
+            .navigationTitle("All Tasks")
+            .screenBackground()
         }
     }
 
@@ -258,7 +351,9 @@ struct TodayView: View {
         let tasks = criticalTasks(from: profile)
 
         return VStack(alignment: .leading, spacing: 14) {
-            SectionHeader(title: "Critical Tasks", action: "See all")
+            SectionHeader(title: "Critical Tasks", action: "See all") {
+                showingAllTasks = true
+            }
 
             if tasks.isEmpty {
                 HStack {

@@ -218,6 +218,7 @@ struct FinancesView: View {
             } else {
                 VStack(spacing: 12) {
                     ForEach(recent) { expense in
+                        NavigationLink(destination: ExpenseDetailView(expense: expense)) {
                         HStack(spacing: 12) {
                             Image(systemName: iconForCategory(expense.category))
                                 .font(.body)
@@ -263,6 +264,8 @@ struct FinancesView: View {
                                 Label("Delete", systemImage: "trash")
                             }
                         }
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
             }

@@ -46,6 +46,9 @@
 		AA10000700007000AA100007 /* EmergencyPacketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000800008000AA100008 /* EmergencyPacketTests.swift */; };
 		BB10000100001000BB100001 /* CareCircleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB10000200002000BB100002 /* CareCircleUITests.swift */; };
 		BB10000300003000BB100003 /* CareCircleLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB10000400004000BB100004 /* CareCircleLaunchTests.swift */; };
+		CC10000100001000CC100001 /* TaskDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC10000200002000CC100002 /* TaskDetailView.swift */; };
+		CC10000300003000CC100003 /* ExpenseDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC10000400004000CC100004 /* ExpenseDetailView.swift */; };
+		CC10000500005000CC100005 /* FamilyMemberDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC10000600006000CC100006 /* FamilyMemberDetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -108,6 +111,9 @@
 		BB10000200002000BB100002 /* CareCircleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareCircleUITests.swift; sourceTree = "<group>"; };
 		BB10000400004000BB100004 /* CareCircleLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareCircleLaunchTests.swift; sourceTree = "<group>"; };
 		BB30000100001000BB300001 /* CareCircleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CareCircleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC10000200002000CC100002 /* TaskDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailView.swift; sourceTree = "<group>"; };
+		CC10000400004000CC100004 /* ExpenseDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseDetailView.swift; sourceTree = "<group>"; };
+		CC10000600006000CC100006 /* FamilyMemberDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyMemberDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -173,6 +179,8 @@
 				B9435B208D3FFC961F5898D2 /* CalendarView.swift */,
 				01A2B3C4D5E6F7081234DDDD /* DocumentDetailView.swift */,
 				6B449BB33DC591B5136CBEBF /* DocumentScannerView.swift */,
+				CC10000400004000CC100004 /* ExpenseDetailView.swift */,
+				CC10000600006000CC100006 /* FamilyMemberDetailView.swift */,
 				2D5193DFF1DFF0319C5B0191 /* FamilyView.swift */,
 				341499FA8F747E5F783EC8D3 /* FinancesView.swift */,
 				313ECC5C7D1CBAAE4EB3E33B /* OnboardingView.swift */,
@@ -180,6 +188,7 @@
 				D6C20DE762250A1290C43444 /* ParentProfileEditView.swift */,
 				39B255C63686C49CBBCE36D5 /* ParentProfileView.swift */,
 				013C81CBD5896779E2CC817F /* SettingsView.swift */,
+				CC10000200002000CC100002 /* TaskDetailView.swift */,
 				8DBA6584DADEE5A0194A827E /* TodayView.swift */,
 				90CAA894193FD0D2001FF986 /* VaultView.swift */,
 				6A1AE509F00C7ED6E15506DC /* WelcomeView.swift */,
@@ -327,6 +336,9 @@
 				D52ADAD428D6A048B0611A9F /* UpdateFeedItem.swift in Sources */,
 				62FBC9383BFB8431D90FA7C6 /* VaultView.swift in Sources */,
 				464CDB54EBFFAFE3220CB226 /* WelcomeView.swift in Sources */,
+				CC10000100001000CC100001 /* TaskDetailView.swift in Sources */,
+				CC10000300003000CC100003 /* ExpenseDetailView.swift in Sources */,
+				CC10000500005000CC100005 /* FamilyMemberDetailView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

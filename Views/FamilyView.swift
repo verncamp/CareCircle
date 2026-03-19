@@ -86,7 +86,10 @@ struct FamilyView: View {
                             .padding(.vertical, 20)
                         } else {
                             ForEach(familyMembers) { member in
-                                memberCard(member)
+                                NavigationLink(destination: FamilyMemberDetailView(member: member)) {
+                                    memberCard(member)
+                                }
+                                .buttonStyle(.plain)
                             }
                         }
                     }
@@ -119,8 +122,11 @@ struct FamilyView: View {
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 12)
                         } else {
-                            ForEach(filteredTasks.prefix(10)) { task in
-                                taskRow(task)
+                            ForEach(filteredTasks) { task in
+                                NavigationLink(destination: TaskDetailView(task: task)) {
+                                    taskRow(task)
+                                }
+                                .buttonStyle(.plain)
                             }
                         }
                     }
@@ -244,6 +250,16 @@ struct FamilyView: View {
                 .font(.caption)
         }
         .contextMenu {
+            Button {
+                // Toggle completion from context menu
+                task.isCompleted.toggle()
+                task.updatedAt = Date()
+                try? modelContext.save()
+            } label: {
+                Label(task.isCompleted ? "Mark Incomplete" : "Mark Complete",
+                      systemImage: task.isCompleted ? "arrow.uturn.backward" : "checkmark")
+            }
+
             Button(role: .destructive) {
                 modelContext.delete(task)
                 try? modelContext.save()
