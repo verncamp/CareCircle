@@ -9,6 +9,7 @@ import SwiftData
 // MARK: - App Router
 
 struct AppRouter: View {
+    @Environment(\.modelContext) private var modelContext
     @AppStorage("appMode") private var appMode: String = "none"
     @Query private var profiles: [ParentProfile]
 
@@ -21,15 +22,72 @@ struct AppRouter: View {
                 OnboardingView()
             case "real":
                 if profiles.isEmpty {
-                    OnboardingView()
+                    BootstrapView()
                 } else {
                     MainContentView(isDemo: false)
                 }
             default:
-                WelcomeView()
+                BootstrapView()
             }
         }
-        .animation(.easeInOut, value: appMode)
+    }
+}
+
+struct BootstrapView: View {
+    @Environment(\.modelContext) private var modelContext
+    @AppStorage("appMode") private var appMode: String = "none"
+    @Query private var profiles: [ParentProfile]
+    @State private var didBootstrap = false
+
+    var body: some View {
+        ZStack {
+            LinearGradient(
+                colors: [
+                    Color.teal.opacity(0.12),
+                    Color.mint.opacity(0.08),
+                    Color(red: 0.98, green: 0.88, blue: 0.82).opacity(0.12)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+
+            VStack(spacing: 18) {
+                Image(systemName: "heart.circle.fill")
+                    .font(.system(size: 68))
+                    .foregroundStyle(.teal)
+
+                Text("Preparing CareCircle")
+                    .font(.title2)
+                    .fontWeight(.bold)
+
+                Text("Launching a working workspace first. You can customize account and family details after the app opens.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 28)
+
+                ProgressView()
+                    .tint(.teal)
+
+                Button("Open manual setup instead") {
+                    appMode = "signup"
+                }
+                .font(.subheadline)
+                .foregroundStyle(.teal)
+            }
+        }
+        .onAppear {
+            guard !didBootstrap else { return }
+            didBootstrap = true
+
+            if profiles.isEmpty {
+                SampleDataGenerator.generateSampleData(modelContext: modelContext)
+                appMode = "demo"
+            } else {
+                appMode = "real"
+            }
+        }
     }
 }
 

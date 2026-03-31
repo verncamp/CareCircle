@@ -35,11 +35,24 @@ struct CareCircleApp: App {
                 isStoredInMemoryOnly: true
             )
         case "real":
-            // Signed-up user: persistent store with CloudKit sync
-            config = ModelConfiguration(
+            // Signed-up user: persistent store with CloudKit sync (requires paid team + iCloud capability).
+            // Personal Team / Debug builds without iCloud entitlements fall back to local store.
+            let cloudConfig = ModelConfiguration(
                 "CareCircle",
                 schema: schema,
                 cloudKitDatabase: .automatic
+            )
+            if let container = try? ModelContainer(for: schema, configurations: [cloudConfig]) {
+                modelContainer = container
+                return
+            }
+            print(
+                "CareCircle: CloudKit store unavailable (missing iCloud entitlement or account). Using local-only store."
+            )
+            config = ModelConfiguration(
+                "CareCircle",
+                schema: schema,
+                cloudKitDatabase: .none
             )
         default:
             // "none", "signup", or any other state: local-only persistent store

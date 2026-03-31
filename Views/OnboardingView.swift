@@ -70,28 +70,41 @@ struct OnboardingView: View {
                 ))
 
                 // Navigation
-                HStack {
-                    if step > 0 {
-                        Button("Back") {
-                            withAnimation { step -= 1 }
-                        }
-                        .foregroundStyle(.secondary)
-                    }
-
-                    Spacer()
-
-                    if step < totalSteps - 1 {
-                        Button {
-                            withAnimation { step += 1 }
-                        } label: {
-                            HStack(spacing: 4) {
-                                Text("Next")
-                                Image(systemName: "arrow.right")
+                VStack(spacing: 8) {
+                    HStack {
+                        if step > 0 {
+                            Button("Back") {
+                                withAnimation { step -= 1 }
                             }
-                            .fontWeight(.semibold)
+                            .foregroundStyle(.secondary)
                         }
-                        .disabled(!canAdvance)
+
+                        Spacer()
+
+                        if step < totalSteps - 1 {
+                            Button {
+                                withAnimation { step += 1 }
+                            } label: {
+                                HStack(spacing: 4) {
+                                    Text("Next")
+                                    Image(systemName: "arrow.right")
+                                }
+                                .fontWeight(.semibold)
+                            }
+                            .disabled(!canAdvance)
+                        }
                     }
+
+                    // Escape hatch so the app is always usable even if onboarding UI is blocked
+                    Button {
+                        SampleDataGenerator.generateSampleData(modelContext: modelContext)
+                        appMode = "demo"
+                    } label: {
+                        Text("Skip for now (load demo data)")
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                    }
+                    .tint(.teal)
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 32)

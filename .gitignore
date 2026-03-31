@@ -22,6 +22,14 @@ Package.resolved
 .LSOverride
 ._*
 
+# Claude Code
+.claude/settings.local.json
+
+# Planning docs (internal)
+CareCircle Product Plan.docx
+CareCircle-Product-Plan.html
+CareCircle-Notion-Import.md
+
 # Archive of old duplicate files
 _archive/
 Care Circle/

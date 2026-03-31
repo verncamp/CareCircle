@@ -28,8 +28,10 @@ targets:
         PRODUCT_NAME: CareCircle
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         GENERATE_INFOPLIST_FILE: YES
-        SUPPORTS_MACCATALYST: YES
+        SUPPORTS_MACCATALYST: NO
         DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER: NO
+        SUPPORTED_PLATFORMS: "iphoneos iphonesimulator"
+        SDKROOT: iphoneos
         INFOPLIST_KEY_NSHealthShareUsageDescription: "CareCircle reads health data to show your parent's vitals to trusted family members."
         INFOPLIST_KEY_NSCameraUsageDescription: "CareCircle uses the camera to scan documents into your vault."
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
@@ -39,3 +41,17 @@ targets:
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
         TARGETED_DEVICE_FAMILY: "1,2"
         DEVELOPMENT_TEAM: R8HQ8WYP5T
+
+schemes:
+  CareCircle:
+    build:
+      targets:
+        CareCircle: all
+    run:
+      config: Debug
+    archive:
+      config: Release
+    profile:
+      config: Release
+    analyze:
+      config: Debug

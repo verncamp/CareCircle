@@ -58,6 +58,17 @@ ParentProfile (root entity)
 4. **Reserved fields for Airwallex** - `airwallexUserID`, `airwallexAccountID`, `airwallexTransactionID` ready for Phase 2
 5. **Liquid Glass design language** - Uses `.ultraThinMaterial` for calm, modern feel
 
+## Code signing (Personal Team vs paid Apple Developer)
+
+**Why builds fail on a free Personal Team:** CareCircle’s full app uses **HealthKit**, **iCloud / CloudKit**, and **push-related entitlements** (`CareCircle.entitlements`). Apple does not issue provisioning profiles for those capabilities on a Personal Team—you typically need the **paid Apple Developer Program** ($99/year) and an App ID with those capabilities enabled.
+
+**What this repo does for local development:**
+
+- **Debug** builds use `CareCircle.Debug.entitlements` (empty entitlements) so Xcode can sign with a Personal Team while you iterate. HealthKit / iCloud / remote push will **not** be available in that configuration; **local notifications** (UNUserNotificationCenter) still work.
+- **Release** builds still use `CareCircle.entitlements` for TestFlight / App Store once you use a paid team and fix provisioning in the Developer portal.
+
+If you need iCloud sync and HealthKit on device while developing, enroll in the Developer Program, register `com.vernoncampbell.carecircle` with the required capabilities, and use **Automatic Signing** with that team.
+
 ## Installation
 
 1. Open Xcode 15.0 or later

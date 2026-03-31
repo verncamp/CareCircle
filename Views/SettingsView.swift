@@ -124,7 +124,7 @@ struct SettingsView: View {
             if isDemo {
                 Button {
                     SampleDataGenerator.clearAllData(modelContext: modelContext)
-                    appMode = "real"
+                    appMode = "signup"
                 } label: {
                     Label("Sign Up for Real", systemImage: "person.badge.plus")
                         .foregroundStyle(.teal)

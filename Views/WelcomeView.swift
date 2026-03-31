@@ -78,7 +78,7 @@ struct WelcomeView: View {
                 VStack(spacing: 14) {
                     Button {
                         SampleDataGenerator.clearAllData(modelContext: modelContext)
-                        appMode = "real"
+                        appMode = "signup" // move into onboarding flow explicitly
                     } label: {
                         Text("Get Started")
                             .font(.headline)
