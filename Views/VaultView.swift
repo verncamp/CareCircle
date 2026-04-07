@@ -14,6 +14,7 @@ struct VaultView: View {
     @Query private var familyMembers: [FamilyMember]
     @State private var showingAddDocument = false
     @State private var showingScanner = false
+    @State private var ai = AIAssistant()
 
     var pinnedDocuments: [Document] {
         let pinned = documents.filter { $0.isPinned }
@@ -254,12 +255,27 @@ struct VaultView: View {
         let author = familyMembers.first(where: \.isCurrentUser)?.name ?? "Someone"
         ActivityFeedHelper.logDocumentAdded(document, by: author, profile: document.parentProfile, context: modelContext)
 
-        // Run OCR — extract on background, update model on main
+        // Run OCR, then use AI to generate a descriptive title and category
         asyncRun { @MainActor in
             let text = await OCRHelper.extractText(from: data)
             if let text, !text.isEmpty {
                 document.aiExtractedText = text
                 try? modelContext.save()
+
+                // AI labeling from extracted content
+                if let label = await ai.labelDocument(from: text) {
+                    if !label.title.isEmpty {
+                        document.title = label.title
+                    }
+                    if let match = DocumentCategory.allCases.first(where: {
+                        $0.rawValue.localizedCaseInsensitiveContains(label.category) ||
+                        label.category.localizedCaseInsensitiveContains($0.rawValue)
+                    }) {
+                        document.category = match
+                    }
+                    document.updatedAt = Date()
+                    try? modelContext.save()
+                }
             }
         }
     }
@@ -381,6 +397,18 @@ struct AddDocumentView: View {
 
         let author = familyMembers.first(where: \.isCurrentUser)?.name ?? "Someone"
         ActivityFeedHelper.logDocumentAdded(document, by: author, profile: parentProfiles.first, context: modelContext)
+
+        // Run OCR + AI labeling on imported PDFs in background
+        if let data = importedFileData {
+            asyncRun { @MainActor in
+                let text = await OCRHelper.extractText(from: data)
+                if let text, !text.isEmpty {
+                    document.aiExtractedText = text
+                    try? modelContext.save()
+                }
+            }
+        }
+
         dismiss()
     }
 }

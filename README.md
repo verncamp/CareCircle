@@ -5,140 +5,144 @@ An iPhone-first coordination app for adult children managing aging parents.
 ## Overview
 
 CareCircle replaces the chaos of scattered notes, texts, photos, and spreadsheets with a unified operating layer for:
-- **Appointments** - Track medical visits with prep checklists and notes
-- **Tasks** - Coordinate who's responsible for what
-- **Documents** - Store and organize important files in one secure vault
-- **Family Collaboration** - Assign roles and keep everyone aligned
+- **Appointments** - Track medical visits with prep checklists, notes, and AI summaries
+- **Tasks** - Coordinate who's responsible for what with priority levels and due dates
+- **Documents** - Store, scan, and organize important files in one secure vault
+- **Family Collaboration** - Assign roles, post updates, and keep everyone aligned
 - **Shared Finances** - Track contributions and expenses transparently
+- **Emergency Readiness** - Generate a shareable PDF packet with all critical care info
+- **Health Monitoring** - Apple Health vitals shared with trusted family members
+- **On-Device AI** - Briefings, note summaries, and task extraction — private by design
 
 ## Project Status
 
-**Phase 1 (MVP)** - Currently in development
+**Phase 1 (MVP)** - Complete
 
 ### Completed
-✅ Full Swift Data model with 8 core entities  
-✅ 5-tab navigation structure  
-✅ Today dashboard with next appointment, critical tasks, and recent updates  
-✅ Finances tab with shared expense tracking  
-✅ Calendar view for appointments  
-✅ Vault for document organization  
-✅ Family view for member management and task assignment  
-✅ Basic CRUD operations for all entities  
-✅ Airwallex-ready data model (fields reserved for future integration)
+- Full SwiftData model with 8 core entities and cascade deletion
+- 6-tab navigation (Today, Calendar, Vault, Family, Finances, Settings)
+- Adaptive layout: iPhone tabs + iPad sidebar
+- Today dashboard with parent card, next appointment, critical tasks, activity feed
+- Calendar with upcoming/past appointments, grouped by date, search
+- Appointment detail with interactive checklist, notes, AI summarization, task extraction
+- Document vault with scan (VisionKit), file import, categorize, pin, search, PDF preview
+- Family view with roles, task assignment, filtered task views, member detail
+- Finances with shared expense tracking, contribution accounts, category breakdown
+- Emergency packet PDF generator with share/export
+- On-device AI (Apple FoundationModels) for daily briefings, note summaries, task extraction, document categorization
+- HealthKit integration with heart rate, blood oxygen, steps, blood pressure, HRV, and 7-day chart
+- Local notifications for appointments (1hr before) and tasks (8 AM on due date)
+- OCR text extraction from scanned documents (Vision framework)
+- Activity feed with automatic logging for all care actions
+- 3-step onboarding flow (iCloud check, parent info, confirmation)
+- Demo mode with rich sample data
+- Welcome screen with Get Started / Try Demo paths
+- Settings with iCloud status, notification management, about page
+- 41 unit tests passing across 7 test suites
+- UI test suite for navigation and core flows
 
 ### Next Steps
-- [ ] Appointment detail view with checklist management
-- [ ] Document scanning with VisionKit
-- [ ] Emergency packet PDF generator
-- [ ] Photo/voice note capture for appointments
-- [ ] Task filtering and sorting
-- [ ] Onboarding flow
-- [ ] Sample data generator for testing
+- [ ] App icon design
+- [ ] Device testing and polish
+- [ ] TestFlight beta distribution
+- [ ] Widget for Today dashboard
+- [ ] Apple Watch companion
+- [ ] Multi-parent profile support
 
 ## Architecture
 
-### Data Model (Swift Data)
+### Tech Stack
+- **UI**: SwiftUI with Liquid Glass design language
+- **Persistence**: SwiftData with CloudKit sync support
+- **AI**: Apple FoundationModels (on-device, no data leaves device)
+- **Health**: HealthKit (read-only)
+- **Scanning**: VisionKit (document camera) + Vision (OCR)
+- **Notifications**: UNUserNotificationCenter (local)
+- **PDF**: Core Graphics (emergency packet generation)
+
+### Data Model (SwiftData)
 
 ```
 ParentProfile (root entity)
-├── Appointments
-├── Tasks
-├── Documents
-├── FamilyMembers
-│   └── ExpenseAccount (1:1)
-├── Expenses
-└── UpdateFeedItems
+├── Appointments (cascade delete)
+│   └── ChecklistItems (codable, embedded)
+├── Tasks (cascade delete)
+├── Documents (cascade delete)
+├── FamilyMembers (cascade delete)
+│   ├── ExpenseAccount (1:1)
+│   └── AssignedTasks (nullify on delete)
+├── Expenses (cascade delete)
+└── UpdateFeedItems (cascade delete)
 ```
 
 ### Key Design Decisions
 
-1. **Swift Data for persistence** - Native, type-safe, and works offline
+1. **SwiftData for persistence** - Native, type-safe, works offline, CloudKit-ready
 2. **Single parent profile for MVP** - Simplifies scope while proving value
-3. **Manual expense tracking first** - Validates financial feature before Airwallex integration
-4. **Reserved fields for Airwallex** - `airwallexUserID`, `airwallexAccountID`, `airwallexTransactionID` ready for Phase 2
-5. **Liquid Glass design language** - Uses `.ultraThinMaterial` for calm, modern feel
+3. **On-device AI only** - Apple FoundationModels keeps all data local and private
+4. **Liquid Glass design** - `.ultraThinMaterial` cards for calm, modern feel
+5. **Explicit relationship inverses** - Ensures reliable cascade deletion
+6. **`asyncRun()` helper** - Disambiguates Swift concurrency `Task` from the SwiftData `Task` model
 
-## Code signing (Personal Team vs paid Apple Developer)
+### Project Structure
 
-**Why builds fail on a free Personal Team:** CareCircle’s full app uses **HealthKit**, **iCloud / CloudKit**, and **push-related entitlements** (`CareCircle.entitlements`). Apple does not issue provisioning profiles for those capabilities on a Personal Team—you typically need the **paid Apple Developer Program** ($99/year) and an App ID with those capabilities enabled.
+```
+CareCircle/
+├── CareCircleApp.swift          # Entry point, ModelContainer setup
+├── ContentView.swift            # AppRouter, MainContentView, tabs/sidebar
+├── Models/                      # 9 SwiftData models
+├── Views/                       # 17 view files
+├── Helpers/                     # 10 utility files
+├── Assets.xcassets/             # App icon, accent color
+├── CareCircleTests/             # 7 unit test files (41 tests)
+├── CareCircleUITests/           # 2 UI test files
+└── project.yml                  # XcodeGen project definition
+```
 
-**What this repo does for local development:**
+## Code Signing
 
-- **Debug** builds use `CareCircle.Debug.entitlements` (empty entitlements) so Xcode can sign with a Personal Team while you iterate. HealthKit / iCloud / remote push will **not** be available in that configuration; **local notifications** (UNUserNotificationCenter) still work.
-- **Release** builds still use `CareCircle.entitlements` for TestFlight / App Store once you use a paid team and fix provisioning in the Developer portal.
+**Personal Team (free):** Debug builds use empty entitlements so Xcode can sign with a Personal Team. HealthKit, iCloud, and remote push will not be available — local notifications still work.
 
-If you need iCloud sync and HealthKit on device while developing, enroll in the Developer Program, register `com.vernoncampbell.carecircle` with the required capabilities, and use **Automatic Signing** with that team.
+**Paid Apple Developer ($99/year):** Required for HealthKit, iCloud/CloudKit sync, and TestFlight. Register `com.vernoncampbell.carecircle` with the required capabilities and use Automatic Signing.
 
 ## Installation
 
-1. Open Xcode 15.0 or later
-2. Create a new iOS App project named "CareCircle"
-3. Copy all files into your project maintaining the folder structure:
-   - `CareCircleApp.swift` → Root
-   - `ContentView.swift` → Root
-   - `Models/*.swift` → Models group
-   - `Views/*.swift` → Views group
-4. Ensure Swift Data is available (iOS 17.0+)
+### With XcodeGen (recommended)
+1. Install XcodeGen: `brew install xcodegen`
+2. Clone the repo
+3. Run `xcodegen generate` in the project root
+4. Open `CareCircle.xcodeproj`
 5. Build and run on simulator or device
+
+### Manual
+1. Open the existing `CareCircle.xcodeproj` in Xcode 26+
+2. Build and run
 
 ## Usage
 
 ### First Launch
+The app shows a Welcome screen with two paths:
+- **Get Started** - 3-step onboarding to create your care circle
+- **Try the Demo** - Pre-loaded sample data to explore features
 
-The app will show an empty state on the Today tab. Tap **"Create Profile"** to generate sample data:
-- One parent profile (Mom Alvarez)
-- One upcoming appointment
-- Three critical tasks
-- Two recent updates
+### Navigation
+- **Today** - Dashboard with parent status, next appointment, critical tasks, activity feed
+- **Calendar** - Upcoming and past appointments with search
+- **Vault** - Document storage with scan, import, pin, and category filter
+- **Family** - Member management, task assignment, and coordination
+- **Finances** - Expense tracking, contributions, and category breakdown
+- **Settings** - Account, iCloud status, notifications, about
 
-### Adding Data
-
-- **Appointments**: Calendar tab → + button
-- **Documents**: Vault tab → + menu → Add Document or Scan Document
-- **Family Members**: Family tab → + button (creates expense account automatically)
-- **Expenses**: Finances tab → + button on Recent Expenses card
-
-### Finances Feature
-
-Each family member gets an `ExpenseAccount` that tracks:
-- Current balance
-- Total contributed
-- Total spent
-
-Expenses can be assigned to family members and categorized for reporting.
-
-## Future Integrations
-
-### Phase 2: Airwallex
-
-When ready to integrate Airwallex:
-
-1. Set up Airwallex backend API
-2. Implement KYC flow for primary caregiver
-3. Create Airwallex accounts and map to `airwallexAccountID` fields
-4. Enable funding flows (bank transfer, card)
-5. Issue virtual cards for shared home account
-6. Sync transactions to `Expense` records with `airwallexTransactionID`
-
-### Phase 3: AI Features
-
-- Appointment note summarization
-- Task extraction from notes
-- Document OCR and categorization
-- Weekly recap generation
-
-## Design Principles
-
-- **Calm, not gamified** - Serious and trustworthy tone
-- **Fast capture** - Minimal friction to add information
-- **Offline-first** - Core features work without network
-- **Privacy-focused** - All data stored locally until collaboration requires sync
-- **AI is supportive** - Never authoritative or diagnostic
+### Emergency
+Tap the red emergency button on the Today screen for quick access to:
+- Call 911
+- Call emergency contact
+- Generate and share an emergency info PDF
 
 ## Requirements
 
-- iOS 17.0+
-- Xcode 15.0+
+- iOS 26.0+
+- Xcode 26.0+
 - Swift 5.9+
 
 ## License
@@ -147,5 +151,5 @@ Proprietary - All rights reserved
 
 ---
 
-**Last updated**: March 17, 2026  
+**Last updated**: April 7, 2026
 **Working owner**: Vernon

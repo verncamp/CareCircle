@@ -45,12 +45,12 @@ final class ParentProfile {
     var healthKitEnabled: Bool = false
 
     // Relationships
-    @Relationship(deleteRule: .cascade) var appointments: [Appointment] = []
-    @Relationship(deleteRule: .cascade) var tasks: [Task] = []
-    @Relationship(deleteRule: .cascade) var documents: [Document] = []
-    @Relationship(deleteRule: .cascade) var familyMembers: [FamilyMember] = []
-    @Relationship(deleteRule: .cascade) var expenses: [Expense] = []
-    @Relationship(deleteRule: .cascade) var updateFeedItems: [UpdateFeedItem] = []
+    @Relationship(deleteRule: .cascade, inverse: \Appointment.parentProfile) var appointments: [Appointment] = []
+    @Relationship(deleteRule: .cascade, inverse: \Task.parentProfile) var tasks: [Task] = []
+    @Relationship(deleteRule: .cascade, inverse: \Document.parentProfile) var documents: [Document] = []
+    @Relationship(deleteRule: .cascade, inverse: \FamilyMember.parentProfile) var familyMembers: [FamilyMember] = []
+    @Relationship(deleteRule: .cascade, inverse: \Expense.parentProfile) var expenses: [Expense] = []
+    @Relationship(deleteRule: .cascade, inverse: \UpdateFeedItem.parentProfile) var updateFeedItems: [UpdateFeedItem] = []
 
     init(
         id: UUID = UUID(),

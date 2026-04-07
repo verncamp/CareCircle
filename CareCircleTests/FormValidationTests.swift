@@ -21,7 +21,7 @@ final class FormValidationTests: XCTestCase {
             for: ParentProfile.self, Appointment.self, Task.self,
                  Document.self, FamilyMember.self, Expense.self,
                  ExpenseAccount.self, UpdateFeedItem.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none)
         )
         context = container.mainContext
     }
@@ -59,12 +59,13 @@ final class FormValidationTests: XCTestCase {
 
     @MainActor
     func testExpenseWithLargeDecimalAmount() throws {
-        let expense = Expense(title: "Surgery", amount: 125_000.99, category: .medical)
+        let largeAmount = Decimal(string: "125000.99")!
+        let expense = Expense(title: "Surgery", amount: largeAmount, category: .medical)
         context.insert(expense)
         try context.save()
 
         let expenses = try context.fetch(FetchDescriptor<Expense>())
-        XCTAssertEqual(expenses.first?.amount, 125_000.99)
+        XCTAssertEqual(expenses.first?.amount, largeAmount)
     }
 
     @MainActor

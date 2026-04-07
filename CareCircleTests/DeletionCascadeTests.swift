@@ -21,7 +21,7 @@ final class DeletionCascadeTests: XCTestCase {
             for: ParentProfile.self, Appointment.self, Task.self,
                  Document.self, FamilyMember.self, Expense.self,
                  ExpenseAccount.self, UpdateFeedItem.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none)
         )
         context = container.mainContext
     }

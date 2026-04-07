@@ -255,10 +255,14 @@ struct FamilyView: View {
         .accessibilityElement(children: .combine)
         .contextMenu {
             Button {
-                // Toggle completion from context menu
                 task.isCompleted.toggle()
                 task.updatedAt = Date()
                 try? modelContext.save()
+
+                if task.isCompleted {
+                    let author = familyMembers.first(where: \.isCurrentUser)?.name ?? "Someone"
+                    ActivityFeedHelper.logTaskCompleted(task, by: author, profile: task.parentProfile, context: modelContext)
+                }
             } label: {
                 Label(task.isCompleted ? "Mark Incomplete" : "Mark Complete",
                       systemImage: task.isCompleted ? "arrow.uturn.backward" : "checkmark")

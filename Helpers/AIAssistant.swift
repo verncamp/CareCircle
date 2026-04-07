@@ -173,9 +173,51 @@ class AIAssistant {
             return nil
         }
     }
+    // MARK: - Document Label from Content
+
+    /// Analyze OCR-extracted text to generate a descriptive title and category for a scanned document.
+    func labelDocument(from extractedText: String) async -> DocumentLabel? {
+        guard isAvailable, !extractedText.isEmpty else { return nil }
+
+        isProcessing = true
+        defer { isProcessing = false }
+
+        let session = LanguageModelSession(
+            instructions: """
+            You are a document filing assistant for a family caregiver app. \
+            Given OCR-extracted text from a scanned document, produce: \
+            1. A short, descriptive title (max 8 words) that a family member \
+               would recognize at a glance. \
+            2. The best category from this exact list: Insurance, Medical Records, \
+               Legal Documents, Medications, Lab Results, Vaccinations, Other. \
+            Base your answer only on the text provided. If the text is too \
+            garbled to classify, use category "Other" and title "Scanned Document".
+            """
+        )
+
+        do {
+            let response = try await session.respond(
+                to: "Label this document:\n\(extractedText.prefix(2000))",
+                generating: DocumentLabel.self
+            )
+            return response.content
+        } catch {
+            lastError = error.localizedDescription
+            return nil
+        }
+    }
 }
 
 // MARK: - Structured Output Types
+
+@Generable
+struct DocumentLabel {
+    @Guide(description: "Short descriptive title for the document, max 8 words")
+    var title: String
+
+    @Guide(description: "Category: Insurance, Medical Records, Legal Documents, Medications, Lab Results, Vaccinations, or Other")
+    var category: String
+}
 
 @Generable
 struct SuggestedTask {

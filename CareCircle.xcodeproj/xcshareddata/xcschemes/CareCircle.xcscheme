@@ -21,6 +21,34 @@
                ReferencedContainer = "container:CareCircle.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "87306A5BE18A82134EDC9D4E"
+               BuildableName = "CareCircleTests.xctest"
+               BlueprintName = "CareCircleTests"
+               ReferencedContainer = "container:CareCircle.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "4825B97F596FFA70550C17CA"
+               BuildableName = "CareCircleUITests.xctest"
+               BlueprintName = "CareCircleUITests"
+               ReferencedContainer = "container:CareCircle.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -39,7 +67,31 @@
          </BuildableReference>
       </MacroExpansion>
       <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "87306A5BE18A82134EDC9D4E"
+               BuildableName = "CareCircleTests.xctest"
+               BlueprintName = "CareCircleTests"
+               ReferencedContainer = "container:CareCircle.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "4825B97F596FFA70550C17CA"
+               BuildableName = "CareCircleUITests.xctest"
+               BlueprintName = "CareCircleUITests"
+               ReferencedContainer = "container:CareCircle.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
+      <CommandLineArguments>
+      </CommandLineArguments>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"

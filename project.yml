@@ -16,8 +16,17 @@ targets:
       - path: Models
       - path: Views
       - path: Helpers
+      - path: Assets.xcassets
     entitlements:
       path: CareCircle.entitlements
+      debugPath: CareCircle.Debug.entitlements
+      properties:
+        com.apple.developer.healthkit: true
+        com.apple.developer.healthkit.access: []
+        com.apple.developer.icloud-container-identifiers:
+          - iCloud.com.vernoncampbell.carecircle
+        com.apple.developer.icloud-services:
+          - CloudKit
     settings:
       base:
         SWIFT_VERSION: "5.9"
@@ -42,13 +51,49 @@ targets:
         TARGETED_DEVICE_FAMILY: "1,2"
         DEVELOPMENT_TEAM: R8HQ8WYP5T
 
+  CareCircleTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: CareCircleTests
+    dependencies:
+      - target: CareCircle
+    settings:
+      base:
+        SWIFT_VERSION: "5.9"
+        GENERATE_INFOPLIST_FILE: YES
+        BUNDLE_LOADER: "$(TEST_HOST)"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/CareCircle.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CareCircle"
+        DEVELOPMENT_TEAM: R8HQ8WYP5T
+
+  CareCircleUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: CareCircleUITests
+    dependencies:
+      - target: CareCircle
+    settings:
+      base:
+        SWIFT_VERSION: "5.9"
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: CareCircle
+        DEVELOPMENT_TEAM: R8HQ8WYP5T
+
 schemes:
   CareCircle:
     build:
       targets:
         CareCircle: all
+        CareCircleTests: [test]
+        CareCircleUITests: [test]
     run:
       config: Debug
+    test:
+      config: Debug
+      targets:
+        - CareCircleTests
+        - CareCircleUITests
     archive:
       config: Release
     profile:

@@ -48,10 +48,12 @@ struct SampleDataGenerator {
             modelContext.insert(member)
             
             // Create expense accounts for each member
+            let contributed = Decimal(Int.random(in: 500...2000))
+            let spent = Decimal(Int.random(in: 100...Int(truncating: contributed as NSDecimalNumber)))
             let account = ExpenseAccount(
-                balance: Decimal(Double.random(in: 100...1000)),
-                totalContributed: Decimal(Double.random(in: 500...2000)),
-                totalSpent: Decimal(Double.random(in: 300...1500))
+                balance: contributed - spent,
+                totalContributed: contributed,
+                totalSpent: spent
             )
             account.familyMember = member
             member.expenseAccount = account
