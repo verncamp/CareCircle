@@ -14,6 +14,7 @@
 		10309B94E179ADACFC0983F7 /* DocumentScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B449BB33DC591B5136CBEBF /* DocumentScannerView.swift */; };
 		114A441B9433B10E783A5BF8 /* ExpenseDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E452BC9A000A819BCA0FAFDF /* ExpenseDetailView.swift */; };
 		175FE2F6683B4E25829A3B08 /* ParentProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937EE7E45BE4B24D6313CE42 /* ParentProfile.swift */; };
+		198B0B2548936AF5ECBDAD6A /* RegionProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F94462684215F198DDDE96E /* RegionProfile.swift */; };
 		25375F84226738584D18366A /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3056EE63F3DC7812C320D8D /* HealthKitManager.swift */; };
 		2A5B2213EE35232D7082E8F5 /* FormValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12AC48E74099309F87F339B3 /* FormValidationTests.swift */; };
 		2D9BEFAA2602410A27A00BCB /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DBA6584DADEE5A0194A827E /* TodayView.swift */; };
@@ -22,12 +23,12 @@
 		41DA7645571DB514C5B9ABF0 /* SampleDataGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BD927AF6572EC6054C8D11 /* SampleDataGenerator.swift */; };
 		46450B0C097099FB205EF340 /* FamilyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5193DFF1DFF0319C5B0191 /* FamilyView.swift */; };
 		464CDB54EBFFAFE3220CB226 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1AE509F00C7ED6E15506DC /* WelcomeView.swift */; };
-		4E23A650A7B514DF3928737A /* CloudKitAccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6AE49CA582D74D0B58866B5 /* CloudKitAccountManager.swift */; };
 		58685D41BA00F0CF4693C595 /* Expense.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B82DD2C793435B1760FEF4B /* Expense.swift */; };
 		610A8B76C23D10D1D9E0D6A1 /* EmergencyPacketGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12718590F1C678E72AEA8008 /* EmergencyPacketGenerator.swift */; };
 		62FBC9383BFB8431D90FA7C6 /* VaultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CAA894193FD0D2001FF986 /* VaultView.swift */; };
 		66D793F2156142A682FEF2C0 /* FamilyMember.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA36E429FA5AC6C146D34C9 /* FamilyMember.swift */; };
 		6CBAF3AB45F1D732DBBA8EE6 /* ParentProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C20DE762250A1290C43444 /* ParentProfileEditView.swift */; };
+		7050A6952480885876907A7E /* RegionalTemplateSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8373FA5EEC4B3D09BD570BC2 /* RegionalTemplateSeeder.swift */; };
 		7DF54F5C94CE75643368CA1F /* DeletionCascadeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A1FA5727C2A85C4F53F92E /* DeletionCascadeTests.swift */; };
 		88009E47EC381E5C9E78AF44 /* CareCircleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AF01489065453532424909B /* CareCircleApp.swift */; };
 		929085F304FD065A9B698B0F /* NotificationSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB938343588DA16F1C5F26DF /* NotificationSettingsView.swift */; };
@@ -46,6 +47,7 @@
 		B6050618FF13EB9B49EAB82C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013C81CBD5896779E2CC817F /* SettingsView.swift */; };
 		B954A5F8CB25D10038EDCE17 /* SaveHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0C2A077200FA95671824EA /* SaveHelper.swift */; };
 		C11DB0A43615F4838A15499B /* OnboardingFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9253A1CC7C9DE090E0956FD9 /* OnboardingFlowTests.swift */; };
+		C4BFC2844E6AA06D7B98C557 /* RegionalDocumentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BB4F3D94F5F7DB48A1DEDEC /* RegionalDocumentTests.swift */; };
 		C7F15BA6CAE17FD2E4EE0CB9 /* AIAssistant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C127343754B9F99C23F5D5B /* AIAssistant.swift */; };
 		CD73B761990ED307246A0243 /* ModelRelationshipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D2D420DE41E810397941D1 /* ModelRelationshipTests.swift */; };
 		CD9BFE0FC0899D2729421F1B /* AppointmentDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A35CF2E3A2758C44E966BE2 /* AppointmentDetailView.swift */; };
@@ -86,6 +88,7 @@
 		2AF01489065453532424909B /* CareCircleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareCircleApp.swift; sourceTree = "<group>"; };
 		2B82DD2C793435B1760FEF4B /* Expense.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Expense.swift; sourceTree = "<group>"; };
 		2D5193DFF1DFF0319C5B0191 /* FamilyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyView.swift; sourceTree = "<group>"; };
+		2F94462684215F198DDDE96E /* RegionProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionProfile.swift; sourceTree = "<group>"; };
 		313ECC5C7D1CBAAE4EB3E33B /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		341499FA8F747E5F783EC8D3 /* FinancesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinancesView.swift; sourceTree = "<group>"; };
 		39B255C63686C49CBBCE36D5 /* ParentProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentProfileView.swift; sourceTree = "<group>"; };
@@ -101,6 +104,7 @@
 		77FF4916A836906D28839C2F /* CareCircleTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = CareCircleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		79A1FA5727C2A85C4F53F92E /* DeletionCascadeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletionCascadeTests.swift; sourceTree = "<group>"; };
 		7EC81C277E7175D4D0C9F39F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		8373FA5EEC4B3D09BD570BC2 /* RegionalTemplateSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionalTemplateSeeder.swift; sourceTree = "<group>"; };
 		88D747A3E9270BCB70E8BC09 /* ActivityFeedHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityFeedHelper.swift; sourceTree = "<group>"; };
 		8BAE93E11BCF8D2BBB062980 /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
 		8DBA6584DADEE5A0194A827E /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
@@ -109,8 +113,8 @@
 		937EE7E45BE4B24D6313CE42 /* ParentProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentProfile.swift; sourceTree = "<group>"; };
 		9845DB314AE198B2A2E02655 /* ExpenseAccountTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseAccountTests.swift; sourceTree = "<group>"; };
 		9A35CF2E3A2758C44E966BE2 /* AppointmentDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentDetailView.swift; sourceTree = "<group>"; };
+		9BB4F3D94F5F7DB48A1DEDEC /* RegionalDocumentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionalDocumentTests.swift; sourceTree = "<group>"; };
 		9F3F7D2554C0C0AFE99514EF /* DocumentDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentDetailView.swift; sourceTree = "<group>"; };
-		A6AE49CA582D74D0B58866B5 /* CloudKitAccountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitAccountManager.swift; sourceTree = "<group>"; };
 		B9435B208D3FFC961F5898D2 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		BB938343588DA16F1C5F26DF /* NotificationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingsView.swift; sourceTree = "<group>"; };
 		C3D2D420DE41E810397941D1 /* ModelRelationshipTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelRelationshipTests.swift; sourceTree = "<group>"; };
@@ -159,11 +163,12 @@
 			children = (
 				88D747A3E9270BCB70E8BC09 /* ActivityFeedHelper.swift */,
 				5C127343754B9F99C23F5D5B /* AIAssistant.swift */,
-				A6AE49CA582D74D0B58866B5 /* CloudKitAccountManager.swift */,
 				12718590F1C678E72AEA8008 /* EmergencyPacketGenerator.swift */,
 				F3056EE63F3DC7812C320D8D /* HealthKitManager.swift */,
 				12999950C0536BEC53B9AA3B /* NotificationManager.swift */,
 				D29461A22C52B19F41ED2DAF /* OCRHelper.swift */,
+				8373FA5EEC4B3D09BD570BC2 /* RegionalTemplateSeeder.swift */,
+				2F94462684215F198DDDE96E /* RegionProfile.swift */,
 				F1BD927AF6572EC6054C8D11 /* SampleDataGenerator.swift */,
 				0C0C2A077200FA95671824EA /* SaveHelper.swift */,
 				6EDAF7DE1CF364C4708F8B92 /* Theme.swift */,
@@ -190,6 +195,7 @@
 				12AC48E74099309F87F339B3 /* FormValidationTests.swift */,
 				C3D2D420DE41E810397941D1 /* ModelRelationshipTests.swift */,
 				9253A1CC7C9DE090E0956FD9 /* OnboardingFlowTests.swift */,
+				9BB4F3D94F5F7DB48A1DEDEC /* RegionalDocumentTests.swift */,
 			);
 			path = CareCircleTests;
 			sourceTree = "<group>";
@@ -355,7 +361,6 @@
 				CD9BFE0FC0899D2729421F1B /* AppointmentDetailView.swift in Sources */,
 				9E4F13552E23EC2492D5FAD1 /* CalendarView.swift in Sources */,
 				88009E47EC381E5C9E78AF44 /* CareCircleApp.swift in Sources */,
-				4E23A650A7B514DF3928737A /* CloudKitAccountManager.swift in Sources */,
 				DAB2E79DB0E5DBAD7D599585 /* ContentView.swift in Sources */,
 				9BB7C905D29386690D1D559E /* Document.swift in Sources */,
 				3916AD181544D6CD0A42318C /* DocumentDetailView.swift in Sources */,
@@ -377,6 +382,8 @@
 				175FE2F6683B4E25829A3B08 /* ParentProfile.swift in Sources */,
 				6CBAF3AB45F1D732DBBA8EE6 /* ParentProfileEditView.swift in Sources */,
 				9AD0C22367099AAC40E497DC /* ParentProfileView.swift in Sources */,
+				198B0B2548936AF5ECBDAD6A /* RegionProfile.swift in Sources */,
+				7050A6952480885876907A7E /* RegionalTemplateSeeder.swift in Sources */,
 				41DA7645571DB514C5B9ABF0 /* SampleDataGenerator.swift in Sources */,
 				B954A5F8CB25D10038EDCE17 /* SaveHelper.swift in Sources */,
 				B6050618FF13EB9B49EAB82C /* SettingsView.swift in Sources */,
@@ -401,6 +408,7 @@
 				2A5B2213EE35232D7082E8F5 /* FormValidationTests.swift in Sources */,
 				CD73B761990ED307246A0243 /* ModelRelationshipTests.swift in Sources */,
 				C11DB0A43615F4838A15499B /* OnboardingFlowTests.swift in Sources */,
+				C4BFC2844E6AA06D7B98C557 /* RegionalDocumentTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -459,8 +467,9 @@
 				DEVELOPMENT_TEAM = R8HQ8WYP5T;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_GENERATION_MODE = GeneratedFile;
+				INFOPLIST_KEY_CARECIRCLE_SUMMARY_API_URL = "";
 				INFOPLIST_KEY_NSCameraUsageDescription = "CareCircle uses the camera to scan documents into your vault.";
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "CareCircle reads health data to show your parent's vitals to trusted family members.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "CareCircle reads health data from this iPhone to show your parent's vitals in the app.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -511,8 +520,9 @@
 				DEVELOPMENT_TEAM = R8HQ8WYP5T;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_GENERATION_MODE = GeneratedFile;
+				INFOPLIST_KEY_CARECIRCLE_SUMMARY_API_URL = "";
 				INFOPLIST_KEY_NSCameraUsageDescription = "CareCircle uses the camera to scan documents into your vault.";
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "CareCircle reads health data to show your parent's vitals to trusted family members.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "CareCircle reads health data from this iPhone to show your parent's vitals in the app.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

@@ -10,9 +10,9 @@ CareCircle replaces the chaos of scattered notes, texts, photos, and spreadsheet
 - **Documents** - Store, scan, and organize important files in one secure vault
 - **Family Collaboration** - Assign roles, post updates, and keep everyone aligned
 - **Shared Finances** - Track contributions and expenses transparently
-- **Emergency Readiness** - Generate a shareable PDF packet with all critical care info
-- **Health Monitoring** - Apple Health vitals shared with trusted family members
-- **On-Device AI** - Briefings, note summaries, and task extraction — private by design
+- **Emergency Readiness** - Generate a shareable PDF packet with critical care info and packet-ready document references
+- **Health Monitoring** - Apple Health vitals read from the current iPhone
+- **On-Device AI** - Briefings, note summaries, and task extraction, with an off-by-default cloud fallback for unsupported devices
 
 ## Project Status
 
@@ -25,24 +25,25 @@ CareCircle replaces the chaos of scattered notes, texts, photos, and spreadsheet
 - Today dashboard with parent card, next appointment, critical tasks, activity feed
 - Calendar with upcoming/past appointments, grouped by date, search
 - Appointment detail with interactive checklist, notes, AI summarization, task extraction
-- Document vault with scan (VisionKit), file import, categorize, pin, search, PDF preview
+- Document vault with scan (VisionKit), file import, category/domain filters, packet metadata, and PDF preview
 - Family view with roles, task assignment, filtered task views, member detail
 - Finances with shared expense tracking, contribution accounts, category breakdown
-- Emergency packet PDF generator with share/export
-- On-device AI (Apple FoundationModels) for daily briefings, note summaries, task extraction, document categorization
+- Emergency packet PDF generator with share/export and critical document references
+- On-device AI (Apple FoundationModels) for daily briefings, note summaries, task extraction, document categorization; optional cloud note-summary fallback for devices that cannot run Apple Intelligence
 - HealthKit integration with heart rate, blood oxygen, steps, blood pressure, HRV, and 7-day chart
 - Local notifications for appointments (1hr before) and tasks (8 AM on due date)
 - OCR text extraction from scanned documents (Vision framework)
 - Activity feed with automatic logging for all care actions
-- 3-step onboarding flow (iCloud check, parent info, confirmation)
+- 4-step onboarding flow (account, region, parent info, confirmation)
+- US/Canada regional document templates for health coverage, insurance, tax, banking, and ID records
 - Demo mode with rich sample data
 - Welcome screen with Get Started / Try Demo paths
-- Settings with iCloud status, notification management, about page
-- 41 unit tests passing across 7 test suites
+- Settings with local storage, notification management, about page
+- Unit test coverage for models, onboarding, regional documents, notifications, and emergency packets
 - UI test suite for navigation and core flows
 
 ### Next Steps
-- [ ] App icon design
+- [x] App icon design
 - [ ] Device testing and polish
 - [ ] TestFlight beta distribution
 - [ ] Widget for Today dashboard
@@ -53,8 +54,8 @@ CareCircle replaces the chaos of scattered notes, texts, photos, and spreadsheet
 
 ### Tech Stack
 - **UI**: SwiftUI with Liquid Glass design language
-- **Persistence**: SwiftData with CloudKit sync support
-- **AI**: Apple FoundationModels (on-device, no data leaves device)
+- **Persistence**: SwiftData with local on-device storage
+- **AI**: Apple FoundationModels on device, with an off-by-default summary fallback endpoint for ineligible devices
 - **Health**: HealthKit (read-only)
 - **Scanning**: VisionKit (document camera) + Vision (OCR)
 - **Notifications**: UNUserNotificationCenter (local)
@@ -77,9 +78,9 @@ ParentProfile (root entity)
 
 ### Key Design Decisions
 
-1. **SwiftData for persistence** - Native, type-safe, works offline, CloudKit-ready
+1. **SwiftData for persistence** - Native, type-safe, works offline, local-first
 2. **Single parent profile for MVP** - Simplifies scope while proving value
-3. **On-device AI only** - Apple FoundationModels keeps all data local and private
+3. **On-device-first AI** - Apple FoundationModels keeps core AI local, with any cloud summary path opt-in and disabled by default
 4. **Liquid Glass design** - `.ultraThinMaterial` cards for calm, modern feel
 5. **Explicit relationship inverses** - Ensures reliable cascade deletion
 6. **`asyncRun()` helper** - Disambiguates Swift concurrency `Task` from the SwiftData `Task` model
@@ -101,9 +102,9 @@ CareCircle/
 
 ## Code Signing
 
-**Personal Team (free):** Debug builds use empty entitlements so Xcode can sign with a Personal Team. HealthKit, iCloud, and remote push will not be available — local notifications still work.
+**Personal Team (free):** Debug builds use empty entitlements so Xcode can sign with a Personal Team. HealthKit and local notifications still work.
 
-**Paid Apple Developer ($99/year):** Required for HealthKit, iCloud/CloudKit sync, and TestFlight. Register `com.vernoncampbell.carecircle` with the required capabilities and use Automatic Signing.
+**Paid Apple Developer ($99/year):** Required for HealthKit and TestFlight. Register `com.vernoncampbell.carecircle` with the required capabilities and use Automatic Signing.
 
 ## Installation
 
@@ -122,16 +123,16 @@ CareCircle/
 
 ### First Launch
 The app shows a Welcome screen with two paths:
-- **Get Started** - 3-step onboarding to create your care circle
+- **Get Started** - 4-step onboarding to create your care circle
 - **Try the Demo** - Pre-loaded sample data to explore features
 
 ### Navigation
 - **Today** - Dashboard with parent status, next appointment, critical tasks, activity feed
 - **Calendar** - Upcoming and past appointments with search
-- **Vault** - Document storage with scan, import, pin, and category filter
+- **Vault** - Document storage with scan, import, pin, category/domain filters, expiry tracking, and packet metadata
 - **Family** - Member management, task assignment, and coordination
 - **Finances** - Expense tracking, contributions, and category breakdown
-- **Settings** - Account, iCloud status, notifications, about
+- **Settings** - Account, local storage, notifications, about
 
 ### Emergency
 Tap the red emergency button on the Today screen for quick access to:

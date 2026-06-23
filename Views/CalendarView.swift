@@ -140,6 +140,7 @@ struct CalendarView: View {
                     if let appt = appointmentToDelete {
                         modelContext.delete(appt)
                         try? modelContext.save()
+                        NotificationManager.resync(context: modelContext)
                         appointmentToDelete = nil
                     }
                 }
@@ -296,7 +297,7 @@ struct AddAppointmentView: View {
         appointment.parentProfile = parentProfiles.first
         modelContext.insert(appointment)
         try? modelContext.save()
-        NotificationManager.scheduleAppointmentReminder(for: appointment)
+        NotificationManager.resync(context: modelContext)
 
         let author = familyMembers.first(where: \.isCurrentUser)?.name ?? "Someone"
         ActivityFeedHelper.logAppointmentAdded(appointment, by: author, profile: parentProfiles.first, context: modelContext)

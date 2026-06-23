@@ -210,6 +210,7 @@ struct FamilyView: View {
                     task.isCompleted.toggle()
                     task.updatedAt = Date()
                     try? modelContext.save()
+                    NotificationManager.resync(context: modelContext)
 
                     if task.isCompleted {
                         let author = familyMembers.first(where: \.isCurrentUser)?.name ?? "Someone"
@@ -258,6 +259,7 @@ struct FamilyView: View {
                 task.isCompleted.toggle()
                 task.updatedAt = Date()
                 try? modelContext.save()
+                NotificationManager.resync(context: modelContext)
 
                 if task.isCompleted {
                     let author = familyMembers.first(where: \.isCurrentUser)?.name ?? "Someone"
@@ -271,6 +273,7 @@ struct FamilyView: View {
             Button(role: .destructive) {
                 modelContext.delete(task)
                 try? modelContext.save()
+                NotificationManager.resync(context: modelContext)
             } label: {
                 Label("Delete", systemImage: "trash")
             }
@@ -423,7 +426,7 @@ struct AddTaskView: View {
         task.parentProfile = parentProfiles.first
         modelContext.insert(task)
         try? modelContext.save()
-        NotificationManager.scheduleTaskReminder(for: task)
+        NotificationManager.resync(context: modelContext)
         dismiss()
     }
 }

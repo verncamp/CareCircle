@@ -2,7 +2,7 @@
 //  OnboardingView.swift
 //  CareCircle
 //
-//  Step-by-step setup: iCloud account → Parent info → Confirm.
+//  Step-by-step setup: account → parent info → confirm.
 //
 
 import SwiftUI
@@ -12,9 +12,10 @@ struct OnboardingView: View {
     @Environment(\.modelContext) private var modelContext
     @AppStorage("appMode") private var appMode: String = "none"
 
-    @State private var cloudKit = CloudKitAccountManager()
     @State private var healthKit = HealthKitManager()
+    @State private var ai = AIAssistant()
     @State private var step = 0
+    @State private var selectedRegion: RegionProfile = RegionProfileResolver.suggested()
 
     // Account (Step 1)
     @State private var userName = ""
@@ -29,7 +30,7 @@ struct OnboardingView: View {
     @State private var userRole: FamilyRole = .medicalAdmin
     @State private var connectHealth = false
 
-    private let totalSteps = 3
+    private let totalSteps = 4
 
     var body: some View {
         ZStack {
@@ -52,7 +53,8 @@ struct OnboardingView: View {
                 Group {
                     switch step {
                     case 0: accountStep
-                    case 1: parentStep
+                    case 1: regionStep
+                    case 2: parentStep
                     default: confirmStep
                     }
                 }
@@ -102,23 +104,18 @@ struct OnboardingView: View {
                 .padding(.bottom, 32)
             }
         }
-        .task {
-            await cloudKit.checkAccountStatus()
-            if let name = cloudKit.userName {
-                userName = name
-            }
-        }
     }
 
     private var canAdvance: Bool {
         switch step {
         case 0: return !userName.isEmpty
-        case 1: return !parentName.isEmpty
+        case 1: return true
+        case 2: return !parentName.isEmpty
         default: return true
         }
     }
 
-    // MARK: - Step 1: iCloud Account
+    // MARK: - Step 1: Account
 
     private var accountStep: some View {
         ScrollView {
@@ -127,57 +124,43 @@ struct OnboardingView: View {
                     Text("Your Account")
                         .font(.title2)
                         .fontWeight(.bold)
-                    Text("CareCircle uses your iCloud account to sync data across devices and share with family.")
+                    Text("CareCircle stores your care information on this iPhone by default. Start with your name and optional contact details.")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                 }
                 .padding(.top, 16)
 
-                // iCloud status
                 VStack(spacing: 16) {
                     HStack(spacing: 12) {
-                        Image(systemName: cloudKit.isSignedIn ? "icloud.fill" : "icloud.slash")
+                        Image(systemName: "iphone")
                             .font(.title)
-                            .foregroundStyle(cloudKit.isSignedIn ? .careTint : .red)
+                            .foregroundStyle(.careTint)
 
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("iCloud")
+                            Text("Local Storage")
                                 .font(.headline)
-                            Text(cloudKit.statusDescription)
+                            Text("Stored on this iPhone")
                                 .font(.subheadline)
-                                .foregroundStyle(cloudKit.isSignedIn ? .green : .red)
+                                .foregroundStyle(.green)
                         }
 
                         Spacer()
 
-                        if cloudKit.isSignedIn {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundStyle(.green)
-                        }
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
                     }
                     .padding()
                     .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
 
-                    if !cloudKit.isSignedIn {
-                        VStack(spacing: 8) {
-                            Text("iCloud sync is optional. You can use CareCircle offline and connect iCloud later in Settings.")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                                .multilineTextAlignment(.center)
-
-                            Button("Retry iCloud") {
-                                asyncRun { @MainActor in await cloudKit.checkAccountStatus() }
-                            }
-                            .font(.caption)
-                            .buttonStyle(.bordered)
-                            .tint(.careTint)
-                        }
-                    }
+                    Text("Appointments, notes, documents, and emergency information stay on this iPhone unless you explicitly share or export them.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
                 }
                 .padding(.horizontal, 24)
 
-                // Name & email — always shown regardless of iCloud status
+                // Name & email
                 VStack(spacing: 16) {
                     TextField("Your full name", text: $userName)
                         .textFieldStyle(.roundedBorder)
@@ -193,18 +176,64 @@ struct OnboardingView: View {
                 }
                 .padding(.horizontal, 24)
 
-                if cloudKit.isSignedIn, cloudKit.userName != nil {
-                    HStack(spacing: 6) {
-                        Image(systemName: "person.crop.circle.badge.checkmark")
-                            .foregroundStyle(.green)
-                        Text("Name auto-filled from iCloud")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                Spacer()
+            }
+        }
+    }
+
+    // MARK: - Step 2: Region
+
+    private var regionStep: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Where do you manage care?")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    Text("We preconfigure document and reminder templates for your region. You can change this later.")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+
+                VStack(spacing: 12) {
+                    ForEach(RegionProfile.allCases, id: \.self) { region in
+                        Button {
+                            selectedRegion = region
+                        } label: {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(region.rawValue)
+                                        .font(.headline)
+                                        .foregroundStyle(.primary)
+                                    Text(region.healthCoverageLabel)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                Image(systemName: selectedRegion == region ? "checkmark.circle.fill" : "circle")
+                                    .foregroundStyle(selectedRegion == region ? .careTint : .secondary)
+                            }
+                            .padding()
+                            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
 
-                Spacer()
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("AI behavior on this iPhone")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.secondary)
+                    Text(ai.availabilityState.message)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding()
+                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
             }
+            .padding(24)
         }
     }
 
@@ -247,7 +276,7 @@ struct OnboardingView: View {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Connect Apple Health")
                                 .font(.subheadline)
-                            Text("Share vitals with trusted family members")
+                            Text("Read vitals from the Health app on this iPhone")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
@@ -273,7 +302,7 @@ struct OnboardingView: View {
                         .font(.title2)
                         .fontWeight(.bold)
 
-                    Text("Your care circle will sync across all your devices via iCloud.")
+                    Text("Your care information stays on this iPhone by default.")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
@@ -287,7 +316,8 @@ struct OnboardingView: View {
                     }
                     summaryRow(label: "Role", value: userRole.rawValue)
                     summaryRow(label: "Care recipient", value: parentName)
-                    summaryRow(label: "Sync", value: cloudKit.isSignedIn ? "iCloud" : "Local only")
+                    summaryRow(label: "Region", value: selectedRegion.rawValue)
+                    summaryRow(label: "Storage", value: "On this iPhone")
                     summaryRow(label: "Apple Health", value: connectHealth ? "Connected" : "Not connected")
                 }
                 .glassCard()
@@ -326,6 +356,7 @@ struct OnboardingView: View {
     private func createProfile() {
         let profile = ParentProfile(
             name: parentName,
+            regionProfileCode: selectedRegion.countryCode,
             dateOfBirth: dateOfBirth,
             bloodType: bloodType.isEmpty ? nil : bloodType,
             allergies: allergies.isEmpty ? nil : allergies,
@@ -348,12 +379,21 @@ struct OnboardingView: View {
         member.expenseAccount = account
         modelContext.insert(account)
 
+        RegionalTemplateSeeder.seedDefaults(
+            for: profile,
+            region: selectedRegion,
+            modelContext: modelContext
+        )
+
         if connectHealth {
             asyncRun { @MainActor in _ = await healthKit.requestAuthorization() }
         }
 
-        // Request notification permission
-        asyncRun { @MainActor in _ = await NotificationManager.requestPermission() }
+        // Request notification permission and seed reminders after setup
+        asyncRun { @MainActor in
+            _ = await NotificationManager.requestPermission()
+            NotificationManager.resync(context: modelContext)
+        }
 
         try? modelContext.save()
         appMode = "real"

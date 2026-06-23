@@ -2,170 +2,251 @@
 //  NotificationSettingsView.swift
 //  CareCircle
 //
-//  Manage notification preferences for appointments and tasks.
+//  Manage local reminder categories and timing.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 import UserNotifications
 
 struct NotificationSettingsView: View {
-    @Environment(\.modelContext) private var modelContext
     @Query(sort: \Appointment.date) private var appointments: [Appointment]
     @Query private var tasks: [Task]
+    @Query private var documents: [Document]
+    @Query private var profiles: [ParentProfile]
+
+    @AppStorage(NotificationManager.Keys.appointmentsEnabled) private var appointmentsEnabled = true
+    @AppStorage(NotificationManager.Keys.tasksEnabled) private var tasksEnabled = true
+    @AppStorage(NotificationManager.Keys.documentExpiryEnabled) private var documentExpiryEnabled = true
+    @AppStorage(NotificationManager.Keys.emergencyPacketEnabled) private var emergencyPacketEnabled = true
+    @AppStorage(NotificationManager.Keys.weeklyDigestEnabled) private var weeklyDigestEnabled = false
+    @AppStorage(NotificationManager.Keys.appointmentLeadTime) private var appointmentLeadTimeMinutes = 120
+    @AppStorage(NotificationManager.Keys.emergencyPacketIntervalDays) private var emergencyPacketIntervalDays = 60
 
     @State private var authorizationStatus: UNAuthorizationStatus = .notDetermined
     @State private var pendingCount = 0
     @State private var isLoading = false
 
-    var isAuthorized: Bool {
+    private var isAuthorized: Bool {
         authorizationStatus == .authorized || authorizationStatus == .provisional
+    }
+
+    private var currentPreferences: CareNotificationPreferences {
+        CareNotificationPreferences(
+            appointment24h: appointmentsEnabled && appointmentLeadTimeMinutes == 1440,
+            appointment2h: appointmentsEnabled && appointmentLeadTimeMinutes == 120,
+            appointment30m: appointmentsEnabled && appointmentLeadTimeMinutes == 30,
+            taskDueEnabled: tasksEnabled,
+            taskOverdueEnabled: tasksEnabled,
+            taskDueHour: 8,
+            document60d: documentExpiryEnabled,
+            document30d: documentExpiryEnabled,
+            document7d: documentExpiryEnabled,
+            emergencyPacketCadenceDays: emergencyPacketEnabled ? emergencyPacketIntervalDays : 3650,
+            weeklyReadinessDigest: weeklyDigestEnabled
+        )
     }
 
     var body: some View {
         List {
-            // Status section
-            Section {
-                HStack(spacing: 14) {
-                    Image(systemName: statusIcon)
-                        .font(.title2)
-                        .foregroundStyle(statusColor)
-                        .frame(width: 36)
+            statusSection
 
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Notification Status")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                        Text(statusDescription)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-
-                    Spacer()
-
-                    if isAuthorized {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundStyle(.green)
-                    }
-                }
-
-                if authorizationStatus == .denied {
-                    Button {
-                        if let url = URL(string: UIApplication.openSettingsURLString) {
-                            UIApplication.shared.open(url)
-                        }
-                    } label: {
-                        Label("Open Settings", systemImage: "gear")
-                    }
-                }
-
-                if authorizationStatus == .notDetermined {
-                    Button {
-                        asyncRun { @MainActor in
-                            _ = await NotificationManager.requestPermission()
-                            await checkStatus()
-                        }
-                    } label: {
-                        Label("Enable Notifications", systemImage: "bell.badge")
-                            .foregroundStyle(.careTint)
-                    }
-                }
-            } header: {
-                Text("Status")
-            } footer: {
-                if authorizationStatus == .denied {
-                    Text("Notifications were denied. Open Settings to allow CareCircle notifications.")
-                }
-            }
-
-            // Active reminders
             if isAuthorized {
-                Section {
-                    HStack {
-                        Label("Scheduled Reminders", systemImage: "clock.badge")
-                        Spacer()
-                        Text("\(pendingCount)")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(.careTint)
-                    }
-
-                    let futureAppointments = appointments.filter { $0.date > Date() }.count
-                    let tasksWithDue = tasks.filter { !$0.isCompleted && $0.dueDate != nil }.count
-
-                    HStack {
-                        Label("Upcoming Appointments", systemImage: "calendar")
-                        Spacer()
-                        Text("\(futureAppointments)")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-
-                    HStack {
-                        Label("Tasks with Due Dates", systemImage: "checklist")
-                        Spacer()
-                        Text("\(tasksWithDue)")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                } header: {
-                    Text("Active Reminders")
-                }
-
-                // Actions
-                Section {
-                    Button {
-                        isLoading = true
-                        NotificationManager.scheduleAll(
-                            appointments: appointments,
-                            tasks: tasks
-                        )
-                        asyncRun { @MainActor in
-                            await checkStatus()
-                            isLoading = false
-                        }
-                    } label: {
-                        HStack {
-                            Label("Reschedule All Reminders", systemImage: "arrow.clockwise")
-                                .foregroundStyle(.careTint)
-                            if isLoading {
-                                Spacer()
-                                ProgressView()
-                                    .controlSize(.small)
-                            }
-                        }
-                    }
-                    .disabled(isLoading)
-
-                    Button(role: .destructive) {
-                        NotificationManager.cancelAll()
-                        asyncRun { @MainActor in await checkStatus() }
-                    } label: {
-                        Label("Clear All Reminders", systemImage: "bell.slash")
-                    }
-                } header: {
-                    Text("Actions")
-                } footer: {
-                    Text("Reschedule refreshes all appointment (1 hour before) and task (8 AM on due date) reminders.")
-                }
+                categoriesSection
+                timingSection
+                activeSection
+                actionsSection
             }
 
-            // Info section
-            Section {
-                VStack(alignment: .leading, spacing: 8) {
-                    infoRow(icon: "calendar.badge.clock", text: "Appointment reminders fire 1 hour before")
-                    infoRow(icon: "checklist", text: "Task reminders fire at 8:00 AM on due date")
-                    infoRow(icon: "iphone", text: "Reminders are local to this device")
-                }
-                .padding(.vertical, 4)
-            } header: {
-                Text("How It Works")
-            }
+            infoSection
         }
         .navigationTitle("Notifications")
+        .onChange(of: appointmentsEnabled) { _, _ in reschedule() }
+        .onChange(of: tasksEnabled) { _, _ in reschedule() }
+        .onChange(of: documentExpiryEnabled) { _, _ in reschedule() }
+        .onChange(of: emergencyPacketEnabled) { _, _ in reschedule() }
+        .onChange(of: weeklyDigestEnabled) { _, _ in reschedule() }
+        .onChange(of: appointmentLeadTimeMinutes) { _, _ in reschedule() }
+        .onChange(of: emergencyPacketIntervalDays) { _, _ in reschedule() }
         .task {
+            migrateAppointmentLeadTimeIfNeeded()
             await checkStatus()
         }
+    }
+
+    private var statusSection: some View {
+        Section("Status") {
+            HStack(spacing: 14) {
+                Image(systemName: statusIcon)
+                    .font(.title2)
+                    .foregroundStyle(statusColor)
+                    .frame(width: 36)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Notification Status")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                    Text(statusDescription)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                if isAuthorized {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                }
+            }
+
+            if authorizationStatus == .denied {
+                Button("Open Settings") {
+                    guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                    UIApplication.shared.open(url)
+                }
+            }
+
+            if authorizationStatus == .notDetermined {
+                Button("Enable Notifications") {
+                    asyncRun { @MainActor in
+                        _ = await NotificationManager.requestPermission()
+                        await checkStatus()
+                    }
+                }
+                .foregroundStyle(.careTint)
+            }
+        }
+    }
+
+    private var categoriesSection: some View {
+        Section("Reminder Categories") {
+            Toggle("Appointments", isOn: $appointmentsEnabled)
+            Toggle("Tasks", isOn: $tasksEnabled)
+            Toggle("Document Expiry", isOn: $documentExpiryEnabled)
+            Toggle("Emergency Packet Refresh", isOn: $emergencyPacketEnabled)
+            Toggle("Weekly Readiness Digest", isOn: $weeklyDigestEnabled)
+        }
+    }
+
+    private var timingSection: some View {
+        Section("Timing") {
+            Picker("Appointment lead time", selection: $appointmentLeadTimeMinutes) {
+                Text("30 minutes").tag(30)
+                Text("2 hours").tag(120)
+                Text("24 hours").tag(1440)
+            }
+
+            Picker("Emergency packet interval", selection: $emergencyPacketIntervalDays) {
+                Text("30 days").tag(30)
+                Text("60 days").tag(60)
+                Text("90 days").tag(90)
+            }
+        }
+    }
+
+    private var activeSection: some View {
+        Section("Active Reminders") {
+            HStack {
+                Label("Scheduled", systemImage: "clock.badge")
+                Spacer()
+                Text("\(pendingCount)")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+            }
+
+            HStack {
+                Label("Upcoming Appointments", systemImage: "calendar")
+                Spacer()
+                Text("\(appointments.filter { $0.date > Date() }.count)")
+                    .foregroundStyle(.secondary)
+            }
+
+            HStack {
+                Label("Open Tasks", systemImage: "checklist")
+                Spacer()
+                Text("\(tasks.filter { !$0.isCompleted }.count)")
+                    .foregroundStyle(.secondary)
+            }
+
+            HStack {
+                Label("Expiring Docs (60d)", systemImage: "doc.badge.clock")
+                Spacer()
+                Text("\(documents.filter(isExpiringWithin60Days).count)")
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private var actionsSection: some View {
+        Section("Actions") {
+            Button {
+                reschedule()
+            } label: {
+                HStack {
+                    Label("Reschedule All Reminders", systemImage: "arrow.clockwise")
+                    if isLoading {
+                        Spacer()
+                        ProgressView().controlSize(.small)
+                    }
+                }
+            }
+            .disabled(isLoading)
+
+            Button(role: .destructive) {
+                NotificationManager.cancelAll()
+                asyncRun { @MainActor in await checkStatus() }
+            } label: {
+                Label("Clear All Reminders", systemImage: "bell.slash")
+            }
+        }
+    }
+
+    private var infoSection: some View {
+        Section("How It Works") {
+            VStack(alignment: .leading, spacing: 8) {
+                infoRow(icon: "calendar.badge.clock", text: "Appointment reminders use your selected lead time")
+                infoRow(icon: "checklist", text: "Task reminders include overdue follow-up for critical items")
+                infoRow(icon: "doc.badge.clock", text: "Document expiry reminders notify at 60/30/7 days")
+                infoRow(icon: "iphone", text: "All reminders are scheduled locally on this iPhone")
+            }
+            .padding(.vertical, 4)
+        }
+    }
+
+    private func reschedule() {
+        isLoading = true
+        let preferences = currentPreferences
+        preferences.save()
+        NotificationManager.scheduleAll(
+            appointments: appointments,
+            tasks: tasks,
+            documents: documents,
+            profile: profiles.first,
+            preferences: preferences
+        )
+        asyncRun { @MainActor in
+            await checkStatus()
+            isLoading = false
+        }
+    }
+
+    private func migrateAppointmentLeadTimeIfNeeded() {
+        switch appointmentLeadTimeMinutes {
+        case 1:
+            appointmentLeadTimeMinutes = 30
+        case 2:
+            appointmentLeadTimeMinutes = 120
+        case 24:
+            appointmentLeadTimeMinutes = 1440
+        default:
+            break
+        }
+    }
+
+    private func isExpiringWithin60Days(_ document: Document) -> Bool {
+        guard let expiry = document.expiryDate else { return false }
+        let cutoff = Calendar.current.date(byAdding: .day, value: 60, to: Date()) ?? .distantFuture
+        return expiry >= Date() && expiry <= cutoff
     }
 
     private func infoRow(icon: String, text: String) -> some View {
@@ -184,7 +265,7 @@ struct NotificationSettingsView: View {
         authorizationStatus = settings.authorizationStatus
 
         let pending = await UNUserNotificationCenter.current().pendingNotificationRequests()
-        pendingCount = pending.count
+        pendingCount = pending.filter { $0.identifier.hasPrefix("carecircle.") }.count
     }
 
     private var statusIcon: String {

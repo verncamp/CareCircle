@@ -4,6 +4,7 @@
 //
 
 import XCTest
+import PDFKit
 @testable import CareCircle
 
 final class EmergencyPacketTests: XCTestCase {
@@ -74,5 +75,42 @@ final class EmergencyPacketTests: XCTestCase {
         XCTAssertNotNil(data)
         // Should be multi-page with 20 medications
         XCTAssertTrue(data.count > 1000, "PDF with many meds should be substantial")
+    }
+
+    func testGenerateIncludesOnlyEmergencyPacketDocuments() {
+        let profile = ParentProfile(name: "Packet Patient")
+        profile.documents.append(
+            Document(
+                title: "Provincial Health Card",
+                category: .insurance,
+                domain: .healthCoverage,
+                countryProfileCode: "CA",
+                fileURL: "template://health-card",
+                tags: ["template", "CA"],
+                issuer: "OHIP",
+                memberOrPolicyId: "HC-123",
+                isCritical: true,
+                includeInEmergencyPacket: true
+            )
+        )
+        profile.documents.append(
+            Document(
+                title: "Bank Account Authorization",
+                category: .legal,
+                domain: .banking,
+                countryProfileCode: "CA",
+                isCritical: true,
+                includeInEmergencyPacket: false
+            )
+        )
+
+        let data = EmergencyPacketGenerator.generate(for: profile)
+        let text = PDFDocument(data: data)?.string ?? ""
+
+        XCTAssertTrue(text.contains("CRITICAL DOCUMENTS TO HAVE READY"))
+        XCTAssertTrue(text.contains("Provincial Health Card"))
+        XCTAssertTrue(text.contains("OHIP"))
+        XCTAssertTrue(text.contains("HC-123"))
+        XCTAssertFalse(text.contains("Bank Account Authorization"))
     }
 }

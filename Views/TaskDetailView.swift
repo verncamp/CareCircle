@@ -52,6 +52,7 @@ struct TaskDetailView: View {
             Button("Delete", role: .destructive) {
                 modelContext.delete(task)
                 try? modelContext.save()
+                NotificationManager.resync(context: modelContext)
                 dismiss()
             }
             Button("Cancel", role: .cancel) {}
@@ -94,6 +95,7 @@ struct TaskDetailView: View {
                     task.isCompleted.toggle()
                     task.updatedAt = Date()
                     try? modelContext.save()
+                    NotificationManager.resync(context: modelContext)
                 }
             } label: {
                 HStack(spacing: 6) {
@@ -273,7 +275,7 @@ struct EditTaskView: View {
         task.assignedTo = assignee
         task.updatedAt = Date()
         try? modelContext.save()
-        NotificationManager.scheduleTaskReminder(for: task)
+        NotificationManager.resync(context: modelContext)
         dismiss()
     }
 }

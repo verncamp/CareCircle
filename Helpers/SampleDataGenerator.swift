@@ -120,15 +120,61 @@ struct SampleDataGenerator {
         }
         
         // Create documents
+        let insuranceExpiry = Calendar.current.date(byAdding: .day, value: 45, to: Date())
+        let medicareExpiry = Calendar.current.date(byAdding: .year, value: 1, to: Date())
+        let medicationRenewal = Calendar.current.date(byAdding: .day, value: 30, to: Date())
+
         let documents = [
-            Document(title: "Insurance Card", category: .insurance, fileURL: "sample://insurance-card.pdf", isPinned: true, tags: ["Blue Cross", "Primary"]),
-            Document(title: "Medication List (Current)", category: .medication, fileURL: "sample://med-list.pdf", isPinned: true, tags: ["Updated", "Current"]),
-            Document(title: "Power of Attorney", category: .legal, fileURL: "sample://poa.pdf", isPinned: true, tags: ["Legal", "Important"]),
-            Document(title: "Lab Results - March 2026", category: .lab, fileURL: "sample://lab-mar-2026.pdf", tags: ["Recent", "Cardiology"]),
-            Document(title: "Hospital Discharge Summary", category: .medical, fileURL: "sample://discharge.pdf", tags: ["ER", "February"]),
-            Document(title: "COVID-19 Vaccination Record", category: .vaccination, fileURL: "sample://covid-vax.pdf", tags: ["Vaccination", "2025"]),
-            Document(title: "Medicare Card", category: .insurance, fileURL: "sample://medicare.pdf", tags: ["Medicare"]),
-            Document(title: "Living Will", category: .legal, fileURL: "sample://living-will.pdf", tags: ["Legal", "Advance Directives"])
+            Document(
+                title: "Insurance Card",
+                category: .insurance,
+                domain: .insurance,
+                fileURL: "sample://insurance-card.pdf",
+                isPinned: true,
+                tags: ["Blue Cross", "Primary"],
+                issuer: "Blue Cross Blue Shield",
+                memberOrPolicyId: "BCBS-987654",
+                expiryDate: insuranceExpiry,
+                isCritical: true,
+                includeInEmergencyPacket: true
+            ),
+            Document(
+                title: "Medication List (Current)",
+                category: .medication,
+                domain: .healthCoverage,
+                fileURL: "sample://med-list.pdf",
+                isPinned: true,
+                tags: ["Updated", "Current"],
+                renewalDate: medicationRenewal,
+                isCritical: true,
+                includeInEmergencyPacket: true
+            ),
+            Document(
+                title: "Power of Attorney",
+                category: .legal,
+                domain: .legal,
+                fileURL: "sample://poa.pdf",
+                isPinned: true,
+                tags: ["Legal", "Important"],
+                isCritical: true,
+                includeInEmergencyPacket: false
+            ),
+            Document(title: "Lab Results - March 2026", category: .lab, domain: .healthCoverage, fileURL: "sample://lab-mar-2026.pdf", tags: ["Recent", "Cardiology"]),
+            Document(title: "Hospital Discharge Summary", category: .medical, domain: .healthCoverage, fileURL: "sample://discharge.pdf", tags: ["ER", "February"]),
+            Document(title: "COVID-19 Vaccination Record", category: .vaccination, domain: .healthCoverage, fileURL: "sample://covid-vax.pdf", tags: ["Vaccination", "2025"]),
+            Document(
+                title: "Medicare Card",
+                category: .insurance,
+                domain: .healthCoverage,
+                fileURL: "sample://medicare.pdf",
+                tags: ["Medicare"],
+                issuer: "Centers for Medicare & Medicaid Services",
+                memberOrPolicyId: "1EG4-TE5-MK73",
+                expiryDate: medicareExpiry,
+                isCritical: true,
+                includeInEmergencyPacket: true
+            ),
+            Document(title: "Living Will", category: .legal, domain: .legal, fileURL: "sample://living-will.pdf", tags: ["Legal", "Advance Directives"], isCritical: true)
         ]
         
         for document in documents {

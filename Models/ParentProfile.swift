@@ -21,6 +21,7 @@ final class ParentProfile {
     var statusMessage: String = "Stable today"
     var createdAt: Date = Date()
     var updatedAt: Date = Date()
+    var regionProfileCode: String = "US"
 
     // Profile details
     @Attribute(.externalStorage) var photoData: Data?
@@ -52,10 +53,16 @@ final class ParentProfile {
     @Relationship(deleteRule: .cascade, inverse: \Expense.parentProfile) var expenses: [Expense] = []
     @Relationship(deleteRule: .cascade, inverse: \UpdateFeedItem.parentProfile) var updateFeedItems: [UpdateFeedItem] = []
 
+    var regionProfile: RegionProfile {
+        get { RegionProfile.from(countryCode: regionProfileCode) }
+        set { regionProfileCode = newValue.countryCode }
+    }
+
     init(
         id: UUID = UUID(),
         name: String = "",
         statusMessage: String = "Stable today",
+        regionProfileCode: String = "US",
         photoData: Data? = nil,
         dateOfBirth: Date? = nil,
         bloodType: String? = nil,
@@ -74,6 +81,7 @@ final class ParentProfile {
         self.id = id
         self.name = name
         self.statusMessage = statusMessage
+        self.regionProfileCode = regionProfileCode
         self.photoData = photoData
         self.dateOfBirth = dateOfBirth
         self.bloodType = bloodType

@@ -251,7 +251,7 @@ struct ParentProfileView: View {
                     Text("No health data available")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
-                    Text("Health data is read from this device's Health app.\nTo share with family, enable Health Sharing in Settings > Health > Sharing.")
+                    Text("Health data is read from the Health app on this iPhone.\nThis data stays on device.")
                         .font(.caption)
                         .foregroundStyle(.tertiary)
                         .multilineTextAlignment(.center)

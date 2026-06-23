@@ -10,6 +10,8 @@ struct TodayView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var parentProfiles: [ParentProfile]
     @Query private var familyMembers: [FamilyMember]
+    @Query(sort: \Document.updatedAt, order: .reverse) private var documents: [Document]
+    @AppStorage(NotificationManager.Keys.emergencyPacketLastGeneratedAt) private var emergencyPacketLastGeneratedAt: Double = 0
     @State private var ai = AIAssistant()
     @State private var briefing: String?
     @State private var showBriefing = false
@@ -32,16 +34,16 @@ struct TodayView: View {
                         }
                         .buttonStyle(.plain)
 
-                        // AI Briefing
-                        if ai.isAvailable {
-                            aiBriefingCard(profile)
-                        }
+                        aiSection(profile)
 
                         if let appt = nextAppointment(from: profile) {
                             appointmentCard(appt)
                         }
 
+                        readinessCard(profile)
                         criticalTasksSection(from: profile)
+                        expiringDocumentsSection
+                        emergencyReadinessSection(from: profile)
                         recentUpdatesSection(from: profile)
                     }
                     .padding(.horizontal)
@@ -71,6 +73,8 @@ struct TodayView: View {
                 Button("Generate Emergency Packet") {
                     guard let profile = activeProfile else { return }
                     emergencyPDFData = EmergencyPacketGenerator.generate(for: profile)
+                    NotificationManager.markEmergencyPacketGenerated()
+                    NotificationManager.resync(context: modelContext)
                     showingEmergencyPacket = true
                 }
 
@@ -180,6 +184,27 @@ struct TodayView: View {
 
     // MARK: - AI Briefing Card
 
+    @ViewBuilder
+    private func aiSection(_ profile: ParentProfile) -> some View {
+        switch ai.availabilityState {
+        case .available:
+            aiBriefingCard(profile)
+        case .appleIntelligenceNotEnabled:
+            aiStatusCard(
+                title: ai.availabilityState.title,
+                message: ai.availabilityState.message,
+                actionTitle: "Open Settings"
+            ) {
+                openAppSettings()
+            }
+        case .modelNotReady, .deviceNotEligible, .unavailable:
+            aiStatusCard(
+                title: ai.availabilityState.title,
+                message: ai.availabilityState.message
+            )
+        }
+    }
+
     private func aiBriefingCard(_ profile: ParentProfile) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
@@ -230,6 +255,38 @@ struct TodayView: View {
         .glassCard()
     }
 
+    private func aiStatusCard(
+        title: String,
+        message: String,
+        actionTitle: String? = nil,
+        action: (() -> Void)? = nil
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                Image(systemName: "sparkles")
+                    .foregroundStyle(.careTint)
+                Text(title)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.secondary)
+                    .textCase(.uppercase)
+                    .tracking(0.5)
+            }
+
+            Text(message)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .lineSpacing(4)
+
+            if let actionTitle, let action {
+                Button(actionTitle, action: action)
+                    .font(.caption)
+                    .foregroundStyle(.careTint)
+            }
+        }
+        .glassCard()
+    }
+
     private func generateBriefing(_ profile: ParentProfile) async {
         briefing = await ai.generateBriefing(
             profile: profile,
@@ -237,6 +294,11 @@ struct TodayView: View {
             tasks: profile.tasks,
             updates: profile.updateFeedItems
         )
+    }
+
+    private func openAppSettings() {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        UIApplication.shared.open(url)
     }
 
     // MARK: - Parent Hero Card
@@ -351,6 +413,33 @@ struct TodayView: View {
 
     // MARK: - Critical Tasks
 
+    private func readinessCard(_ profile: ParentProfile) -> some View {
+        let expiring = expiringDocs(for: profile)
+        let packetAgeText = emergencyPacketAgeText()
+
+        return VStack(alignment: .leading, spacing: 12) {
+            SectionHeader(title: "Care Readiness")
+
+            HStack {
+                Label("Expiring documents (60d)", systemImage: "doc.badge.clock")
+                Spacer()
+                Text("\(expiring.count)")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(expiring.isEmpty ? .secondary : .orange)
+            }
+
+            HStack {
+                Label("Emergency packet", systemImage: "cross.case")
+                Spacer()
+                Text(packetAgeText)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .glassCard()
+    }
+
     private func criticalTasksSection(from profile: ParentProfile) -> some View {
         let tasks = criticalTasks(from: profile)
 
@@ -421,6 +510,61 @@ struct TodayView: View {
     }
 
     // MARK: - Recent Updates
+
+    private var expiringDocumentsSection: some View {
+        let cutoff = Calendar.current.date(byAdding: .day, value: 30, to: Date()) ?? .distantFuture
+        let expiring = documents
+            .filter { ($0.expiryDate ?? .distantFuture) <= cutoff }
+            .sorted { ($0.expiryDate ?? .distantFuture) < ($1.expiryDate ?? .distantFuture) }
+            .prefix(3)
+
+        return VStack(alignment: .leading, spacing: 12) {
+            SectionHeader(title: "Expiring Docs")
+            if expiring.isEmpty {
+                Text("No documents expiring in the next 30 days.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            } else {
+                ForEach(Array(expiring), id: \.id) { doc in
+                    HStack {
+                        Image(systemName: "doc.badge.clock")
+                            .foregroundStyle(.orange)
+                        Text(doc.title)
+                            .font(.subheadline)
+                        Spacer()
+                        if let expiry = doc.expiryDate {
+                            Text(expiry.formatted(date: .abbreviated, time: .omitted))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
+        }
+        .glassCard()
+    }
+
+    private func emergencyReadinessSection(from profile: ParentProfile) -> some View {
+        let criticalCount = profile.documents.filter(\.isCritical).count
+        let packetCount = profile.documents.filter(\.includeInEmergencyPacket).count
+        return VStack(alignment: .leading, spacing: 12) {
+            SectionHeader(title: "Emergency Readiness")
+            HStack {
+                Label("\(criticalCount) critical documents", systemImage: "exclamationmark.triangle.fill")
+                Spacer()
+                Label("\(packetCount) in emergency packet", systemImage: "cross.case.fill")
+            }
+            .font(.caption)
+            .foregroundStyle(.secondary)
+
+            Button("Open Emergency Actions") {
+                showingEmergency = true
+            }
+            .font(.subheadline)
+            .foregroundStyle(.careTint)
+        }
+        .glassCard()
+    }
 
     private func recentUpdatesSection(from profile: ParentProfile) -> some View {
         let updates = recentUpdates(from: profile)
@@ -546,6 +690,20 @@ struct TodayView: View {
             .sorted { $0.priority.sortOrder < $1.priority.sortOrder }
             .prefix(5)
             .map { $0 }
+    }
+
+    func expiringDocs(for profile: ParentProfile) -> [Document] {
+        let cutoff = Calendar.current.date(byAdding: .day, value: 60, to: Date()) ?? .distantFuture
+        return documents.filter { doc in
+            guard doc.parentProfile?.id == profile.id, let expiry = doc.expiryDate else { return false }
+            return expiry >= Date() && expiry <= cutoff
+        }
+    }
+
+    func emergencyPacketAgeText() -> String {
+        guard emergencyPacketLastGeneratedAt > 0 else { return "Not generated yet" }
+        let date = Date(timeIntervalSince1970: emergencyPacketLastGeneratedAt)
+        return date.formatted(date: .abbreviated, time: .omitted)
     }
 
     func recentUpdates(from profile: ParentProfile) -> [UpdateFeedItem] {

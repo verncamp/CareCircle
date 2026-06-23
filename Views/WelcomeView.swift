@@ -46,18 +46,18 @@ struct WelcomeView: View {
                     )
                     featureRow(
                         icon: "person.3.fill",
-                        title: "Family Coordination",
-                        subtitle: "Assign tasks and track who owns what"
+                        title: "Care Coordination",
+                        subtitle: "Track responsibilities and next steps in one place"
                     )
                     featureRow(
                         icon: "heart.text.square.fill",
                         title: "Health Monitoring",
-                        subtitle: "Apple Watch vitals shared with trusted family"
+                        subtitle: "Read Apple Health vitals from this iPhone"
                     )
                     featureRow(
                         icon: "sparkles",
                         title: "AI-Powered Summaries",
-                        subtitle: "On-device intelligence, private by design"
+                        subtitle: "On-device when available, with manual workflows always available"
                     )
                 }
                 .padding(.horizontal, 32)

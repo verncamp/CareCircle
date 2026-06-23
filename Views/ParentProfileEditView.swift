@@ -175,7 +175,7 @@ struct ParentProfileEditView: View {
                 } header: {
                     Text("Apple Health")
                 } footer: {
-                    Text("Read heart rate, blood oxygen, steps, and blood pressure from this device's Health app. To share data with family members on other devices, enable Health Sharing in Settings > Health > Sharing.")
+                    Text("Read heart rate, blood oxygen, steps, and blood pressure from the Health app on this iPhone. This data stays on device.")
                 }
             }
             .navigationTitle("Edit Profile")

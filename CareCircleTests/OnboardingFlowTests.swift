@@ -39,6 +39,7 @@ final class OnboardingFlowTests: XCTestCase {
         // Simulate what OnboardingView.createProfile() does
         let profile = ParentProfile(
             name: "Mom",
+            regionProfileCode: "CA",
             dateOfBirth: Calendar.current.date(byAdding: .year, value: -75, to: Date()),
             bloodType: "O+",
             allergies: "Penicillin",
@@ -66,6 +67,7 @@ final class OnboardingFlowTests: XCTestCase {
         XCTAssertEqual(profile.name, "Mom")
         XCTAssertEqual(profile.bloodType, "O+")
         XCTAssertEqual(profile.allergies, "Penicillin")
+        XCTAssertEqual(profile.regionProfileCode, "CA")
         XCTAssertEqual(profile.familyMembers.count, 1)
 
         // Verify member

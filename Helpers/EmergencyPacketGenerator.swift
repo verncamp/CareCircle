@@ -83,6 +83,26 @@ struct EmergencyPacketGenerator {
         }
         y += 8
 
+        // Emergency packet document references
+        let packetDocuments = emergencyPacketDocuments(from: profile)
+        if !packetDocuments.isEmpty {
+            y = ensurePageSpace(y, pageHeight: pageHeight, margin: margin)
+            y = drawSectionHeader("CRITICAL DOCUMENTS TO HAVE READY", at: y, margin: margin, width: contentWidth)
+
+            for document in packetDocuments {
+                y = ensurePageSpace(y, pageHeight: pageHeight, margin: margin, minimumSpace: 52)
+                y = drawText("• \(document.title)", at: y, margin: margin, width: contentWidth,
+                             font: .boldSystemFont(ofSize: 12), color: .darkText)
+
+                let details = documentPacketDetails(document)
+                if !details.isEmpty {
+                    y = drawText("  \(details.joined(separator: " | "))", at: y, margin: margin, width: contentWidth,
+                                 font: .systemFont(ofSize: 10), color: .gray)
+                }
+            }
+            y += 8
+        }
+
         // Medications
         if !profile.medications.isEmpty {
             y = drawSectionHeader("CURRENT MEDICATIONS", at: y, margin: margin, width: contentWidth)
@@ -205,5 +225,48 @@ struct EmergencyPacketGenerator {
         path.lineWidth = 0.5
         path.stroke()
         return y + 1
+    }
+
+    private static func ensurePageSpace(
+        _ y: CGFloat,
+        pageHeight: CGFloat,
+        margin: CGFloat,
+        minimumSpace: CGFloat = 72
+    ) -> CGFloat {
+        guard y > pageHeight - margin - minimumSpace else { return y }
+        UIGraphicsBeginPDFPage()
+        return margin
+    }
+
+    private static func emergencyPacketDocuments(from profile: ParentProfile) -> [Document] {
+        profile.documents
+            .filter { $0.includeInEmergencyPacket }
+            .sorted { lhs, rhs in
+                if lhs.isPinned != rhs.isPinned { return lhs.isPinned && !rhs.isPinned }
+                if lhs.domain != rhs.domain { return lhs.domain.rawValue < rhs.domain.rawValue }
+                return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+            }
+    }
+
+    private static func documentPacketDetails(_ document: Document) -> [String] {
+        var details = [document.domain.rawValue, document.countryProfileCode]
+
+        if let issuer = document.issuer, !issuer.isEmpty {
+            details.append("Issuer: \(issuer)")
+        }
+
+        if let memberOrPolicyId = document.memberOrPolicyId, !memberOrPolicyId.isEmpty {
+            details.append("ID: \(memberOrPolicyId)")
+        }
+
+        if let expiryDate = document.expiryDate {
+            details.append("Expires: \(expiryDate.formatted(date: .abbreviated, time: .omitted))")
+        }
+
+        if document.fileURL.hasPrefix("template://") {
+            details.append("Needs attachment")
+        }
+
+        return details
     }
 }

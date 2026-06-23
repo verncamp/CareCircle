@@ -11,10 +11,11 @@ import SwiftData
 struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @AppStorage("appMode") private var appMode: String = "none"
+    @AppStorage("cloudSummariesEnabled") private var cloudSummariesEnabled = false
     @Query private var profiles: [ParentProfile]
     @Query private var familyMembers: [FamilyMember]
 
-    @State private var cloudKit = CloudKitAccountManager()
+    @State private var ai = AIAssistant()
     @State private var showingEditProfile = false
     @State private var showingAddMember = false
     @State private var showingResetConfirm = false
@@ -53,7 +54,6 @@ struct SettingsView: View {
                 dangerSection
             }
             .navigationTitle("Settings")
-            .task { await cloudKit.checkAccountStatus() }
             .sheet(isPresented: $showingEditProfile) {
                 if let profile {
                     ParentProfileEditView(profile: profile)
@@ -113,7 +113,7 @@ struct SettingsView: View {
                     VStack(alignment: .leading) {
                         Text(isDemo ? "Demo User" : "No Account")
                             .font(.headline)
-                        Text(isDemo ? "Exploring CareCircle" : "Sign in to save your data")
+                        Text(isDemo ? "Exploring CareCircle" : "Create a profile to organize care on this iPhone")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
@@ -241,6 +241,14 @@ struct SettingsView: View {
                     .font(.subheadline)
                     .foregroundStyle(.green)
             }
+
+            let region = RegionProfile.from(countryCode: profile.regionProfileCode)
+            Label("Region: \(region.rawValue)", systemImage: "globe.americas")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            Text(region.healthCoverageLabel)
+                .font(.caption)
+                .foregroundStyle(.secondary)
         }
     }
 
@@ -249,20 +257,58 @@ struct SettingsView: View {
     private var preferencesSection: some View {
         Section("App") {
             HStack(spacing: 12) {
-                Image(systemName: cloudKit.isSignedIn ? "icloud.fill" : "icloud.slash")
-                    .foregroundStyle(cloudKit.isSignedIn ? .careTint : .red)
+                Image(systemName: "iphone")
+                    .foregroundStyle(.careTint)
                 VStack(alignment: .leading, spacing: 1) {
-                    Text("iCloud Sync")
+                    Text("Storage")
                         .font(.subheadline)
-                    Text(cloudKit.statusDescription)
+                    Text("On this iPhone")
                         .font(.caption)
-                        .foregroundStyle(cloudKit.isSignedIn ? .green : .red)
+                        .foregroundStyle(.green)
                 }
                 Spacer()
-                if cloudKit.isSignedIn {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundStyle(.green)
+                    .font(.caption)
+            }
+
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 12) {
+                    Image(systemName: "sparkles")
+                        .foregroundStyle(.careTint)
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("AI Assistance")
+                            .font(.subheadline)
+                        Text(ai.availabilityState.title)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                }
+
+                Text(ai.availabilityState.message)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            if ai.availabilityState == .appleIntelligenceNotEnabled {
+                Button("Open Settings") {
+                    openAppSettings()
+                }
+                .foregroundStyle(.careTint)
+            }
+
+            if ai.availabilityState == .deviceNotEligible {
+                if ai.isCloudSummaryConfigured {
+                    Toggle("Enable Cloud Summaries", isOn: $cloudSummariesEnabled)
+                    Text("Cloud summaries only apply to simple appointment-note summaries on unsupported devices.")
                         .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else {
+                    Label("Cloud summaries are not configured for this build", systemImage: "info.circle")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
                 }
             }
 
@@ -335,11 +381,11 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     SectionHeader(title: "Features")
                     featureItem("Appointments & checklists")
-                    featureItem("Family task coordination")
+                    featureItem("Care task coordination")
                     featureItem("Document vault with scanning")
-                    featureItem("Shared expense tracking")
-                    featureItem("Apple Health vitals monitoring")
-                    featureItem("On-device AI summaries")
+                    featureItem("Expense tracking")
+                    featureItem("Apple Health vitals on this iPhone")
+                    featureItem("AI summaries when available")
                 }
                 .glassCard()
             }
@@ -358,6 +404,11 @@ struct SettingsView: View {
             Text(text)
                 .font(.subheadline)
         }
+    }
+
+    private func openAppSettings() {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        UIApplication.shared.open(url)
     }
 }
 

@@ -2,21 +2,95 @@
 //  AIAssistant.swift
 //  CareCircle
 //
-//  On-device AI using Apple Foundation Models.
-//  Runs locally — no data leaves the device.
+//  Uses Apple Foundation Models when available at runtime.
+//  On unsupported devices, appointment-note summaries can optionally
+//  fall back to a backend-managed cloud summary endpoint.
 //
 
 import Foundation
 import FoundationModels
 
+enum AIAvailabilityState: Equatable {
+    case available
+    case appleIntelligenceNotEnabled
+    case modelNotReady
+    case deviceNotEligible
+    case unavailable
+
+    init(systemAvailability: SystemLanguageModel.Availability) {
+        switch systemAvailability {
+        case .available:
+            self = .available
+        case .unavailable(.deviceNotEligible):
+            self = .deviceNotEligible
+        case .unavailable(.appleIntelligenceNotEnabled):
+            self = .appleIntelligenceNotEnabled
+        case .unavailable(.modelNotReady):
+            self = .modelNotReady
+        case .unavailable(_):
+            self = .unavailable
+        }
+    }
+
+    var isReadyForOnDeviceFeatures: Bool {
+        self == .available
+    }
+
+    var title: String {
+        switch self {
+        case .available:
+            return "AI Ready"
+        case .appleIntelligenceNotEnabled:
+            return "Turn On Apple Intelligence"
+        case .modelNotReady:
+            return "AI Not Ready Yet"
+        case .deviceNotEligible:
+            return "Cloud Summaries Available"
+        case .unavailable:
+            return "AI Unavailable"
+        }
+    }
+
+    var message: String {
+        switch self {
+        case .available:
+            return "On-device AI features are ready on this iPhone."
+        case .appleIntelligenceNotEnabled:
+            return "This iPhone supports Apple Intelligence, but it is turned off. Enable it in Settings for better summaries and task help."
+        case .modelNotReady:
+            return "Apple Intelligence is still downloading or not ready yet. Core workflows still work without AI."
+        case .deviceNotEligible:
+            return "This iPhone does not support Apple Intelligence. You can optionally enable cloud summaries for simple appointment-note summaries."
+        case .unavailable:
+            return "AI features are unavailable right now. Core workflows still work without AI."
+        }
+    }
+}
+
 @Observable
 @MainActor
 class AIAssistant {
+    private let model = SystemLanguageModel.default
+
     var isProcessing = false
     var lastError: String?
 
+    var availabilityState: AIAvailabilityState {
+        AIAvailabilityState(systemAvailability: model.availability)
+    }
+
     var isAvailable: Bool {
-        SystemLanguageModel.default.isAvailable
+        availabilityState.isReadyForOnDeviceFeatures
+    }
+
+    var isCloudSummaryConfigured: Bool {
+        Self.cloudSummaryEndpoint != nil
+    }
+
+    var canUseCloudSummaryFallback: Bool {
+        availabilityState == .deviceNotEligible
+            && isCloudSummaryConfigured
+            && UserDefaults.standard.bool(forKey: Self.cloudSummariesEnabledKey)
     }
 
     // MARK: - Daily Briefing
@@ -96,6 +170,19 @@ class AIAssistant {
     // MARK: - Note Summarization
 
     func summarizeNotes(_ notes: String) async -> String? {
+        guard !notes.isEmpty else { return nil }
+
+        switch availabilityState {
+        case .available:
+            return await summarizeNotesOnDevice(notes)
+        case .deviceNotEligible where canUseCloudSummaryFallback:
+            return await summarizeNotesInCloud(notes)
+        default:
+            return nil
+        }
+    }
+
+    private func summarizeNotesOnDevice(_ notes: String) async -> String? {
         guard isAvailable, !notes.isEmpty else { return nil }
 
         isProcessing = true
@@ -115,6 +202,62 @@ class AIAssistant {
             return response.content
         } catch {
             lastError = error.localizedDescription
+            return nil
+        }
+    }
+
+    private func summarizeNotesInCloud(_ notes: String) async -> String? {
+        guard !notes.isEmpty else { return nil }
+        guard let endpoint = Self.cloudSummaryEndpoint else {
+            lastError = "Cloud summaries are not configured for this build."
+            return nil
+        }
+
+        isProcessing = true
+        defer { isProcessing = false }
+
+        do {
+            var request = URLRequest(url: endpoint)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.timeoutInterval = 20
+            request.httpBody = try JSONEncoder().encode(
+                CloudSummaryRequest(
+                    notes: notes,
+                    noteType: "appointment_note_summary",
+                    client: "ios"
+                )
+            )
+
+            let sessionConfig = URLSessionConfiguration.ephemeral
+            sessionConfig.timeoutIntervalForRequest = 15
+            sessionConfig.timeoutIntervalForResource = 20
+            let session = URLSession(configuration: sessionConfig)
+            let (data, response) = try await session.data(for: request)
+
+            guard let httpResponse = response as? HTTPURLResponse else {
+                lastError = "Cloud summary service returned an invalid response."
+                return nil
+            }
+
+            guard (200..<300).contains(httpResponse.statusCode) else {
+                lastError = "Cloud summary service returned \(httpResponse.statusCode)."
+                return nil
+            }
+
+            let summary = try JSONDecoder().decode(CloudSummaryResponse.self, from: data)
+            let cleaned = summary.summary.trimmingCharacters(in: .whitespacesAndNewlines)
+            if cleaned.isEmpty {
+                lastError = "Cloud summary service returned an empty summary."
+                return nil
+            }
+            return cleaned
+        } catch {
+            if (error as NSError).code == NSURLErrorTimedOut {
+                lastError = "Cloud summary request timed out. Please try again."
+            } else {
+                lastError = error.localizedDescription
+            }
             return nil
         }
     }
@@ -206,6 +349,38 @@ class AIAssistant {
             return nil
         }
     }
+}
+
+private extension AIAssistant {
+    static let cloudSummariesEnabledKey = "cloudSummariesEnabled"
+    static let cloudSummaryEndpointDefaultsKey = "cloudSummaryEndpoint"
+    static let cloudSummaryEndpointInfoKey = "CARECIRCLE_SUMMARY_API_URL"
+
+    static var cloudSummaryEndpoint: URL? {
+        if let rawValue = UserDefaults.standard.string(forKey: cloudSummaryEndpointDefaultsKey),
+           !rawValue.isEmpty,
+           let url = URL(string: rawValue) {
+            return url
+        }
+
+        if let rawValue = Bundle.main.object(forInfoDictionaryKey: cloudSummaryEndpointInfoKey) as? String,
+           !rawValue.isEmpty,
+           let url = URL(string: rawValue) {
+            return url
+        }
+
+        return nil
+    }
+}
+
+private struct CloudSummaryRequest: Encodable {
+    let notes: String
+    let noteType: String
+    let client: String
+}
+
+private struct CloudSummaryResponse: Decodable {
+    let summary: String
 }
 
 // MARK: - Structured Output Types

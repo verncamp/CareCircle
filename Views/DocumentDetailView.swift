@@ -54,6 +54,18 @@ struct DocumentDetailView: View {
                             .padding(.vertical, 4)
                             .background(.orange.opacity(0.1), in: Capsule())
                         }
+                        if document.isCritical {
+                            HStack(spacing: 4) {
+                                Image(systemName: "exclamationmark.triangle.fill")
+                                Text("Critical")
+                            }
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .foregroundStyle(.red)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                            .background(.red.opacity(0.1), in: Capsule())
+                        }
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -70,6 +82,39 @@ struct DocumentDetailView: View {
 
                     detailRow(label: "Created", value: document.createdAt.formatted(date: .long, time: .shortened))
                     detailRow(label: "Updated", value: document.updatedAt.formatted(date: .long, time: .shortened))
+                    detailRow(label: "Domain", value: document.domain.rawValue)
+                    detailRow(label: "Country", value: document.countryProfileCode)
+
+                    if let issuer = document.issuer, !issuer.isEmpty {
+                        detailRow(label: "Issuer", value: issuer)
+                    }
+
+                    if let memberOrPolicyId = document.memberOrPolicyId, !memberOrPolicyId.isEmpty {
+                        detailRow(label: "Member / Policy ID", value: memberOrPolicyId)
+                    }
+
+                    if let expiryDate = document.expiryDate {
+                        detailRow(label: "Expiry", value: expiryDate.formatted(date: .abbreviated, time: .omitted))
+                    }
+
+                    if let renewalDate = document.renewalDate {
+                        detailRow(label: "Renewal", value: renewalDate.formatted(date: .abbreviated, time: .omitted))
+                    }
+
+                    if document.isCritical || document.includeInEmergencyPacket {
+                        HStack(spacing: 8) {
+                            if document.isCritical {
+                                Label("Critical", systemImage: "exclamationmark.triangle.fill")
+                                    .font(.caption)
+                                    .foregroundStyle(.orange)
+                            }
+                            if document.includeInEmergencyPacket {
+                                Label("Emergency Packet", systemImage: "cross.case.fill")
+                                    .font(.caption)
+                                    .foregroundStyle(.careTint)
+                            }
+                        }
+                    }
 
                     if !document.tags.isEmpty {
                         VStack(alignment: .leading, spacing: 6) {
@@ -180,6 +225,7 @@ struct DocumentDetailView: View {
             Button("Delete", role: .destructive) {
                 modelContext.delete(document)
                 try? modelContext.save()
+                NotificationManager.resync(context: modelContext)
                 dismiss()
             }
             Button("Cancel", role: .cancel) {}
@@ -243,8 +289,18 @@ struct EditDocumentView: View {
 
     @State private var title: String = ""
     @State private var category: DocumentCategory = .other
+    @State private var domain: DocumentDomain = .other
     @State private var isPinned: Bool = false
+    @State private var isCritical: Bool = false
+    @State private var issuer: String = ""
+    @State private var memberOrPolicyId: String = ""
+    @State private var hasExpiryDate: Bool = false
+    @State private var expiryDate: Date = Date()
+    @State private var hasRenewalDate: Bool = false
+    @State private var renewalDate: Date = Date()
     @State private var tagText: String = ""
+    @State private var tags: [String] = []
+    @State private var includeInEmergencyPacket: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -258,7 +314,28 @@ struct EditDocumentView: View {
                         }
                     }
 
+                    Picker("Domain", selection: $domain) {
+                        ForEach(DocumentDomain.allCases, id: \.self) { item in
+                            Text(item.rawValue).tag(item)
+                        }
+                    }
+
                     Toggle("Pin to top", isOn: $isPinned)
+                    Toggle("Critical document", isOn: $isCritical)
+                }
+
+                Section("Coverage Details") {
+                    TextField("Issuer (optional)", text: $issuer)
+                    TextField("Member/Policy ID (optional)", text: $memberOrPolicyId)
+                    Toggle("Has expiry date", isOn: $hasExpiryDate)
+                    if hasExpiryDate {
+                        DatePicker("Expiry date", selection: $expiryDate, displayedComponents: .date)
+                    }
+                    Toggle("Has renewal date", isOn: $hasRenewalDate)
+                    if hasRenewalDate {
+                        DatePicker("Renewal date", selection: $renewalDate, displayedComponents: .date)
+                    }
+                    Toggle("Include in emergency packet", isOn: $includeInEmergencyPacket)
                 }
 
                 Section("Tags") {
@@ -267,19 +344,19 @@ struct EditDocumentView: View {
                             .textInputAutocapitalization(.never)
                         Button("Add") {
                             let tag = tagText.trimmingCharacters(in: .whitespaces)
-                            guard !tag.isEmpty, !document.tags.contains(tag) else { return }
-                            document.tags.append(tag)
+                            guard !tag.isEmpty, !tags.contains(tag) else { return }
+                            tags.append(tag)
                             tagText = ""
                         }
                         .disabled(tagText.trimmingCharacters(in: .whitespaces).isEmpty)
                     }
 
-                    if !document.tags.isEmpty {
-                        ForEach(document.tags, id: \.self) { tag in
+                    if !tags.isEmpty {
+                        ForEach(tags, id: \.self) { tag in
                             Text(tag)
                         }
                         .onDelete { offsets in
-                            document.tags.remove(atOffsets: offsets)
+                            tags.remove(atOffsets: offsets)
                         }
                     }
                 }
@@ -299,7 +376,17 @@ struct EditDocumentView: View {
             .onAppear {
                 title = document.title
                 category = document.category
+                domain = document.domain
                 isPinned = document.isPinned
+                isCritical = document.isCritical
+                issuer = document.issuer ?? ""
+                memberOrPolicyId = document.memberOrPolicyId ?? ""
+                hasExpiryDate = document.expiryDate != nil
+                expiryDate = document.expiryDate ?? Date()
+                hasRenewalDate = document.renewalDate != nil
+                renewalDate = document.renewalDate ?? Date()
+                includeInEmergencyPacket = document.includeInEmergencyPacket
+                tags = document.tags
             }
         }
     }
@@ -307,9 +394,18 @@ struct EditDocumentView: View {
     private func saveChanges() {
         document.title = title
         document.category = category
+        document.domain = domain
         document.isPinned = isPinned
+        document.isCritical = isCritical
+        document.includeInEmergencyPacket = includeInEmergencyPacket
+        document.issuer = issuer.isEmpty ? nil : issuer
+        document.memberOrPolicyId = memberOrPolicyId.isEmpty ? nil : memberOrPolicyId
+        document.expiryDate = hasExpiryDate ? expiryDate : nil
+        document.renewalDate = hasRenewalDate ? renewalDate : nil
+        document.tags = tags
         document.updatedAt = Date()
         try? modelContext.save()
+        NotificationManager.resync(context: modelContext)
         dismiss()
     }
 }

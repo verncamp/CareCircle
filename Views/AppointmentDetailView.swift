@@ -9,6 +9,7 @@ import SwiftData
 struct AppointmentDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Bindable var appointment: Appointment
+    @AppStorage("cloudSummariesEnabled") private var cloudSummariesEnabled = false
 
     @State private var ai = AIAssistant()
     @State private var aiSummary: String?
@@ -29,8 +30,8 @@ struct AppointmentDetailView: View {
                 notesCard
 
                 // AI Actions
-                if ai.isAvailable && !appointment.notes.isEmpty {
-                    aiCard
+                if !appointment.notes.isEmpty {
+                    aiSection
                 }
             }
             .padding(.horizontal)
@@ -214,6 +215,34 @@ struct AppointmentDetailView: View {
 
     // MARK: - AI Actions
 
+    @ViewBuilder
+    private var aiSection: some View {
+        switch ai.availabilityState {
+        case .available:
+            aiCard
+        case .appleIntelligenceNotEnabled:
+            aiPromptCard(
+                title: ai.availabilityState.title,
+                message: ai.availabilityState.message,
+                actionTitle: "Open Settings"
+            ) {
+                openAppSettings()
+            }
+        case .modelNotReady:
+            aiPromptCard(
+                title: ai.availabilityState.title,
+                message: ai.availabilityState.message
+            )
+        case .deviceNotEligible:
+            cloudSummaryCard
+        case .unavailable:
+            aiPromptCard(
+                title: ai.availabilityState.title,
+                message: ai.availabilityState.message
+            )
+        }
+    }
+
     private var aiCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
@@ -306,6 +335,106 @@ struct AppointmentDetailView: View {
         .glassCard()
     }
 
+    private var cloudSummaryCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                Image(systemName: "sparkles")
+                    .foregroundStyle(.careTint)
+                SectionHeader(title: "Cloud Summary")
+                if ai.isProcessing {
+                    ProgressView().controlSize(.small)
+                }
+            }
+
+            if let summary = aiSummary {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Summary")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.careTint)
+                    Text(summary)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .lineSpacing(3)
+                }
+            }
+
+            if !ai.isCloudSummaryConfigured {
+                Text("This device does not support Apple Intelligence, and cloud summaries are not configured for this build yet.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            } else if !cloudSummariesEnabled {
+                Text("This iPhone does not support Apple Intelligence. Enable cloud summaries to upload appointment notes for a simple summary. Health data stays on this iPhone.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .lineSpacing(3)
+
+                Button("Enable Cloud Summaries") {
+                    cloudSummariesEnabled = true
+                }
+                .font(.subheadline)
+                .fontWeight(.medium)
+                .foregroundStyle(.careTint)
+            } else {
+                Text("Appointment notes will be sent securely to CareCircle's summary service. Only simple note summaries use the cloud path.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .lineSpacing(3)
+
+                Button {
+                    asyncRun { @MainActor in
+                        let result = await ai.summarizeNotes(appointment.notes)
+                        if let result {
+                            aiSummary = result
+                            appointment.aiSummary = result
+                            try? modelContext.save()
+                        }
+                    }
+                } label: {
+                    Label("Summarize Notes", systemImage: "sparkles")
+                }
+                .font(.subheadline)
+                .foregroundStyle(.careTint)
+                .disabled(ai.isProcessing)
+            }
+
+            if let error = ai.lastError, !error.isEmpty {
+                Text(error)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+            }
+        }
+        .glassCard()
+    }
+
+    private func aiPromptCard(
+        title: String,
+        message: String,
+        actionTitle: String? = nil,
+        action: (() -> Void)? = nil
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                Image(systemName: "sparkles")
+                    .foregroundStyle(.careTint)
+                SectionHeader(title: title)
+            }
+
+            Text(message)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .lineSpacing(3)
+
+            if let actionTitle, let action {
+                Button(actionTitle, action: action)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.careTint)
+            }
+        }
+        .glassCard()
+    }
+
     private func saveExtractedTasks() {
         for suggested in suggestedTasks {
             let priority: TaskPriority = switch suggested.priority.lowercased() {
@@ -321,6 +450,11 @@ struct AppointmentDetailView: View {
         }
         try? modelContext.save()
         suggestedTasks = []
+    }
+
+    private func openAppSettings() {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        UIApplication.shared.open(url)
     }
 }
 
@@ -352,6 +486,7 @@ struct EditAppointmentView: View {
                     Button("Done") {
                         appointment.updatedAt = Date()
                         try? modelContext.save()
+                        NotificationManager.resync(context: modelContext)
                         dismiss()
                     }
                     .fontWeight(.semibold)

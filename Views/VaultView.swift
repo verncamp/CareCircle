@@ -11,6 +11,7 @@ struct VaultView: View {
     @Query(sort: \Document.createdAt, order: .reverse) private var documents: [Document]
     @State private var searchText = ""
     @State private var selectedCategory: DocumentCategory?
+    @State private var selectedDomain: DocumentDomain?
     @Query private var familyMembers: [FamilyMember]
     @State private var showingAddDocument = false
     @State private var showingScanner = false
@@ -19,6 +20,7 @@ struct VaultView: View {
     var pinnedDocuments: [Document] {
         let pinned = documents.filter { $0.isPinned }
         if let cat = selectedCategory { return pinned.filter { $0.category == cat } }
+        if let domain = selectedDomain { return pinned.filter { $0.domain == domain } }
         return pinned
     }
 
@@ -27,18 +29,70 @@ struct VaultView: View {
         if let cat = selectedCategory {
             unpinned = unpinned.filter { $0.category == cat }
         }
+        if let domain = selectedDomain {
+            unpinned = unpinned.filter { $0.domain == domain }
+        }
         if searchText.isEmpty { return unpinned }
         return unpinned.filter {
             $0.title.localizedCaseInsensitiveContains(searchText) ||
             $0.category.rawValue.localizedCaseInsensitiveContains(searchText) ||
+            $0.domain.rawValue.localizedCaseInsensitiveContains(searchText) ||
             $0.tags.contains { $0.localizedCaseInsensitiveContains(searchText) }
         }
+    }
+
+    var criticalDocuments: [Document] {
+        documents
+            .filter { $0.isCritical }
+            .sorted { ($0.expiryDate ?? .distantFuture) < ($1.expiryDate ?? .distantFuture) }
+    }
+
+    var expiringDocuments: [Document] {
+        let cutoff = Calendar.current.date(byAdding: .day, value: 60, to: Date()) ?? .distantFuture
+        return documents
+            .filter {
+                guard let expiry = $0.expiryDate else { return false }
+                return expiry >= Date() && expiry <= cutoff
+            }
+            .sorted { ($0.expiryDate ?? .distantFuture) < ($1.expiryDate ?? .distantFuture) }
     }
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
+                    if !criticalDocuments.isEmpty {
+                        VStack(alignment: .leading, spacing: 12) {
+                            SectionHeader(title: "Critical Documents")
+                                .padding(.horizontal, 4)
+
+                            VStack(spacing: 8) {
+                                ForEach(criticalDocuments.prefix(5)) { doc in
+                                    NavigationLink(destination: DocumentDetailView(document: doc)) {
+                                        documentRow(doc)
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                        }
+                    }
+
+                    if !expiringDocuments.isEmpty {
+                        VStack(alignment: .leading, spacing: 12) {
+                            SectionHeader(title: "Expiring Soon")
+                                .padding(.horizontal, 4)
+
+                            VStack(spacing: 8) {
+                                ForEach(expiringDocuments.prefix(4)) { doc in
+                                    NavigationLink(destination: DocumentDetailView(document: doc)) {
+                                        expiringRow(doc)
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                        }
+                    }
+
                     // Pinned
                     if !pinnedDocuments.isEmpty {
                         VStack(alignment: .leading, spacing: 12) {
@@ -90,7 +144,7 @@ struct VaultView: View {
             .navigationTitle("Vault")
             .screenBackground()
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button("All Categories") {
                             selectedCategory = nil
@@ -112,6 +166,33 @@ struct VaultView: View {
                             Image(systemName: "line.3.horizontal.decrease.circle")
                             if let cat = selectedCategory {
                                 Text(cat.rawValue)
+                                    .font(.caption)
+                            }
+                        }
+                    }
+                }
+                ToolbarItem(placement: .topBarLeading) {
+                    Menu {
+                        Button("All Domains") {
+                            selectedDomain = nil
+                        }
+                        ForEach(DocumentDomain.allCases, id: \.self) { domain in
+                            Button {
+                                selectedDomain = domain
+                            } label: {
+                                HStack {
+                                    Text(domain.rawValue)
+                                    if selectedDomain == domain {
+                                        Image(systemName: "checkmark")
+                                    }
+                                }
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "square.grid.2x2")
+                            if let domain = selectedDomain {
+                                Text(domain.rawValue)
                                     .font(.caption)
                             }
                         }
@@ -184,7 +265,7 @@ struct VaultView: View {
                     .fontWeight(.medium)
 
                 HStack(spacing: 6) {
-                    Text(doc.category.rawValue)
+                    Text(doc.domain.rawValue)
                     Text("·")
                     Text(doc.createdAt.formatted(date: .abbreviated, time: .omitted))
                 }
@@ -215,10 +296,39 @@ struct VaultView: View {
             Button(role: .destructive) {
                 modelContext.delete(doc)
                 try? modelContext.save()
+                NotificationManager.resync(context: modelContext)
             } label: {
                 Label("Delete", systemImage: "trash")
             }
         }
+    }
+
+    private func expiringRow(_ doc: Document) -> some View {
+        HStack(spacing: 14) {
+            Image(systemName: "doc.badge.clock")
+                .font(.title3)
+                .foregroundStyle(.orange)
+                .frame(width: 36, height: 36)
+                .background(.orange.opacity(0.1), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(doc.title)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                Text(doc.domain.rawValue)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            if let expiry = doc.expiryDate {
+                Text(expiry.formatted(date: .abbreviated, time: .omitted))
+                    .font(.caption)
+                    .foregroundStyle(.orange)
+            }
+        }
+        .glassCard(padding: 12, cornerRadius: 14)
     }
 
     // MARK: - Empty State
@@ -245,12 +355,14 @@ struct VaultView: View {
         let document = Document(
             title: "Scanned Document (\(pages) page\(pages == 1 ? "" : "s"))",
             category: .other,
+            countryProfileCode: documents.first?.parentProfile?.regionProfileCode ?? "US",
             fileURL: "scanned://\(UUID().uuidString)"
         )
         document.fileData = data
         document.parentProfile = documents.first?.parentProfile
         modelContext.insert(document)
         try? modelContext.save()
+        NotificationManager.resync(context: modelContext)
 
         let author = familyMembers.first(where: \.isCurrentUser)?.name ?? "Someone"
         ActivityFeedHelper.logDocumentAdded(document, by: author, profile: document.parentProfile, context: modelContext)
@@ -275,6 +387,7 @@ struct VaultView: View {
                     }
                     document.updatedAt = Date()
                     try? modelContext.save()
+                    NotificationManager.resync(context: modelContext)
                 }
             }
         }
@@ -295,7 +408,16 @@ struct AddDocumentView: View {
 
     @State private var title = ""
     @State private var category: DocumentCategory = .other
+    @State private var domain: DocumentDomain = .other
     @State private var isPinned = false
+    @State private var isCritical = false
+    @State private var includeInEmergencyPacket = false
+    @State private var issuer = ""
+    @State private var memberOrPolicyId = ""
+    @State private var hasExpiryDate = false
+    @State private var expiryDate = Date()
+    @State private var hasRenewalDate = false
+    @State private var renewalDate = Date()
     @State private var ai = AIAssistant()
     @State private var showingFilePicker = false
     @State private var importedFileData: Data?
@@ -325,7 +447,30 @@ struct AddDocumentView: View {
                         }
                     }
 
+                    Picker("Domain", selection: $domain) {
+                        ForEach(DocumentDomain.allCases, id: \.self) { item in
+                            Text(item.rawValue).tag(item)
+                        }
+                    }
+
                     Toggle("Pin to top", isOn: $isPinned)
+                    Toggle("Critical document", isOn: $isCritical)
+                    Toggle("Include in emergency packet", isOn: $includeInEmergencyPacket)
+                }
+
+                Section("Coverage Details") {
+                    TextField("Issuer (optional)", text: $issuer)
+                    TextField("Member/Policy ID (optional)", text: $memberOrPolicyId)
+
+                    Toggle("Has expiry date", isOn: $hasExpiryDate)
+                    if hasExpiryDate {
+                        DatePicker("Expiry date", selection: $expiryDate, displayedComponents: .date)
+                    }
+
+                    Toggle("Has renewal date", isOn: $hasRenewalDate)
+                    if hasRenewalDate {
+                        DatePicker("Renewal date", selection: $renewalDate, displayedComponents: .date)
+                    }
                 }
 
                 Section("File") {
@@ -380,6 +525,11 @@ struct AddDocumentView: View {
                     }
                 }
             }
+            .onChange(of: isCritical) { _, newValue in
+                if newValue {
+                    includeInEmergencyPacket = true
+                }
+            }
         }
     }
 
@@ -387,13 +537,22 @@ struct AddDocumentView: View {
         let document = Document(
             title: title,
             category: category,
+            domain: domain,
+            countryProfileCode: parentProfiles.first?.regionProfileCode ?? "US",
             fileURL: importedFileName ?? "manual://\(UUID().uuidString)",
-            isPinned: isPinned
+            isPinned: isPinned,
+            issuer: issuer.isEmpty ? nil : issuer,
+            memberOrPolicyId: memberOrPolicyId.isEmpty ? nil : memberOrPolicyId,
+            expiryDate: hasExpiryDate ? expiryDate : nil,
+            renewalDate: hasRenewalDate ? renewalDate : nil,
+            isCritical: isCritical,
+            includeInEmergencyPacket: includeInEmergencyPacket
         )
         document.fileData = importedFileData
         document.parentProfile = parentProfiles.first
         modelContext.insert(document)
         try? modelContext.save()
+        NotificationManager.resync(context: modelContext)
 
         let author = familyMembers.first(where: \.isCurrentUser)?.name ?? "Someone"
         ActivityFeedHelper.logDocumentAdded(document, by: author, profile: parentProfiles.first, context: modelContext)

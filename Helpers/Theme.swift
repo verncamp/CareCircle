@@ -201,6 +201,18 @@ func iconForDocumentCategory(_ category: DocumentCategory) -> String {
     }
 }
 
+func iconForDocumentDomain(_ domain: DocumentDomain) -> String {
+    switch domain {
+    case .tax: return "doc.text.magnifyingglass"
+    case .insurance: return "shield.checkered"
+    case .banking: return "building.columns"
+    case .healthCoverage: return "cross.case"
+    case .governmentId: return "person.text.rectangle"
+    case .legal: return "doc.plaintext"
+    case .other: return "doc"
+    }
+}
+
 func iconForExpenseCategory(_ category: ExpenseCategory) -> String {
     switch category {
     case .medical:        return "cross.case.fill"
