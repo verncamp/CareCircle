@@ -25,9 +25,9 @@ struct DocumentDetailView: View {
                 VStack(spacing: 12) {
                     Image(systemName: iconForCategory(document.category))
                         .font(.system(size: 40))
-                        .foregroundStyle(.teal)
+                        .foregroundStyle(.careTint)
                         .frame(width: 72, height: 72)
-                        .background(.teal.opacity(0.1), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                        .background(.careTint.opacity(0.1), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
 
                     Text(document.title)
                         .font(.title2)
@@ -40,7 +40,7 @@ struct DocumentDetailView: View {
                             .fontWeight(.medium)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 4)
-                            .background(.teal.opacity(0.1), in: Capsule())
+                            .background(.careTint.opacity(0.1), in: Capsule())
 
                         if document.isPinned {
                             HStack(spacing: 4) {
@@ -120,7 +120,7 @@ struct DocumentDetailView: View {
                         .padding(.vertical, 10)
                     }
                     .buttonStyle(.bordered)
-                    .tint(.teal)
+                    .tint(.careTint)
 
                     if document.fileData != nil {
                         Button {
@@ -136,7 +136,7 @@ struct DocumentDetailView: View {
                             .padding(.vertical, 10)
                         }
                         .buttonStyle(.bordered)
-                        .tint(.teal)
+                        .tint(.careTint)
                     }
 
                     Button(role: .destructive) {

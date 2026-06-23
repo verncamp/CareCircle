@@ -13,30 +13,20 @@ struct WelcomeView: View {
 
     var body: some View {
         ZStack {
-            // Background
-            LinearGradient(
-                colors: [
-                    Color.teal.opacity(0.15),
-                    Color.mint.opacity(0.08),
-                    Color(red: 0.98, green: 0.88, blue: 0.82).opacity(0.15)
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            CareCircleScreenWash(isHero: true)
+                .ignoresSafeArea()
 
             VStack(spacing: 0) {
                 Spacer()
 
                 // Logo & tagline
                 VStack(spacing: 16) {
-                    Image(systemName: "heart.circle.fill")
-                        .font(.system(size: 80))
-                        .foregroundStyle(.teal)
-                        .shadow(color: .teal.opacity(0.3), radius: 20, y: 8)
+                    CareCircleMark(size: 82)
+                        .shadow(color: .careTint.opacity(0.24), radius: 18, y: 8)
 
                     Text("CareCircle")
                         .font(.system(size: 36, weight: .bold, design: .rounded))
+                        .foregroundStyle(.careInk)
 
                     Text("One place to coordinate care\nfor the people who matter most")
                         .font(.subheadline)
@@ -86,7 +76,7 @@ struct WelcomeView: View {
                             .padding(.vertical, 14)
                     }
                     .buttonStyle(.borderedProminent)
-                    .tint(.teal)
+                    .tint(.careTint)
                     .controlSize(.large)
 
                     Button {
@@ -99,7 +89,7 @@ struct WelcomeView: View {
                             .padding(.vertical, 14)
                     }
                     .buttonStyle(.bordered)
-                    .tint(.teal)
+                    .tint(.careTint)
                     .controlSize(.large)
                 }
                 .padding(.horizontal, 24)
@@ -112,7 +102,7 @@ struct WelcomeView: View {
         HStack(spacing: 14) {
             Image(systemName: icon)
                 .font(.title2)
-                .foregroundStyle(.teal)
+                .foregroundStyle(.careTint)
                 .frame(width: 36)
 
             VStack(alignment: .leading, spacing: 2) {

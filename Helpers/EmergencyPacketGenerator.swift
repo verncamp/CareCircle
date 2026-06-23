@@ -29,7 +29,7 @@ struct EmergencyPacketGenerator {
 
         // Title
         y = drawText("EMERGENCY CARE PACKET", at: y, margin: margin, width: contentWidth,
-                      font: .boldSystemFont(ofSize: 22), color: UIColor(red: 0.2, green: 0.6, blue: 0.6, alpha: 1))
+                      font: .boldSystemFont(ofSize: 22), color: .careTint)
 
         // Generated date
         y = drawText("Generated \(Date().formatted(date: .long, time: .shortened))",
@@ -176,7 +176,7 @@ struct EmergencyPacketGenerator {
     private static func drawSectionHeader(_ text: String, at y: CGFloat, margin: CGFloat, width: CGFloat) -> CGFloat {
         let newY = drawText(text, at: y, margin: margin, width: width,
                             font: .boldSystemFont(ofSize: 13),
-                            color: UIColor(red: 0.2, green: 0.6, blue: 0.6, alpha: 1))
+                            color: .careTint)
         return newY + 2
     }
 

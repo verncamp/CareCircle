@@ -67,7 +67,7 @@ struct NotificationSettingsView: View {
                         }
                     } label: {
                         Label("Enable Notifications", systemImage: "bell.badge")
-                            .foregroundStyle(.teal)
+                            .foregroundStyle(.careTint)
                     }
                 }
             } header: {
@@ -87,7 +87,7 @@ struct NotificationSettingsView: View {
                         Text("\(pendingCount)")
                             .font(.subheadline)
                             .fontWeight(.semibold)
-                            .foregroundStyle(.teal)
+                            .foregroundStyle(.careTint)
                     }
 
                     let futureAppointments = appointments.filter { $0.date > Date() }.count
@@ -127,7 +127,7 @@ struct NotificationSettingsView: View {
                     } label: {
                         HStack {
                             Label("Reschedule All Reminders", systemImage: "arrow.clockwise")
-                                .foregroundStyle(.teal)
+                                .foregroundStyle(.careTint)
                             if isLoading {
                                 Spacer()
                                 ProgressView()
@@ -171,7 +171,7 @@ struct NotificationSettingsView: View {
     private func infoRow(icon: String, text: String) -> some View {
         HStack(spacing: 10) {
             Image(systemName: icon)
-                .foregroundStyle(.teal)
+                .foregroundStyle(.careTint)
                 .frame(width: 20)
             Text(text)
                 .font(.subheadline)

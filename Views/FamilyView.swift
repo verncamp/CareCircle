@@ -29,10 +29,10 @@ struct FamilyView: View {
     }
 
     private let avatarGradients: [[Color]] = [
-        [.teal, .mint],
+        [.careTint, .careSage],
         [.pink, .orange],
         [.purple, .pink],
-        [.green, .teal],
+        [.green, .careTint],
         [.orange, .yellow]
     ]
 
@@ -77,7 +77,7 @@ struct FamilyView: View {
                             VStack(spacing: 12) {
                                 Image(systemName: "person.3")
                                     .font(.system(size: 40))
-                                    .foregroundStyle(.teal.opacity(0.5))
+                                    .foregroundStyle(.careTint.opacity(0.5))
                                 Text("No family members yet")
                                     .font(.subheadline)
                                     .foregroundStyle(.secondary)
@@ -104,7 +104,7 @@ struct FamilyView: View {
                             } label: {
                                 Image(systemName: "plus.circle.fill")
                                     .symbolRenderingMode(.hierarchical)
-                                    .foregroundStyle(.teal)
+                                    .foregroundStyle(.careTint)
                             }
                         }
 
@@ -174,10 +174,10 @@ struct FamilyView: View {
                         Text("You")
                             .font(.caption2)
                             .fontWeight(.medium)
-                            .foregroundStyle(.teal)
+                            .foregroundStyle(.careTint)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(.teal.opacity(0.1), in: Capsule())
+                            .background(.careTint.opacity(0.1), in: Capsule())
                     }
                 }
 

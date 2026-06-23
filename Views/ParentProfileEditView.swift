@@ -36,11 +36,11 @@ struct ParentProfileEditView: View {
                                     .frame(width: 80, height: 80)
                                     .clipShape(Circle())
                             } else {
-                                AvatarView(name: profile.name, size: 80, gradient: [.teal, .mint])
+                                AvatarView(name: profile.name, size: 80, gradient: [.careTint, .careSage])
                                     .overlay(alignment: .bottomTrailing) {
                                         Image(systemName: "camera.circle.fill")
                                             .font(.title3)
-                                            .foregroundStyle(.teal)
+                                            .foregroundStyle(.careTint)
                                             .background(.white, in: Circle())
                                     }
                             }

@@ -59,9 +59,9 @@ struct ExpenseDetailView: View {
         VStack(spacing: 14) {
             Image(systemName: iconForCategory(expense.category))
                 .font(.system(size: 36))
-                .foregroundStyle(.teal)
+                .foregroundStyle(.careTint)
                 .frame(width: 64, height: 64)
-                .background(.teal.opacity(0.1), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .background(.careTint.opacity(0.1), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
 
             Text(expense.title)
                 .font(.title2)
@@ -73,10 +73,10 @@ struct ExpenseDetailView: View {
             Text(expense.category.rawValue)
                 .font(.caption)
                 .fontWeight(.medium)
-                .foregroundStyle(.teal)
+                .foregroundStyle(.careTint)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 4)
-                .background(.teal.opacity(0.1), in: Capsule())
+                .background(.careTint.opacity(0.1), in: Capsule())
         }
         .frame(maxWidth: .infinity)
         .glassCard()
@@ -100,7 +100,7 @@ struct ExpenseDetailView: View {
     private func detailRow(icon: String, label: String, value: String) -> some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
-                .foregroundStyle(.teal)
+                .foregroundStyle(.careTint)
                 .frame(width: 20)
             Text(label)
                 .font(.subheadline)

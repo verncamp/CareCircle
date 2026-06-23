@@ -83,7 +83,7 @@ struct MainContentView: View {
                 }
             }
         }
-        .tint(.teal)
+        .tint(.careTint)
     }
 
     private var demoBanner: some View {
@@ -118,7 +118,7 @@ struct MainContentView: View {
         .foregroundStyle(.white)
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
-        .background(.teal.gradient)
+        .background(.careTint.gradient)
     }
 
     // iPad / Mac: sidebar
@@ -171,7 +171,7 @@ struct SidebarView: View {
                 }
                 .listRowBackground(
                     selectedTab == tab
-                        ? Color.teal.opacity(0.12)
+                        ? Color.careTint.opacity(0.12)
                         : Color.clear
                 )
             }

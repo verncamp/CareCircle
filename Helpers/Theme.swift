@@ -6,6 +6,60 @@
 //
 
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
+
+// MARK: - Brand Tokens
+
+extension Color {
+    static let careClay = Color(red: 194 / 255, green: 97 / 255, blue: 61 / 255)
+    static let careClayPressed = Color(red: 168 / 255, green: 79 / 255, blue: 48 / 255)
+    static let careSage = Color(red: 63 / 255, green: 122 / 255, blue: 107 / 255)
+    static let careApricot = Color(red: 232 / 255, green: 168 / 255, blue: 124 / 255)
+    static let careOat = Color(red: 245 / 255, green: 240 / 255, blue: 232 / 255)
+    static let careInk = Color(red: 36 / 255, green: 29 / 255, blue: 23 / 255)
+
+    static var careTint: Color { careClay }
+    static var careTintSoft: Color { careClay.opacity(0.10) }
+    static var careAvatarGradient: [Color] { [.careClay, .careApricot] }
+}
+
+extension ShapeStyle where Self == Color {
+    static var careTint: Color { Color.careTint }
+    static var careSage: Color { Color.careSage }
+    static var careApricot: Color { Color.careApricot }
+    static var careInk: Color { Color.careInk }
+    static var careTintSoft: Color { Color.careTintSoft }
+}
+
+#if canImport(UIKit)
+extension UIColor {
+    static let careTint = UIColor(red: 194 / 255, green: 97 / 255, blue: 61 / 255, alpha: 1)
+    static let careSage = UIColor(red: 63 / 255, green: 122 / 255, blue: 107 / 255, alpha: 1)
+}
+#endif
+
+// MARK: - Screen Background
+
+struct CareCircleScreenWash: View {
+    var isHero = false
+
+    var body: some View {
+        ZStack {
+            Color.careOat
+            LinearGradient(
+                colors: [
+                    Color.careClay.opacity(isHero ? 0.12 : 0.06),
+                    Color.careSage.opacity(isHero ? 0.08 : 0.05),
+                    Color.careApricot.opacity(isHero ? 0.18 : 0.12)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        }
+    }
+}
 
 // MARK: - Glass Card Modifier
 
@@ -20,6 +74,10 @@ struct GlassCard: ViewModifier {
                 .ultraThinMaterial,
                 in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
             )
+            .overlay {
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .stroke(.white.opacity(0.24), lineWidth: 0.5)
+            }
             .shadow(color: .black.opacity(0.06), radius: 10, y: 4)
     }
 }
@@ -29,22 +87,36 @@ extension View {
         modifier(GlassCard(padding: padding, cornerRadius: cornerRadius))
     }
 
-    func screenBackground() -> some View {
+    func screenBackground(isHero: Bool = false) -> some View {
         self.background {
-            ZStack {
-                Color(.systemGroupedBackground)
-                LinearGradient(
-                    colors: [
-                        Color.teal.opacity(0.08),
-                        Color.mint.opacity(0.05),
-                        Color(red: 0.98, green: 0.88, blue: 0.82).opacity(0.12)
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-            }
+            CareCircleScreenWash(isHero: isHero)
             .ignoresSafeArea()
         }
+    }
+}
+
+// MARK: - Brand Mark
+
+struct CareCircleMark: View {
+    var size: CGFloat = 80
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .trim(from: 0.10, to: 0.90)
+                .stroke(
+                    Color.careSage,
+                    style: StrokeStyle(lineWidth: size * 0.11, lineCap: .round)
+                )
+                .rotationEffect(.degrees(18))
+                .frame(width: size, height: size)
+
+            Circle()
+                .fill(Color.careTint)
+                .frame(width: size * 0.22, height: size * 0.22)
+        }
+        .frame(width: size, height: size)
+        .accessibilityLabel("CareCircle")
     }
 }
 
@@ -90,7 +162,7 @@ extension TaskPriority {
     var color: Color {
         switch self {
         case .low:    return .secondary
-        case .normal: return .teal
+        case .normal: return .careTint
         case .high:   return .orange
         case .urgent: return .red
         }
@@ -156,7 +228,7 @@ func formatCurrency(_ amount: Decimal) -> String {
 struct AvatarView: View {
     let name: String
     var size: CGFloat = 48
-    var gradient: [Color] = [.teal, .mint]
+    var gradient: [Color] = Color.careAvatarGradient
 
     private var initials: String {
         let parts = name.split(separator: " ")

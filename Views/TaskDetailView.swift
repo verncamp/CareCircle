@@ -145,7 +145,7 @@ struct TaskDetailView: View {
     private func detailRow(icon: String, label: String, value: String, valueColor: Color = .primary) -> some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
-                .foregroundStyle(.teal)
+                .foregroundStyle(.careTint)
                 .frame(width: 20)
 
             Text(label)

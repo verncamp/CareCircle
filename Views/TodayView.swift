@@ -184,7 +184,7 @@ struct TodayView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
                 Image(systemName: "sparkles")
-                    .foregroundStyle(.teal)
+                    .foregroundStyle(.careTint)
                 Text("Daily Briefing")
                     .font(.subheadline)
                     .fontWeight(.semibold)
@@ -210,7 +210,7 @@ struct TodayView: View {
                     asyncRun { @MainActor in await generateBriefing(profile) }
                 }
                 .font(.caption)
-                .foregroundStyle(.teal)
+                .foregroundStyle(.careTint)
             } else {
                 Button {
                     asyncRun { @MainActor in await generateBriefing(profile) }
@@ -220,7 +220,7 @@ struct TodayView: View {
                         Text("Generate today's briefing")
                     }
                     .font(.subheadline)
-                    .foregroundStyle(.teal)
+                    .foregroundStyle(.careTint)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
                 }
@@ -244,7 +244,7 @@ struct TodayView: View {
     private func parentHeroCard(_ profile: ParentProfile) -> some View {
         VStack(spacing: 16) {
             HStack(spacing: 14) {
-                AvatarView(name: profile.name, size: 56, gradient: [.teal, .mint])
+                AvatarView(name: profile.name, size: 56, gradient: [.careTint, .careSage])
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(profile.name)
@@ -309,7 +309,7 @@ struct TodayView: View {
                         .textCase(.uppercase)
                 }
                 .frame(width: 52, height: 52)
-                .background(.teal.opacity(0.1), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .background(.careTint.opacity(0.1), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(appointment.title)
@@ -323,7 +323,7 @@ struct TodayView: View {
 
                     Text(appointment.date.formatted(date: .omitted, time: .shortened))
                         .font(.subheadline)
-                        .foregroundStyle(.teal)
+                        .foregroundStyle(.careTint)
                         .fontWeight(.medium)
                 }
 
@@ -336,7 +336,7 @@ struct TodayView: View {
 
                 HStack(spacing: 8) {
                     ProgressView(value: Double(completed), total: Double(total))
-                        .tint(.teal)
+                        .tint(.careTint)
 
                     Text("\(completed)/\(total) ready")
                         .font(.caption)
@@ -434,7 +434,7 @@ struct TodayView: View {
                 } label: {
                     Image(systemName: "square.and.pencil")
                         .font(.subheadline)
-                        .foregroundStyle(.teal)
+                        .foregroundStyle(.careTint)
                 }
             }
 
@@ -469,7 +469,7 @@ struct TodayView: View {
                                 .foregroundStyle(.white)
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 6)
-                                .background(.teal, in: Capsule())
+                                .background(.careTint, in: Capsule())
                         }
                         .disabled(noteText.isEmpty)
                     }

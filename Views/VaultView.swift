@@ -151,9 +151,9 @@ struct VaultView: View {
         VStack(alignment: .leading, spacing: 10) {
             Image(systemName: iconForCategory(doc.category))
                 .font(.title2)
-                .foregroundStyle(.teal)
+                .foregroundStyle(.careTint)
                 .frame(width: 40, height: 40)
-                .background(.teal.opacity(0.1), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .background(.careTint.opacity(0.1), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
 
             Text(doc.title)
                 .font(.subheadline)
@@ -174,9 +174,9 @@ struct VaultView: View {
         HStack(spacing: 14) {
             Image(systemName: iconForCategory(doc.category))
                 .font(.title3)
-                .foregroundStyle(.teal)
+                .foregroundStyle(.careTint)
                 .frame(width: 36, height: 36)
-                .background(.teal.opacity(0.1), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .background(.careTint.opacity(0.1), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
 
             VStack(alignment: .leading, spacing: 3) {
                 Text(doc.title)
@@ -227,7 +227,7 @@ struct VaultView: View {
         VStack(spacing: 16) {
             Image(systemName: "folder.badge.plus")
                 .font(.system(size: 48))
-                .foregroundStyle(.teal.opacity(0.5))
+                .foregroundStyle(.careTint.opacity(0.5))
 
             Text("No Documents Yet")
                 .font(.title3)
@@ -332,7 +332,7 @@ struct AddDocumentView: View {
                     if let fileName = importedFileName {
                         HStack {
                             Image(systemName: "doc.fill")
-                                .foregroundStyle(.teal)
+                                .foregroundStyle(.careTint)
                             Text(fileName)
                                 .font(.subheadline)
                             Spacer()

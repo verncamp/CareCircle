@@ -75,12 +75,12 @@ struct AppointmentDetailView: View {
                         .textCase(.uppercase)
                 }
                 .frame(width: 56, height: 56)
-                .background(.teal.opacity(0.1), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .background(.careTint.opacity(0.1), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(appointment.date.formatted(date: .complete, time: .shortened))
                         .font(.subheadline)
-                        .foregroundStyle(.teal)
+                        .foregroundStyle(.careTint)
                         .fontWeight(.medium)
 
                     if !appointment.location.isEmpty {
@@ -95,15 +95,15 @@ struct AppointmentDetailView: View {
             let isPast = appointment.date < Date()
             HStack(spacing: 6) {
                 Image(systemName: isPast ? "checkmark.circle.fill" : "clock.fill")
-                    .foregroundStyle(isPast ? .green : .teal)
+                    .foregroundStyle(isPast ? .green : .careTint)
                 Text(isPast ? "Completed" : "Upcoming")
                     .font(.caption)
                     .fontWeight(.medium)
-                    .foregroundStyle(isPast ? .green : .teal)
+                    .foregroundStyle(isPast ? .green : .careTint)
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 5)
-            .background((isPast ? Color.green : Color.teal).opacity(0.1), in: Capsule())
+            .background((isPast ? Color.green : Color.careTint).opacity(0.1), in: Capsule())
         }
         .glassCard()
     }
@@ -128,7 +128,7 @@ struct AppointmentDetailView: View {
 
             if total > 0 {
                 ProgressView(value: Double(completed), total: Double(max(total, 1)))
-                    .tint(completed == total ? .green : .teal)
+                    .tint(completed == total ? .green : .careTint)
             }
 
             ForEach(Array(appointment.checklistItems.enumerated()), id: \.element.id) { index, item in
@@ -169,7 +169,7 @@ struct AppointmentDetailView: View {
             HStack(spacing: 12) {
                 Image(systemName: "plus.circle")
                     .font(.title3)
-                    .foregroundStyle(.teal)
+                    .foregroundStyle(.careTint)
 
                 TextField("Add item", text: $newChecklistItem)
                     .font(.subheadline)
@@ -179,7 +179,7 @@ struct AppointmentDetailView: View {
                     Button("Add") { addChecklistItem() }
                         .font(.caption)
                         .fontWeight(.semibold)
-                        .foregroundStyle(.teal)
+                        .foregroundStyle(.careTint)
                 }
             }
         }
@@ -218,7 +218,7 @@ struct AppointmentDetailView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
                 Image(systemName: "sparkles")
-                    .foregroundStyle(.teal)
+                    .foregroundStyle(.careTint)
                 SectionHeader(title: "AI Assistant")
                 if ai.isProcessing {
                     ProgressView().controlSize(.small)
@@ -231,7 +231,7 @@ struct AppointmentDetailView: View {
                     Text("Summary")
                         .font(.caption)
                         .fontWeight(.semibold)
-                        .foregroundStyle(.teal)
+                        .foregroundStyle(.careTint)
                     Text(summary)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
@@ -245,12 +245,12 @@ struct AppointmentDetailView: View {
                     Text("Suggested Tasks")
                         .font(.caption)
                         .fontWeight(.semibold)
-                        .foregroundStyle(.teal)
+                        .foregroundStyle(.careTint)
 
                     ForEach(suggestedTasks, id: \.title) { task in
                         HStack(spacing: 8) {
                             Image(systemName: "arrow.right.circle")
-                                .foregroundStyle(.teal)
+                                .foregroundStyle(.careTint)
                                 .font(.caption)
                             Text(task.title)
                                 .font(.subheadline)
@@ -271,7 +271,7 @@ struct AppointmentDetailView: View {
                             .font(.subheadline)
                             .fontWeight(.medium)
                     }
-                    .foregroundStyle(.teal)
+                    .foregroundStyle(.careTint)
                     .padding(.top, 4)
                 }
             }
@@ -300,7 +300,7 @@ struct AppointmentDetailView: View {
                 }
             }
             .font(.subheadline)
-            .foregroundStyle(.teal)
+            .foregroundStyle(.careTint)
             .disabled(ai.isProcessing)
         }
         .glassCard()

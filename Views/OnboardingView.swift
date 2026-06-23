@@ -33,23 +33,15 @@ struct OnboardingView: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(
-                colors: [
-                    Color.teal.opacity(0.1),
-                    Color.mint.opacity(0.05),
-                    Color(red: 0.98, green: 0.88, blue: 0.82).opacity(0.1)
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            CareCircleScreenWash(isHero: true)
+                .ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Progress
                 HStack(spacing: 8) {
                     ForEach(0..<totalSteps, id: \.self) { i in
                         Capsule()
-                            .fill(i <= step ? Color.teal : Color.teal.opacity(0.2))
+                            .fill(i <= step ? Color.careTint : Color.careTint.opacity(0.2))
                             .frame(height: 4)
                     }
                 }
@@ -104,7 +96,7 @@ struct OnboardingView: View {
                             .font(.caption)
                             .fontWeight(.semibold)
                     }
-                    .tint(.teal)
+                    .tint(.careTint)
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 32)
@@ -147,7 +139,7 @@ struct OnboardingView: View {
                     HStack(spacing: 12) {
                         Image(systemName: cloudKit.isSignedIn ? "icloud.fill" : "icloud.slash")
                             .font(.title)
-                            .foregroundStyle(cloudKit.isSignedIn ? .teal : .red)
+                            .foregroundStyle(cloudKit.isSignedIn ? .careTint : .red)
 
                         VStack(alignment: .leading, spacing: 2) {
                             Text("iCloud")
@@ -179,7 +171,7 @@ struct OnboardingView: View {
                             }
                             .font(.caption)
                             .buttonStyle(.bordered)
-                            .tint(.teal)
+                            .tint(.careTint)
                         }
                     }
                 }
@@ -260,7 +252,7 @@ struct OnboardingView: View {
                                 .foregroundStyle(.secondary)
                         }
                     }
-                    .tint(.teal)
+                    .tint(.careTint)
                 }
             }
             .padding(24)
@@ -275,7 +267,7 @@ struct OnboardingView: View {
                 VStack(spacing: 16) {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 64))
-                        .foregroundStyle(.teal)
+                        .foregroundStyle(.careTint)
 
                     Text("You're all set!")
                         .font(.title2)
@@ -309,7 +301,7 @@ struct OnboardingView: View {
                         .padding(.vertical, 14)
                 }
                 .buttonStyle(.borderedProminent)
-                .tint(.teal)
+                .tint(.careTint)
                 .controlSize(.large)
                 .disabled(parentName.isEmpty || userName.isEmpty)
             }

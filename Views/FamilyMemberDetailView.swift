@@ -13,10 +13,10 @@ struct FamilyMemberDetailView: View {
     @State private var showingEdit = false
 
     private let avatarGradients: [[Color]] = [
-        [.teal, .mint],
+        [.careTint, .careSage],
         [.pink, .orange],
         [.purple, .pink],
-        [.green, .teal],
+        [.green, .careTint],
         [.orange, .yellow]
     ]
 
@@ -81,10 +81,10 @@ struct FamilyMemberDetailView: View {
                     Text("You")
                         .font(.caption2)
                         .fontWeight(.medium)
-                        .foregroundStyle(.teal)
+                        .foregroundStyle(.careTint)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
-                        .background(.teal.opacity(0.1), in: Capsule())
+                        .background(.careTint.opacity(0.1), in: Capsule())
                 }
             }
         }
@@ -101,7 +101,7 @@ struct FamilyMemberDetailView: View {
             if let email = member.email, !email.isEmpty {
                 HStack(spacing: 12) {
                     Image(systemName: "envelope.fill")
-                        .foregroundStyle(.teal)
+                        .foregroundStyle(.careTint)
                         .frame(width: 20)
                     Text(email)
                         .font(.subheadline)
@@ -112,7 +112,7 @@ struct FamilyMemberDetailView: View {
             if let phone = member.phoneNumber, !phone.isEmpty {
                 HStack(spacing: 12) {
                     Image(systemName: "phone.fill")
-                        .foregroundStyle(.teal)
+                        .foregroundStyle(.careTint)
                         .frame(width: 20)
                     Text(phone)
                         .font(.subheadline)

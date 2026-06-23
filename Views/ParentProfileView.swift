@@ -81,7 +81,7 @@ struct ParentProfileView: View {
                     .clipShape(Circle())
                     .shadow(color: .black.opacity(0.1), radius: 8, y: 4)
             } else {
-                AvatarView(name: profile.name, size: 96, gradient: [.teal, .mint])
+                AvatarView(name: profile.name, size: 96, gradient: [.careTint, .careSage])
             }
 
             VStack(spacing: 4) {
@@ -160,7 +160,7 @@ struct ParentProfileView: View {
             if let value, !value.isEmpty {
                 HStack(spacing: 12) {
                     Image(systemName: icon)
-                        .foregroundStyle(.teal)
+                        .foregroundStyle(.careTint)
                         .frame(width: 24)
                     VStack(alignment: .leading, spacing: 1) {
                         Text(label)
@@ -189,7 +189,7 @@ struct ParentProfileView: View {
                 ForEach(profile.medications) { med in
                     HStack(spacing: 12) {
                         Image(systemName: "pills.fill")
-                            .foregroundStyle(.teal)
+                            .foregroundStyle(.careTint)
                             .frame(width: 24)
                         VStack(alignment: .leading, spacing: 2) {
                             Text(med.name)
@@ -222,7 +222,7 @@ struct ParentProfileView: View {
                                 .fontWeight(.medium)
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 6)
-                                .background(.teal.opacity(0.1), in: Capsule())
+                                .background(.careTint.opacity(0.1), in: Capsule())
                         }
                     }
                 }
@@ -364,7 +364,7 @@ struct ParentProfileView: View {
             if let pharmacy = profile.pharmacyName, !pharmacy.isEmpty {
                 HStack(spacing: 12) {
                     Image(systemName: "cross.circle.fill")
-                        .foregroundStyle(.teal)
+                        .foregroundStyle(.careTint)
                         .font(.title3)
                     VStack(alignment: .leading, spacing: 1) {
                         Text(pharmacy)
@@ -413,7 +413,7 @@ struct ParentProfileView: View {
                 .padding(.vertical, 10)
             }
             .buttonStyle(.borderedProminent)
-            .tint(.teal)
+            .tint(.careTint)
         }
         .glassCard()
     }

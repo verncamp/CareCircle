@@ -89,7 +89,7 @@ struct SettingsView: View {
         Section {
             if let user = currentUser {
                 HStack(spacing: 14) {
-                    AvatarView(name: user.name, size: 50, gradient: [.teal, .mint])
+                    AvatarView(name: user.name, size: 50, gradient: [.careTint, .careSage])
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(user.name)
@@ -101,7 +101,7 @@ struct SettingsView: View {
                         }
                         Text(user.role.rawValue)
                             .font(.caption)
-                            .foregroundStyle(.teal)
+                            .foregroundStyle(.careTint)
                     }
                 }
                 .padding(.vertical, 4)
@@ -127,7 +127,7 @@ struct SettingsView: View {
                     appMode = "signup"
                 } label: {
                     Label("Sign Up for Real", systemImage: "person.badge.plus")
-                        .foregroundStyle(.teal)
+                        .foregroundStyle(.careTint)
                 }
             }
         } header: {
@@ -152,10 +152,10 @@ struct SettingsView: View {
                                 Text("You")
                                     .font(.caption2)
                                     .fontWeight(.medium)
-                                    .foregroundStyle(.teal)
+                                    .foregroundStyle(.careTint)
                                     .padding(.horizontal, 5)
                                     .padding(.vertical, 1)
-                                    .background(.teal.opacity(0.1), in: Capsule())
+                                    .background(.careTint.opacity(0.1), in: Capsule())
                             }
                         }
                         Text(member.role.rawValue)
@@ -178,7 +178,7 @@ struct SettingsView: View {
                 showingAddMember = true
             } label: {
                 Label("Invite Family Member", systemImage: "person.badge.plus")
-                    .foregroundStyle(.teal)
+                    .foregroundStyle(.careTint)
             }
         } header: {
             Text("Care Circle (\(familyMembers.count) members)")
@@ -212,7 +212,7 @@ struct SettingsView: View {
                         .frame(width: 44, height: 44)
                         .clipShape(Circle())
                 } else {
-                    AvatarView(name: profile.name, size: 44, gradient: [.teal, .mint])
+                    AvatarView(name: profile.name, size: 44, gradient: [.careTint, .careSage])
                 }
 
                 VStack(alignment: .leading, spacing: 2) {
@@ -250,7 +250,7 @@ struct SettingsView: View {
         Section("App") {
             HStack(spacing: 12) {
                 Image(systemName: cloudKit.isSignedIn ? "icloud.fill" : "icloud.slash")
-                    .foregroundStyle(cloudKit.isSignedIn ? .teal : .red)
+                    .foregroundStyle(cloudKit.isSignedIn ? .careTint : .red)
                 VStack(alignment: .leading, spacing: 1) {
                     Text("iCloud Sync")
                         .font(.subheadline)
@@ -321,7 +321,7 @@ struct SettingsView: View {
             VStack(spacing: 20) {
                 Image(systemName: "heart.circle.fill")
                     .font(.system(size: 64))
-                    .foregroundStyle(.teal)
+                    .foregroundStyle(.careTint)
 
                 Text("CareCircle")
                     .font(.title)
@@ -353,7 +353,7 @@ struct SettingsView: View {
     private func featureItem(_ text: String) -> some View {
         HStack(spacing: 8) {
             Image(systemName: "checkmark.circle.fill")
-                .foregroundStyle(.teal)
+                .foregroundStyle(.careTint)
                 .font(.caption)
             Text(text)
                 .font(.subheadline)
